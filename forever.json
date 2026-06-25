@@ -19,6 +19,7 @@
             "key": "配置中心",
             "name": "❤配置｜中心",
             "type": 3,
+			"jar": "./yl4.jar",
             "api": "csp_Config",
             "searchable": 0,
             "changeable": 0,
