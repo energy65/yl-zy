@@ -342,6 +342,13 @@
             "filterable": 1,
             "ext": "http://cmsyun2.qijiyun.vip/api.php/app/"
         },
+		      {
+            "key": "极动",
+            "name": "极动｜4K",
+            "type": 1,
+            "api": "http://qp.69mini.com/api.php/provide/vod/",
+            "playUrl": "json:https://jiexi.jdyx.pro/api/?key=69db80070c205190ba29265369377793&url="
+        },
         {
             "key": "hajim-腾讯备",
             "name": "🐮4k线路1备",
