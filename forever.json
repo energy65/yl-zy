@@ -111,7 +111,7 @@
             "searchable": 1,
             "changeable": 1,
             "ext": {
-                "filters": "./json/jianpian.json",
+                "filters": "./jianpian.json",
                 "imgUrl": "https://img.zgbkz.com",
                 "sites": "https://api.ztcgi.com"
             }
