@@ -438,7 +438,7 @@
             "name": "橘子|fei",
             "type": 3,
             "changeable": 0,
-            "api": "./py/FeiApp.py",
+            "api": "./FeiApp.py",
             "ext": "https://dmc.yy-fun.cc/feiapp"
         },
 		      {
@@ -524,7 +524,7 @@
             "key": "tt",
             "name": "55┃py",
             "type": 3,
-            "api": "./py/ttx.py",
+            "api": "./ttx.py",
             "searchable": 1,
             "changeable": 1,
             "quickSearch": 1,
@@ -535,7 +535,7 @@
             "key": "芒果",
             "name": "芒果.py",
             "type": 3,
-            "api": "./py/芒果.py",
+            "api": "./芒果.py",
             "searchable": 1,
             "quickSearch": 1
         },
@@ -543,7 +543,7 @@
             "key": "爱奇艺",
             "name": "爱奇艺.py",
             "type": 3,
-            "api": "./py/爱奇艺.py",
+            "api": "./爱奇艺.py",
             "searchable": 1,
             "quickSearch": 1
         },
