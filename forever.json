@@ -6,7 +6,7 @@
     "sites": [
         {
             "key": "csp_Douban",
-            "name": "接口免费，不要上当受骗，qq群：1075309029",
+            "name": "自用",
             "type": 3,
             "api": "csp_Douban",
             "searchable": 0,
@@ -349,6 +349,244 @@
             "api": "http://qp.69mini.com/api.php/provide/vod/",
             "playUrl": "json:https://jiexi.jdyx.pro/api/?key=69db80070c205190ba29265369377793&url="
         },
+		  {
+            "key": "星辰",
+            "name": "星辰TV[SM]",
+            "type": 3,
+            "searchable": 1,
+            "api": "./SM2.py",
+            "quickSearch": 1,
+            "filterable": 1,
+            "ext": {
+                "Host": "http://dh.001155.top",
+                "Account": "wen970088",
+                "Password": "wen97008822",
+                "token": "66db51dce860acdcdf65aa70587e2583",
+                "MachineId": "dc33632cdfedc0c5"
+            }
+        },
+		    {
+            "key": "剧圈圈⁹⁹",
+            "name": " ᵖʸ剧圈圈⁹⁹| APP",
+            "type": 3,
+            "api": "./99APP.py",
+            "ext": {
+                "host": "http://124.221.3.182:19987/app/bn",
+                "appkey": "d1f0c269eab74d93821fffc9befdbbba",
+                "versionName": "1.2.0",
+                "name": "剧圈圈",
+                "package": "com.qingtangxiaozhuan.xyz",
+                "buildNumber": "2002",
+                "buildSignature": "054FA8DDA4319C6B6A9B954CA5777541C993F00B1B0BD4394F7EDE48184C4594"
+            }
+        },
+		    {
+            "key": "lvdou",
+            "name": "免米┃免米高码4K",
+            "type": 3,
+            "jar": "http://125.208.22.184:6019/uploads/tvbox/jar/spider2.jar;md5;83e07fbdf15ceb9d57201bfbfe5ad818",
+            "api": "csp_AppYsV2",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "ext": "http://210.16.170.113:8999/api.php/app/"
+        },
+		       {
+            "key": "1app2le-emb2",
+            "name": "星耀┃影酷高码（有点慢）",
+            "type": 3,
+            "api": "csp_XYEM",
+            "jar": "http://125.208.22.184:6019/uploads/tvbox/jar/xywp.jar;md5;9c1c7add8c7526c96d5d6d62835fa6ce",
+            "playerType": 1,
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "changeable": 1,
+            "ext": {
+                "server": "/ZE6FY7TFUnOGwjVo+fPI+9+XFczGlOZVIQ8d1JhOg6njtshlUgalztNE/9E2LHgmPCYbSAwr39icR5tt3pNgWCoiEjz1Vqi7dEy1ehoUC8=",
+                "emptySizeText": "星耀出品",
+                "playFromText": "星耀媒体库",
+                "danmu": "http://d.ztso.xyz:7871/index8.php?url=",
+                "cms": "https://gctf.tfdh.top/api.php/provide/vod/?ac=detail&wd=",
+                "playPrefix": "xyemby-",
+                "blockClasses": "公告"
+            }
+        },
+        {
+            "key": "pro",
+            "name": "星耀┃PRO高码（有点慢）",
+            "type": 3,
+            "api": "csp_XYEM",
+            "jar": "http://125.208.22.184:6019/uploads/tvbox/jar/xywp.jar;md5;9c1c7add8c7526c96d5d6d62835fa6ce",
+            "playerType": 1,
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "changeable": 1,
+            "ext": {
+                "server": "/ZE6FY7TFUnOGwjVo+fPI96n4WIco/6idAjPgUAh8LdcnXtWgRmktLUP+nNJ7yKVaZPwZdD+VdGVcyRK27b6Cg==",
+                "emptySizeText": "星耀出品",
+                "playFromText": "星耀媒体库",
+                "danmu": "http://d.ztso.xyz:7871/index8.php?url=",
+                "cms": "https://gctf.tfdh.top/api.php/provide/vod/?ac=detail&wd=",
+                "playPrefix": "xypro-",
+                "blockClasses": "公告"
+            }
+        },
+		   {
+            "key": "橘子fei",
+            "name": "橘子|fei",
+            "type": 3,
+            "changeable": 0,
+            "api": "./py/FeiApp.py",
+            "ext": "https://dmc.yy-fun.cc/feiapp"
+        },
+		      {
+            "key": "坚果采集",
+            "name": "坚果采集",
+            "type": 1,
+            "api": "http://210.16.170.113:7112/api.php/provide/vod",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "playerType": 2,
+            "changeable": 1
+        },
+		   {
+            "key": "zb",
+            "name": "CCTV",
+            "type": 3,
+            "api": "./cctv.py",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 0
+        },
+		     {
+            "key": "农民影视",
+            "name": "💡农民｜影视",
+            "type": 3,
+            "jar": "https://ncstatic-file.clewm.net/rsrc/2026/0122/13/c704a90482b8e54190a5ac1c0034b05f.jpg;md5;964068270d22fb616b8462d9ee58d267",
+            "api": "csp_Wwys",
+            "ext": "https://vip.wwgz.cn:5200"
+        },
+		       {
+            "key": "LYY",
+            "name": "烈羽云-4k",
+            "type": 3,
+            "api": "./AppV2.py",
+            "ext": {
+                "api": "http://bb4kcmslieyuyun.qijiyun.vip/api.php/app",
+                "ua": "Dart/2.14 (dart:io)"
+            }
+        },
+        {
+            "key": "JYY",
+            "name": "极影云-4k",
+            "type": 3,
+            "api": "./AppV2.py",
+            "ext": {
+                "api": "http://101.201.171.207:802/api.php/app",
+                "ua": "Dart/2.14 (dart:io)"
+            }
+        },
+		        {
+            "key": "魔方APP",
+            "name": "魔方APPpy",
+            "type": 3,
+            "changeable": 0,
+            "api": "./getapp3.4.6.py",
+            "ext": {
+                "host": "https://www.alibaba31casaq.top",
+                "key": "1234567887654321",
+                "sort": "4K线路,4K线路3,4K极清"
+            }
+        },
+		{
+            "key": "首播",
+            "name": "首播app",
+            "type": 3,
+            "changeable": 0,
+            "api": "./AppV2.py",
+            "ext": "http://36.138.188.242:6003//api.php/app/"
+        },
+		     {
+            "key": "荐片",
+            "name": "荐片.py",
+            "type": 3,
+            "api": "./荐片.py",
+            "searchable": 1,
+            "changeable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "playerType": 2
+        },
+		   {
+            "key": "tt",
+            "name": "55┃py",
+            "type": 3,
+            "api": "./py/ttx.py",
+            "searchable": 1,
+            "changeable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "playerType": "2"
+        },
+        {
+            "key": "芒果",
+            "name": "芒果.py",
+            "type": 3,
+            "api": "./py/芒果.py",
+            "searchable": 1,
+            "quickSearch": 1
+        },
+        {
+            "key": "爱奇艺",
+            "name": "爱奇艺.py",
+            "type": 3,
+            "api": "./py/爱奇艺.py",
+            "searchable": 1,
+            "quickSearch": 1
+        },
+		      {
+            "key": "py_新剧吧_APP",
+            "name": "新剧吧┃APP",
+            "type": 3,
+            "searchable": 1,
+            "quickSearch": 1,
+            "api": "./getapp3.4.5.py",
+            "ext": {
+                "host": "https://appto2-1316376600.cos.ap-beijing.myqcloud.com/appto.txt",
+                "datakey": "685bf108bc47b67d"
+            }
+        },
+		    {
+            "key": "壹影视",
+            "name": "壹影视|py",
+            "type": 3,
+            "api": "./壹影视2.py",
+            "searchable": 1,
+            "quickSearch": 1
+        },
+		       {
+            "key": "喜马拉雅",
+            "name": "喜马拉雅.py",
+            "type": 3,
+            "api": "./喜马拉雅.py",
+            "searchable": 1,
+            "quickSearch": 1
+        },
+		        {
+            "key": "2影视App",
+            "name": "2影视┃[APP]",
+            "type": 3,
+            "quickSearch": 1,
+            "api": "./getapp3.4.1.py",
+            "ext": {
+                "host": "https://aysappto.oss-cn-chengdu.aliyuncs.com/qj1.txt",
+                "datakey": "dksvndkaAjekakcE",
+                "api": 2
+            }
+        },
         {
             "key": "hajim-腾讯备",
             "name": "🐮4k线路1备",
@@ -551,6 +789,13 @@
                 "filters": "./wogg2.json",
                 "proxy": "noproxy"
             }
+        },
+		      {
+            "key": "fy",
+            "name": "飞鱼",
+            "type": 1,
+            "api": "http://111.170.58.66:2526/api.php/provide/vod/?key=64af2add095411af303c3dc0b146dc3a&ac=list",
+            "playUrl": "json:http://tp.ybnooo.cn/jx4.php?url="
         },
 		 {
             "key": "暴风资源",
