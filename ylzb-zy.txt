@@ -1,5 +1,4 @@
 秒播央视,#genre#
-CCTV-1HD,http://107.150.60.122/live/cctv1hd.m3u8
 CCTV-2HD,http://107.150.60.122/live/cctv2hd.m3u8
 CCTV-3HD,http://107.150.60.122/live/cctv3hd.m3u8
 CCTV-4HD,http://107.150.60.122/live/cctv4hd.m3u8
