@@ -145,6 +145,51 @@
           "searchable": 1,
           "type": 3
         },
+		{
+          "key": "袋鼠PY",
+          "name": "👌袋鼠丨PY",
+          "api": "./袋鼠.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+                 {
+          "key": "王者PY",
+          "name": "👌王者丨PY",
+          "api": "./王者TV.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+           {
+          "key": "布布PY",
+          "name": "👌布布丨PY",
+          "api": "./布布.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+        {
+          "key": "libvioPY",
+          "name": "👌libvio丨PY",
+          "api": "./libvio.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+		        {
+          "key": "novip PY",
+          "name": "👌novip丨PY",
+          "api": "./novip.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
 		 {
             "key": "鹊桥",
             "name": "👌鹊桥｜影视 ",
@@ -1202,6 +1247,15 @@
             "changeable": 1,
             "playerType": 2,
             "ext": "0"
+        },
+		        {
+            "key": "azz音乐py",
+            "name": "🎶azz音乐|py",
+            "api": "./azz音乐网.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
         },
         {
             "key": "py_yymp3",
