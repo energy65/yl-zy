@@ -1257,6 +1257,15 @@
             "searchable": 1,
             "type": 3
         },
+		     {
+            "key": "千千音乐py",
+            "name": "🎶千千音乐|py",
+            "api": "./千千音乐.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
         {
             "key": "py_yymp3",
             "name": "🎶yymp3|音乐",
