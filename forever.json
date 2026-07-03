@@ -1351,6 +1351,12 @@
             "api": "./网易云音乐.py"
         },
 		{
+            "key": "网易云音乐有MV",
+            "name": "🐬网易云有MV｜音乐",
+            "type": 3,
+            "api": "./网易云-有MV.py"
+        },
+		{
       "key": "酷我音乐歌手分类",
       "name": "酷我音乐歌手分类",
       "type": 3,
@@ -1392,6 +1398,51 @@
           "searchable": 1,
           "type": 3
         },
+			{
+            "key": "👧幼小衔接",
+            "name": "🎶幼小衔接|py",
+            "api": "./幼小衔接.py",
+			 "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+        	{
+            "key": "美食bili",
+            "name": "🎶美食|py",
+            "api": "./美食.py",
+			 "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+        {
+            "key": "李子柒bili",
+            "name": "🎶李子柒|py",
+            "api": "./李子柒.py",
+			 "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+        {
+  "key": "yirisc",
+  "name": "一日三餐┃PY",
+  "type": 3,
+  "api": "./一日三餐.py",
+  "searchable": 1,
+  "filterable": 0,
+  "ext": ""
+},
+{
+  "key": "yuzhou",
+  "name": "宇宙太空┃PY",
+  "type": 3,
+  "api": "./宇宙太空.py",
+  "searchable": 1,
+  "filterable": 0,
+  "ext": ""
+},
         {
             "key": "csp_Bili",
             "name": "🅱️哔哩┃合集",
