@@ -135,9 +135,6 @@ class Spider(Spider):
         for i in kjson['data']['result']:
             if str(i['bvid']) == '':
                 continue
-            duration = i.get('duration', 0)
-            if duration < 1800:
-                continue
             id = str(i['bvid'])
             name = i['title']
             pic = i['pic']
@@ -250,9 +247,6 @@ class Spider(Spider):
                 if related_res.get("code") == 0:
                     related_data = related_res.get("data", [])
                     for i, related_video in enumerate(related_data[:99999]):
-                        related_duration = related_video.get('duration', 0)
-                        if related_duration < 1800:
-                            continue
                         related_title = related_video.get("title", f"相关视频{i+1}")
                         related_bvid = related_video.get("bvid", "")
 
@@ -365,9 +359,6 @@ class Spider(Spider):
         kjson = json.loads(res.text)
         for i in kjson['data']['result']:
             if str(i['bvid']) == '':
-                continue
-            duration = i.get('duration', 0)
-            if duration < 1800:
                 continue
             id = str(i['bvid'])
             name = i['title']
