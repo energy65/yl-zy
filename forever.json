@@ -73,6 +73,33 @@
             "api": "./drpy2.min.js",
             "ext": "./qq.js"
         },
+	    {
+          "key": "fengye1 PY",
+          "name": "🍁fengye1丨PY",
+          "api": "./fengye1.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+                                 {
+          "key": "fengye2 PY",
+          "name": "🍁fengye2丨PY",
+          "api": "./fengye2.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+        {
+          "key": "fengye3 PY",
+          "name": "🍁fengye3丨PY",
+          "api": "./fengye3.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
 		        {
             "key": "奇乐影视",
             "name": "奇乐影视",
@@ -202,6 +229,25 @@
           "searchable": 1,
           "type": 3
         },
+		          {
+          "key": "开心影院PY",
+          "name": "👌开心影院丨PY",
+          "api": "./开心影院.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+		                     {
+          "key": "lsys PY",
+          "name": "👌绿色影视丨PY",
+          "api": "./lsys.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+		
 		 {
             "key": "鹊桥",
             "name": "👌鹊桥｜影视 ",
@@ -1318,6 +1364,33 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
+        },
+		                      {
+          "key": "kuwo PY",
+          "name": "👌kuwo丨PY",
+          "api": "./kuwo.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+                         {
+          "key": "🐶kugou PY",
+          "name": "🐶kugou丨PY",
+          "api": "./kg.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+                                 {
+          "key": "bili_mv PY",
+          "name": "bili_mv丨PY",
+          "api": "./bili_mv.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
         },
         {
             "key": "csp_Bili",
