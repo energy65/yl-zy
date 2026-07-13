@@ -3,7 +3,7 @@ import sys
 import re
 import base64
 import requests
-sys.path.append('..')
+sys.path.append('yl-main')
 from base.spider import Spider
 
 
@@ -20,22 +20,32 @@ class Spider(Spider):
             'User-Agent': 'Mozilla/5.0 (Linux; Android 12; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
             'Referer': 'https://m.kugou.com/'
         }
+        self.kuwo_headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Referer': 'https://www.kuwo.cn/'
+        }
         self.quality_config = [
-            ("无损", "flac", 1400),
-            ("320k", "320", 320),
-            ("128k", "128", 128),
+            ("标准128K", "128", 128),
+            ("高清192K", "192", 192),
+            ("超清320K", "320", 320),
+            ("无损APE", "ape", 2000),
         ]
+        self.wx_gzh = "源力软件汇"
         self.artist_type_map = {
-            'artist_hot': '-1',
-            'artist_man': '1',
-            'artist_woman': '2',
-            'artist_team': '3',
-            'artist_jp_man': '4',
-            'artist_jp_woman': '5',
-            'artist_jp_team': '6',
-            'artist_us_man': '7',
-            'artist_us_woman': '8',
-            'artist_us_team': '9',
+            'artist_hot': '0',
+            'artist_cn': '1',
+            'artist_us': '2',
+            'artist_kr': '6',
+            'artist_jp': '5',
+            'artist_other': '4',
+        }
+        self.artist_sex_map = {
+            'artist_hot': '0',
+            'artist_cn': '0',
+            'artist_us': '0',
+            'artist_kr': '0',
+            'artist_jp': '0',
+            'artist_other': '0',
         }
         self.classes = [
             {'type_id': 'bang_8888', 'type_name': '酷狗TOP500'},
@@ -48,15 +58,11 @@ class Spider(Spider):
             {'type_id': 'pl_classic', 'type_name': '经典老歌'},
             {'type_id': 'pl_dj', 'type_name': 'DJ舞曲'},
             {'type_id': 'artist_hot', 'type_name': '热门歌手'},
-            {'type_id': 'artist_man', 'type_name': '华语男歌手'},
-            {'type_id': 'artist_woman', 'type_name': '华语女歌手'},
-            {'type_id': 'artist_team', 'type_name': '华语组合'},
-            {'type_id': 'artist_jp_man', 'type_name': '日韩男歌手'},
-            {'type_id': 'artist_jp_woman', 'type_name': '日韩女歌手'},
-            {'type_id': 'artist_jp_team', 'type_name': '日韩组合'},
-            {'type_id': 'artist_us_man', 'type_name': '欧美男歌手'},
-            {'type_id': 'artist_us_woman', 'type_name': '欧美女歌手'},
-            {'type_id': 'artist_us_team', 'type_name': '欧美组合'},
+            {'type_id': 'artist_cn', 'type_name': '华语歌手'},
+            {'type_id': 'artist_us', 'type_name': '欧美歌手'},
+            {'type_id': 'artist_kr', 'type_name': '韩国歌手'},
+            {'type_id': 'artist_jp', 'type_name': '日本歌手'},
+            {'type_id': 'artist_other', 'type_name': '其他歌手'},
         ]
 
     def isVideoFormat(self, url):
@@ -87,7 +93,7 @@ class Spider(Spider):
                 return self._get_artist_songs(aid, pg)
             elif tid.startswith('artist_'):
                 type_key = tid
-                artist_type = self.artist_type_map.get(type_key, '-1')
+                artist_type = self.artist_type_map.get(type_key, '0')
                 return self._get_artist_list(artist_type, pg)
             elif tid.startswith('bang_detail_'):
                 bid = tid.replace('bang_detail_', '')
@@ -98,11 +104,6 @@ class Spider(Spider):
                     return self._get_bang_songs(bang_id, pg)
                 else:
                     return self._get_bang_list(pg)
-            elif tid.startswith('mv_detail_'):
-                mvid = tid.replace('mv_detail_', '')
-                return self._get_mv_detail(mvid, pg)
-            elif tid.startswith('mv_'):
-                return self._get_mv_list(tid, pg)
             else:
                 return self._get_bang_songs('8888', pg)
         except Exception as e:
@@ -123,9 +124,6 @@ class Spider(Spider):
             elif vid.startswith('bang_detail_'):
                 bang_id = vid.replace('bang_detail_', '')
                 return self._get_bang_detail(bang_id)
-            elif vid.startswith('mv_detail_'):
-                mvid = vid.replace('mv_detail_', '')
-                return self._get_mv_video_detail(mvid)
             else:
                 return self._get_song_detail(vid)
         except Exception as e:
@@ -133,7 +131,7 @@ class Spider(Spider):
             return {'list': []}
 
     def playerContent(self, flag, id, vipFlags):
-        result = {"parse": 0, "playUrl": "", "url": "", "header": {}}
+        result = {"parse": 0, "playUrl": "", "url": "", "header": {}, "lrc": ""}
         try:
             raw_id = str(id)
 
@@ -145,7 +143,6 @@ class Spider(Spider):
             hash_val = raw_id
             song_name_hint = ''
             artist_hint = ''
-            is_mv = False
 
             if '&&' in hash_val:
                 hash_val = hash_val.split('&&')[0]
@@ -154,8 +151,6 @@ class Spider(Spider):
                 parts = hash_val.split('$')
                 if len(parts) >= 2:
                     name_part = parts[0]
-                    if 'MV' in name_part or 'mv' in name_part:
-                        is_mv = True
                     if ' - ' in name_part:
                         np = name_part.split(' - ', 1)
                         artist_hint = np[0].strip()
@@ -187,21 +182,52 @@ class Spider(Spider):
                 result["url"] = ""
                 return result
 
-            if is_mv:
-                play_url = self._get_mv_play_url(hash_val)
-                result["url"] = play_url
-                result["header"] = self.mobile_headers
-            else:
-                play_url = self._get_play_url(hash_val, song_name_hint, artist_hint)
-                result["url"] = play_url
-                result["header"] = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    'Referer': 'https://www.kugou.com/'
-                }
+            quality_map = {
+                '标准128K': (128, 'mp3'),
+                '高清192K': (192, 'mp3'),
+                '超清320K': (320, 'mp3'),
+                '无损APE': (2000, 'ape'),
+            }
 
-                lrc = self._get_lyric(hash_val)
-                if lrc:
-                    result["lrc"] = lrc
+            clean_flag = flag
+            if flag and ' - ' in flag:
+                clean_flag = flag.split(' - ')[0].strip()
+
+            play_url = ''
+            if clean_flag and clean_flag in quality_map:
+                bitrate, fmt = quality_map[clean_flag]
+                play_url = self._get_play_url_by_quality(hash_val, bitrate, fmt, song_name_hint, artist_hint)
+
+            if not play_url:
+                play_url = self._get_play_url(hash_val, song_name_hint, artist_hint)
+
+            if not play_url:
+                result["parse"] = 0
+                result["url"] = ""
+                return result
+
+            result["url"] = play_url
+            result["header"] = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Referer': 'https://www.kugou.com/'
+            }
+
+            lrc = self._get_lyric(hash_val)
+            if lrc:
+                result["lrc"] = lrc
+                try:
+                    ssa_lrc = self._create_ssa_subtitle(lrc)
+                    ssa_base64 = base64.b64encode(ssa_lrc.encode('utf-8')).decode('utf-8')
+                    ssa_url = "data:text/x-ssa;base64," + ssa_base64
+
+                    result["subs"] = [{
+                        "name": "5行歌词",
+                        "url": ssa_url,
+                        "format": "text/x-ssa",
+                        "selected": True
+                    }]
+                except Exception:
+                    pass
 
         except Exception as e:
             print("playerContent error:", e)
@@ -231,11 +257,11 @@ class Spider(Spider):
     def _get_song_name_artist(self, it):
         song = ''
         artist = ''
-        
+
         song = it.get('songname') or it.get('SongName') or it.get('audio_name') or it.get('name') or ''
-        
+
         artist = it.get('singername') or it.get('SingerName') or it.get('author_name') or it.get('artist') or ''
-        
+
         if (not song or not artist) and it.get('filename'):
             filename = str(it.get('filename', ''))
             if ' - ' in filename:
@@ -244,7 +270,7 @@ class Spider(Spider):
                     artist = parts[0].strip()
                 if not song:
                     song = parts[1].strip()
-        
+
         if not artist and it.get('authors'):
             authors = it['authors']
             if isinstance(authors, list) and len(authors) > 0:
@@ -252,16 +278,16 @@ class Spider(Spider):
                     artist = authors[0].get('author_name', authors[0].get('name', ''))
                 elif isinstance(authors[0], str):
                     artist = authors[0]
-        
+
         if not artist and it.get('h5_author_name'):
             artist = it['h5_author_name']
-        
+
         if not artist and isinstance(song, str) and ' - ' in song:
             parts = song.split(' - ', 1)
             if len(parts) == 2:
                 artist = parts[0]
                 song = parts[1]
-        
+
         return str(song).strip(), str(artist).strip()
 
     def _get_playlist_list(self, tid, pg):
@@ -277,13 +303,13 @@ class Spider(Spider):
             api_url = "http://m.kugou.com/plist/index?json=true&page=" + str(pg) + "&pagesize=30&sortid=" + sort_id
             res = self.fetch(api_url, headers=self.mobile_headers)
             data = res.json()
-            
+
             plist_data = data.get('plist', {})
             if isinstance(plist_data, dict):
                 plist_list = plist_data.get('list', [])
             else:
                 plist_list = []
-            
+
             if isinstance(plist_list, list) and plist_list:
                 vods = self._parse_playlist(plist_list)
                 if vods:
@@ -291,7 +317,7 @@ class Spider(Spider):
                     return {'list': vods, 'page': pg, 'pagecount': (total // 30) + 1, 'limit': 30, 'total': total}
         except Exception as e:
             print("_get_playlist_list error:", e)
-        
+
         return self._get_bang_list(pg)
 
     def _parse_playlist(self, data_list):
@@ -332,88 +358,106 @@ class Spider(Spider):
             if not pid or not pid.isdigit():
                 return self._get_playlist_songs_fallback(pid)
 
-            api_url = "http://m.kugou.com/plist/list/" + pid + "?json=true"
-            res = self.fetch(api_url, headers=self.mobile_headers)
-            d = res.json()
-
-            list_data = d.get('list', d.get('data', {}))
-            info = list_data.get('info', list_data)
-            song_list = list_data.get('list', list_data.get('songs', []))
-
-            if isinstance(info, dict):
-                vod_name = info.get('specialname', info.get('name', '酷狗歌单'))
-                vod_pic = info.get('imgurl', info.get('img', info.get('pic', '')))
+            info_url = "http://m.kugou.com/plist/list/" + pid + "?json=true&page=1"
+            info_res = self.fetch(info_url, headers=self.mobile_headers)
+            info_d = info_res.json()
+            info_section = info_d.get('info', {}).get('list', {})
+            if isinstance(info_section, dict):
+                vod_name = info_section.get('specialname', '酷狗歌单')
+                vod_pic = info_section.get('imgurl', '')
                 if vod_pic and '{size}' in vod_pic:
                     vod_pic = vod_pic.replace('{size}', '400')
-                vod_content = info.get('intro', info.get('info', ''))
+                vod_content = info_section.get('intro', '')
 
-            for it in song_list:
-                if not isinstance(it, dict):
-                    continue
-                hash_val = str(it.get('hash', it.get('Hash', ''))).lower()
-                song, artist = self._get_song_name_artist(it)
-                albumpic = it.get('imgurl', it.get('album_img', it.get('pic', '')))
-                if albumpic and '{size}' in albumpic:
-                    albumpic = albumpic.replace('{size}', '400')
-
-                if hash_val and song:
-                    display_name = song + " - " + artist if artist and artist != song else song
-                    display_name = re.sub(r'<[^>]+>', '', display_name)
-                    display_name = re.sub(r'[$#]', '', display_name).strip()
-                    play_arr.append(display_name + "$" + hash_val)
-                    play_pics.append(albumpic)
+            seen_hashes = set()
+            for pg in range(1, 500):
+                try:
+                    api_url = "http://mobilecdn.kugou.com/api/v3/special/song?specialid=" + pid + "&page=" + str(pg) + "&pagesize=100"
+                    res = self.fetch(api_url, headers=self.headers)
+                    data = res.json()
+                    song_list = data.get('data', {}).get('info', [])
+                    if not song_list:
+                        break
+                    new_count = 0
+                    for it in song_list:
+                        if not isinstance(it, dict):
+                            continue
+                        hash_val = str(it.get('hash', it.get('Hash', ''))).lower()
+                        if hash_val in seen_hashes:
+                            continue
+                        seen_hashes.add(hash_val)
+                        new_count += 1
+                        song, artist = self._get_song_name_artist(it)
+                        albumpic = it.get('imgurl', it.get('album_img', it.get('pic', '')))
+                        if albumpic and '{size}' in albumpic:
+                            albumpic = albumpic.replace('{size}', '400')
+                        if hash_val and song:
+                            display_name = song + " - " + artist if artist and artist != song else song
+                            display_name = re.sub(r'<[^>]+>', '', display_name)
+                            display_name = re.sub(r'[$#]', '', display_name).strip()
+                            play_arr.append(display_name + "$" + hash_val)
+                            play_pics.append(albumpic)
+                    if new_count == 0:
+                        break
+                except Exception:
+                    break
         except Exception as e:
             print("_get_playlist_detail error:", e)
 
         if not play_arr:
             return self._get_playlist_songs_fallback(pid)
 
+        song_list = '#'.join(play_arr)
+        qualities = [q[0] + ' - ' + self.wx_gzh for q in self.quality_config]
+        vod_play_from = '$$$'.join(qualities)
+        vod_play_url = '$$$'.join([song_list for _ in qualities])
+
         vod = {
             'vod_id': pid,
             'vod_name': vod_name,
             'vod_pic': vod_pic,
-            'vod_content': vod_content,
+            'vod_content': '微信公众号：' + self.wx_gzh + '\n福利多多，精彩多多\n' + vod_content,
             'vod_remarks': "歌曲 : " + str(len(play_arr)) + "首",
-            'vod_play_from': '酷狗音乐',
-            'vod_play_url': '#'.join(play_arr),
+            'vod_play_from': vod_play_from,
+            'vod_play_url': vod_play_url,
         }
         if play_pics:
-            vod['vod_play_pic'] = '#'.join(play_pics)
+            vod['vod_play_pic'] = '$$$'.join([play_pics[0] for _ in qualities])
             vod['vod_play_pic_ratio'] = 1.5
 
         return {'list': [vod]}
 
     def _get_playlist_songs_fallback(self, pid):
         play_arr = []
-        play_pics = []
         search_result = self._get_search_songs('热门歌曲', 1)
         for item in search_result.get('list', []):
             hash_val = item['vod_id'].replace('song_', '')
             play_arr.append(item['vod_name'] + "$" + hash_val)
-            play_pics.append(item.get('vod_pic', ''))
+
+        song_list = '#'.join(play_arr)
+        qualities = [q[0] + ' - ' + self.wx_gzh for q in self.quality_config]
+        vod_play_from = '$$$'.join(qualities)
+        vod_play_url = '$$$'.join([song_list for _ in qualities])
+
         vod = {
             'vod_id': pid or 'hot_songs',
             'vod_name': '热门歌曲',
-            'vod_pic': play_pics[0] if play_pics else '',
-            'vod_content': '酷狗音乐热门歌曲',
+            'vod_pic': '',
+            'vod_content': '微信公众号：' + self.wx_gzh + '\n福利多多，精彩多多\n酷狗音乐热门歌曲',
             'vod_remarks': "歌曲 : " + str(len(play_arr)) + "首",
-            'vod_play_from': '酷狗音乐',
-            'vod_play_url': '#'.join(play_arr),
+            'vod_play_from': vod_play_from,
+            'vod_play_url': vod_play_url,
         }
-        if play_pics:
-            vod['vod_play_pic'] = '#'.join(play_pics)
-            vod['vod_play_pic_ratio'] = 1.5
         return {'list': [vod]}
 
     def _get_playlist_songs(self, pid, pg):
         vods = []
         try:
-            api_url = "http://m.kugou.com/plist/list/" + pid + "?json=true&page=" + str(pg)
-            res = self.fetch(api_url, headers=self.mobile_headers)
+            api_url = "http://mobilecdn.kugou.com/api/v3/special/song?specialid=" + pid + "&page=" + str(pg) + "&pagesize=30"
+            res = self.fetch(api_url, headers=self.headers)
             d = res.json()
 
-            list_data = d.get('list', d.get('data', {}))
-            song_list = list_data.get('list', list_data.get('songs', []))
+            song_list = d.get('data', {}).get('info', [])
 
             for it in song_list:
                 if not isinstance(it, dict):
@@ -430,12 +474,40 @@ class Spider(Spider):
                     display_name = re.sub(r'[$#]', '', display_name).strip()
                     vods.append({
                         'vod_name': display_name,
-                        'vod_id': 'song_' + hash_val,
+                        'vod_id': 'pl_detail_' + pid,
                         'vod_pic': albumpic,
                         'vod_remarks': '酷狗音乐',
                     })
         except Exception as e:
             print("_get_playlist_songs error:", e)
+
+        if not vods:
+            try:
+                api_url = "http://m.kugou.com/plist/list/" + pid + "?json=true&page=" + str(pg)
+                res = self.fetch(api_url, headers=self.mobile_headers)
+                d = res.json()
+                list_data = d.get('list', d.get('data', {}))
+                song_list = list_data.get('list', list_data.get('songs', []))
+                for it in song_list:
+                    if not isinstance(it, dict):
+                        continue
+                    hash_val = str(it.get('hash', it.get('Hash', ''))).lower()
+                    song, artist = self._get_song_name_artist(it)
+                    albumpic = it.get('imgurl', it.get('album_img', it.get('pic', '')))
+                    if albumpic and '{size}' in albumpic:
+                        albumpic = albumpic.replace('{size}', '400')
+                    if hash_val and song:
+                        display_name = song + " - " + artist if artist and artist != song else song
+                        display_name = re.sub(r'<[^>]+>', '', display_name)
+                        display_name = re.sub(r'[$#]', '', display_name).strip()
+                        vods.append({
+                            'vod_name': display_name,
+                            'vod_id': 'pl_detail_' + pid,
+                            'vod_pic': albumpic,
+                            'vod_remarks': '酷狗音乐',
+                        })
+            except Exception as e2:
+                print("_get_playlist_songs fallback error:", e2)
 
         if not vods:
             search_result = self._get_search_songs('热门歌曲', pg)
@@ -444,20 +516,29 @@ class Spider(Spider):
 
     def _get_artist_list(self, artist_type, pg):
         vods = []
+        total = 9999
         try:
-            api_url = "http://mobilecdn.kugou.com/api/v3/singer/list?type=" + str(artist_type) + "&page=" + str(pg) + "&pagesize=30"
-            res = self.fetch(api_url, headers=self.headers)
+            api_url = "http://m.kugou.com/singer/list?json=true&page=" + str(pg) + "&pagesize=30&type=" + str(artist_type)
+            res = self.fetch(api_url, headers=self.mobile_headers)
             data = res.json()
-            
-            info_list = data.get('data', {}).get('info', [])
-            total = data.get('data', {}).get('total', 999) or 999
-            
-            for it in info_list:
-                if not isinstance(it, dict):
+
+            singers_data = data.get('singers', {})
+            list_data = singers_data.get('list', {})
+            if isinstance(list_data, dict):
+                info_list = list_data.get('info', [])
+            else:
+                info_list = []
+
+            for entry in info_list:
+                if not isinstance(entry, dict):
                     continue
-                singer_id = str(it.get('singerid', it.get('singer_id', it.get('id', ''))))
-                name = it.get('singername', it.get('singer_name', it.get('name', '未知歌手')))
-                pic = it.get('imgurl', it.get('singer_pic', it.get('img', it.get('avatar', it.get('pic', '')))))
+                singer_list = entry.get('singer', [])
+                if not isinstance(singer_list, list) or not singer_list:
+                    continue
+                it = singer_list[0]
+                singer_id = str(it.get('singerid', it.get('id', '')))
+                name = it.get('singername', it.get('name', '未知歌手'))
+                pic = it.get('imgurl', it.get('singer_pic', it.get('img', '')))
                 if pic and not pic.startswith('http'):
                     pic = 'https://' + pic.lstrip('/')
                 if pic and '{size}' in pic:
@@ -467,13 +548,19 @@ class Spider(Spider):
                     continue
 
                 name = re.sub(r'<[^>]+>', '', str(name)).strip()
+                songcount = it.get('songcount', '')
+                remarks = str(songcount) + '首歌曲' if songcount else '歌手'
                 vods.append({
                     'vod_name': name,
                     'vod_id': 'artist_detail_' + singer_id,
                     'vod_pic': pic,
-                    'vod_remarks': it.get('country', it.get('company', '歌手')),
+                    'vod_remarks': remarks,
                     'vod_tag': 'folder'
                 })
+
+            total = singers_data.get('total', 9999) or 9999
+            if total == 0:
+                total = 9999
         except Exception as e:
             print("_get_artist_list error:", e)
 
@@ -489,8 +576,8 @@ class Spider(Spider):
 
     def _default_artists(self):
         default = [
-            ("周杰伦", "3520"), ("林俊杰", "3359"), ("陈奕迅", "3283"),
-            ("邓紫棋", "5182"), ("薛之谦", "3894"), ("毛不易", "119235"),
+            ("周杰伦", "3520"), ("林俊杰", "1574"), ("陈奕迅", "3283"),
+            ("邓紫棋", "4490"), ("薛之谦", "3894"), ("毛不易", "119235"),
             ("李荣浩", "3754"), ("华晨宇", "5267"), ("张学友", "3282"),
             ("王菲", "3285"), ("五月天", "3281"), ("Taylor Swift", "4497"),
         ]
@@ -510,13 +597,28 @@ class Spider(Spider):
 
         try:
             aid = artist_id.replace('artist_detail_', '').replace('artist_', '')
-            
+
             info = self._get_artist_info(aid)
             artist_name = info.get('name', '')
             artist_pic = info.get('pic', '')
-            
-            songs_result = self._get_v3_artist_songs(aid, 1, 50)
-            for it in songs_result:
+
+            all_songs = []
+            seen_hashes = set()
+            for pg in range(1, 200):
+                songs_result = self._get_v3_artist_songs(aid, pg, 100)
+                if not songs_result:
+                    break
+                new_count = 0
+                for it in songs_result:
+                    h = str(it.get('hash', '')).lower()
+                    if h and h not in seen_hashes:
+                        seen_hashes.add(h)
+                        all_songs.append(it)
+                        new_count += 1
+                if new_count == 0:
+                    break
+
+            for it in all_songs:
                 hash_val = str(it.get('hash', '')).lower()
                 song, artist = self._get_song_name_artist(it)
                 albumpic = it.get('imgurl', it.get('album_img', it.get('pic', '')))
@@ -525,6 +627,8 @@ class Spider(Spider):
 
                 if hash_val and song:
                     display_name = song + " - " + artist if artist and artist != song else song
+                    if not artist and artist_name:
+                        display_name = song + " - " + artist_name
                     display_name = re.sub(r'<[^>]+>', '', display_name)
                     display_name = re.sub(r'[$#]', '', display_name).strip()
                     play_arr.append(display_name + "$" + hash_val)
@@ -541,18 +645,23 @@ class Spider(Spider):
             if not artist_name:
                 artist_name = '热门歌手'
 
+        song_list = '#'.join(play_arr)
+        qualities = [q[0] + ' - ' + self.wx_gzh for q in self.quality_config]
+        vod_play_from = '$$$'.join(qualities)
+        vod_play_url = '$$$'.join([song_list for _ in qualities])
+
         vod = {
             'vod_id': artist_id,
             'vod_name': artist_name or '歌手',
             'vod_pic': artist_pic or (play_pics[0] if play_pics else ''),
-            'vod_content': "共 " + str(len(play_arr)) + " 首歌曲",
+            'vod_content': "微信公众号：" + self.wx_gzh + "\n福利多多，精彩多多\n共 " + str(len(play_arr)) + " 首歌曲",
             'vod_remarks': "歌曲 : " + str(len(play_arr)) + "首",
             'vod_actor': artist_name,
-            'vod_play_from': '酷狗音乐',
-            'vod_play_url': '#'.join(play_arr),
+            'vod_play_from': vod_play_from,
+            'vod_play_url': vod_play_url,
         }
         if play_pics:
-            vod['vod_play_pic'] = '#'.join(play_pics)
+            vod['vod_play_pic'] = '$$$'.join([play_pics[0] for _ in qualities])
             vod['vod_play_pic_ratio'] = 1.5
 
         return {'list': [vod]}
@@ -593,12 +702,12 @@ class Spider(Spider):
         vods = []
         try:
             aid = artist_id.replace('artist_detail_', '').replace('artist_', '')
-            
+
             song_list = self._get_v3_artist_songs(aid, pg, 30)
-            
+
             artist_info = self._get_artist_info(aid)
             artist_name = artist_info.get('name', '')
-            
+
             for it in song_list:
                 if not isinstance(it, dict):
                     continue
@@ -620,7 +729,7 @@ class Spider(Spider):
                     display_name = re.sub(r'[$#]', '', display_name).strip()
                     vods.append({
                         'vod_name': display_name,
-                        'vod_id': 'song_' + hash_val,
+                        'vod_id': 'artist_detail_' + aid,
                         'vod_pic': albumpic,
                         'vod_remarks': '酷狗音乐',
                     })
@@ -742,17 +851,22 @@ class Spider(Spider):
                 play_pics.append(item.get('vod_pic', ''))
             bang_name = bang_name or '热门歌曲'
 
+        song_list = '#'.join(play_arr)
+        qualities = [q[0] + ' - ' + self.wx_gzh for q in self.quality_config]
+        vod_play_from = '$$$'.join(qualities)
+        vod_play_url = '$$$'.join([song_list for _ in qualities])
+
         vod = {
             'vod_id': bang_id,
             'vod_name': bang_name,
             'vod_pic': bang_pic or (play_pics[0] if play_pics else ''),
-            'vod_content': '',
+            'vod_content': '微信公众号：' + self.wx_gzh + '\n福利多多，精彩多多',
             'vod_remarks': "歌曲 : " + str(len(play_arr)) + "首",
-            'vod_play_from': '酷狗音乐',
-            'vod_play_url': '#'.join(play_arr),
+            'vod_play_from': vod_play_from,
+            'vod_play_url': vod_play_url,
         }
         if play_pics:
-            vod['vod_play_pic'] = '#'.join(play_pics)
+            vod['vod_play_pic'] = '$$$'.join([play_pics[0] for _ in qualities])
             vod['vod_play_pic_ratio'] = 1.5
 
         return {'list': [vod]}
@@ -786,7 +900,7 @@ class Spider(Spider):
                     display_name = re.sub(r'[$#]', '', display_name).strip()
                     vods.append({
                         'vod_name': display_name,
-                        'vod_id': 'song_' + hash_val,
+                        'vod_id': 'bang_detail_' + bang_id,
                         'vod_pic': albumpic,
                         'vod_remarks': '排行榜',
                     })
@@ -818,15 +932,13 @@ class Spider(Spider):
 
             play_from_arr = []
             play_url_arr = []
-            play_pic_arr = []
 
             for q_name, q_type, q_br in self.quality_config:
-                play_from_arr.append(q_name)
+                play_from_arr.append(q_name + ' - ' + self.wx_gzh)
                 play_url_arr.append(display_name + "$" + hash_val)
-                play_pic_arr.append(pic)
 
             lrc = self._get_lyric(hash_val)
-            content = "歌曲：" + song_name + "\n歌手：" + artist + "\n专辑：" + album + "\n来源：酷狗音乐"
+            content = "微信公众号：" + self.wx_gzh + "\n福利多多，精彩多多\n歌曲：" + song_name + "\n歌手：" + artist + "\n专辑：" + album + "\n来源：酷狗音乐"
             if lrc:
                 lrc_lines = lrc.split('\n')
                 clean_lines = []
@@ -847,8 +959,8 @@ class Spider(Spider):
                 "vod_play_from": '$$$'.join(play_from_arr),
                 "vod_play_url": '$$$'.join(play_url_arr),
             }
-            if play_pic_arr:
-                vod['vod_play_pic'] = '$$$'.join(play_pic_arr)
+            if pic:
+                vod['vod_play_pic'] = '$$$'.join([pic for _ in play_from_arr])
                 vod['vod_play_pic_ratio'] = 1.0
 
             result["list"] = [vod]
@@ -861,11 +973,11 @@ class Spider(Spider):
                 "vod_id": vid,
                 "vod_name": "歌曲_" + hash_val[:8],
                 "vod_pic": '',
-                "vod_content": '酷狗音乐',
+                "vod_content": '微信公众号：' + self.wx_gzh + '\n福利多多，精彩多多\n酷狗音乐',
                 "vod_remarks": '酷狗音乐',
                 "vod_actor": '',
-                "vod_play_from": '标准音质',
-                "vod_play_url": "歌曲_" + hash_val[:8] + "$" + hash_val,
+                "vod_play_from": '$$$'.join([q[0] + ' - ' + self.wx_gzh for q in self.quality_config]),
+                "vod_play_url": '$$$'.join(["歌曲_" + hash_val[:8] + "$" + hash_val for _ in self.quality_config]),
             }
             result["list"] = [vod]
 
@@ -912,21 +1024,6 @@ class Spider(Spider):
             except Exception:
                 pass
 
-        if not info.get('name'):
-            try:
-                search_url = "http://mobilecdn.kugou.com/api/v3/search/song?format=json&keyword=" + hash_val + "&page=1&pagesize=1&showtype=1"
-                res = self.fetch(search_url)
-                data = res.json()
-                info_list = data.get('data', {}).get('info', [])
-                if info_list:
-                    it = info_list[0]
-                    info['name'] = it.get('songname', '')
-                    info['artist'] = it.get('singername', '')
-                    info['album'] = it.get('album_name', '')
-                    info['duration'] = it.get('duration', '')
-            except Exception:
-                pass
-
         return info
 
     def _get_play_url(self, hash_val, song_name_hint='', artist_hint=''):
@@ -962,29 +1059,25 @@ class Spider(Spider):
 
         return ''
 
-    def _get_kuwo_play_url(self, hash_val, song_name_hint='', artist_hint=''):
+    def _get_play_url_by_quality(self, hash_val, bitrate, fmt, song_name_hint='', artist_hint=''):
+        song_name = song_name_hint
+        artist = artist_hint
+
+        if not song_name:
+            song_info = self._get_song_info(hash_val)
+            song_name = song_info.get('name', '')
+            artist = song_info.get('artist', '')
+
+        if not song_name:
+            return self._get_play_url(hash_val, song_name_hint, artist_hint)
+
+        keyword = song_name
+        if artist:
+            keyword = artist + " " + song_name
+
         try:
-            song_name = song_name_hint
-            artist = artist_hint
-            
-            if not song_name:
-                song_info = self._get_song_info(hash_val)
-                song_name = song_info.get('name', '')
-                artist = song_info.get('artist', '')
-            
-            if not song_name:
-                return ''
-            
-            keyword = song_name
-            if artist:
-                keyword = artist + " " + song_name
-            
             search_url = "https://search.kuwo.cn/r.s?client=kt&all=" + keyword + "&pn=0&rn=5&vipver=1&ft=music&encoding=utf8&rformat=json&mobi=1"
-            kuwo_headers = {
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 10)',
-                'Referer': 'https://www.kuwo.cn/'
-            }
-            r = self.fetch(search_url, headers=kuwo_headers, timeout=8)
+            r = self.fetch(search_url, headers=self.kuwo_headers, timeout=8)
             content = r.text
             if content.startswith('try{'):
                 content = content[4:]
@@ -992,24 +1085,71 @@ class Spider(Spider):
                 content = content[:-11]
             if content.startswith('jsonp'):
                 content = content.split('(', 1)[1].rsplit(')', 1)[0]
-            
-            import json
+
             data = json.loads(content)
             abslist = data.get('abslist', [])
             if not abslist:
                 return ''
-            
+
             first = abslist[0]
             rid = first.get('MUSICRID', '').replace('MUSIC_', '')
             if not rid:
                 return ''
-            
+
+            format_type = 'flac' if bitrate >= 1000 else 'mp3'
+            api_url = "https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid=" + str(rid) + "&bitrate=" + str(bitrate) + "&format=" + format_type
+            r2 = self.fetch(api_url, headers=self.kuwo_headers, timeout=8)
+            data2 = r2.json()
+            if data2.get('code') == 200 and data2.get('data') and data2['data'].get('url'):
+                return data2['data']['url']
+        except Exception:
+            pass
+
+        return ''
+
+    def _get_kuwo_play_url(self, hash_val, song_name_hint='', artist_hint=''):
+        try:
+            song_name = song_name_hint
+            artist = artist_hint
+
+            if not song_name:
+                song_info = self._get_song_info(hash_val)
+                song_name = song_info.get('name', '')
+                artist = song_info.get('artist', '')
+
+            if not song_name:
+                return ''
+
+            keyword = song_name
+            if artist:
+                keyword = artist + " " + song_name
+
+            search_url = "https://search.kuwo.cn/r.s?client=kt&all=" + keyword + "&pn=0&rn=5&vipver=1&ft=music&encoding=utf8&rformat=json&mobi=1"
+            r = self.fetch(search_url, headers=self.kuwo_headers, timeout=8)
+            content = r.text
+            if content.startswith('try{'):
+                content = content[4:]
+            if content.endswith('}catch(e){}'):
+                content = content[:-11]
+            if content.startswith('jsonp'):
+                content = content.split('(', 1)[1].rsplit(')', 1)[0]
+
+            data = json.loads(content)
+            abslist = data.get('abslist', [])
+            if not abslist:
+                return ''
+
+            first = abslist[0]
+            rid = first.get('MUSICRID', '').replace('MUSIC_', '')
+            if not rid:
+                return ''
+
             quality_list = [320, 128]
             for bitrate in quality_list:
                 format_type = 'flac' if bitrate >= 1000 else 'mp3'
                 api_url = "https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid=" + str(rid) + "&bitrate=" + str(bitrate) + "&format=" + format_type
                 try:
-                    r2 = self.fetch(api_url, headers=kuwo_headers, timeout=8)
+                    r2 = self.fetch(api_url, headers=self.kuwo_headers, timeout=8)
                     data2 = r2.json()
                     if data2.get('code') == 200 and data2.get('data') and data2['data'].get('url'):
                         return data2['data']['url']
@@ -1017,7 +1157,7 @@ class Spider(Spider):
                     continue
         except Exception as e:
             print("_get_kuwo_play_url error:", e)
-        
+
         return ''
 
     def _get_lyric(self, hash_val):
@@ -1122,142 +1262,93 @@ class Spider(Spider):
             print("_get_search_songs error:", e)
             return {'list': [], 'page': pg, 'pagecount': 0, 'limit': 30, 'total': 0}
 
-    def _get_mv_list(self, tid, pg):
-        vods = []
-        try:
-            mv_keyword_map = {
-                'mv_hot': '热门MV',
-                'mv_cn': '华语MV',
-                'mv_jp': '日韩MV',
-                'mv_us': '欧美MV',
-            }
-            keyword = mv_keyword_map.get(tid, 'MV')
-            search_url = "http://mobilecdn.kugou.com/api/v3/search/song?format=json&keyword=" + keyword + "&page=" + str(pg) + "&pagesize=30&showtype=1"
-            res = self.fetch(search_url)
-            data = res.json()
-            info_list = data.get('data', {}).get('info', [])
+    def _format_time(self, seconds):
+        m = int(seconds // 60)
+        s = seconds % 60
+        return f"{m:02d}:{s:05.2f}"
 
-            for it in info_list:
-                if not isinstance(it, dict):
-                    continue
-                mvhash = it.get('mvhash', it.get('mvHash', ''))
-                if not mvhash:
-                    continue
-                song, artist = self._get_song_name_artist(it)
-                pic = it.get('album_img', it.get('imgUrl', ''))
-                if pic and not pic.startswith('http'):
-                    pic = 'https://' + pic.lstrip('/')
-                if pic and '{size}' in pic:
-                    pic = pic.replace('{size}', '400')
+    def _create_ssa_subtitle(self, lrc_text):
+        lines = []
+        pattern = r'\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)'
 
-                display_name = song + " - " + artist if artist else song
-                display_name = re.sub(r'<[^>]+>', '', display_name)
-                display_name = re.sub(r'[$#]', '', display_name).strip()
-                vods.append({
-                    'vod_name': display_name + ' [MV]',
-                    'vod_id': 'mv_detail_' + mvhash,
-                    'vod_pic': pic,
-                    'vod_remarks': 'MV',
-                    'vod_tag': 'folder'
-                })
-        except Exception as e:
-            print("_get_mv_list error:", e)
+        for line in lrc_text.split('\n'):
+            match = re.match(pattern, line)
+            if match:
+                minutes = int(match.group(1))
+                seconds = int(match.group(2))
+                ms_str = match.group(3)
+                if len(ms_str) == 3:
+                    hundredths = int(ms_str) // 10
+                else:
+                    hundredths = int(ms_str)
+                text = match.group(4).strip()
 
-        if not vods:
-            vods = self._get_default_mv_list()
-        return {'list': vods, 'page': pg, 'pagecount': 99, 'limit': 30, 'total': 9999}
+                total_seconds = minutes * 60 + seconds + hundredths / 100.0
+                if text:
+                    lines.append({
+                        'start': total_seconds,
+                        'text': text
+                    })
 
-    def _get_default_mv_list(self):
-        default = [
-            ("晴天 - 周杰伦 [MV]", "92b86da2e11c3c84de3a944ed12d97f1"),
-            ("稻香 - 周杰伦 [MV]", "fa30dad34632aaff8ac33bcf24acc241"),
-            ("夜曲 - 周杰伦 [MV]", "14f783ab3068b2cfb40b64f7a79763c8"),
-            ("青花瓷 - 周杰伦 [MV]", "dc602a8579c0ac1e2895543ffc2c7daf"),
-        ]
-        return [{
-            'vod_id': 'mv_detail_' + mid,
-            'vod_name': name,
-            'vod_pic': '',
-            'vod_remarks': 'MV',
-            'vod_tag': 'folder'
-        } for name, mid in default]
+        if not lines:
+            return ""
 
-    def _get_mv_detail(self, mvid, pg):
-        return self._get_mv_list('mv_hot', pg)
+        ssa_header = """[Script Info]
+ScriptType: v4.00+
+Collisions: Normal
+PlayResX: 1280
+PlayResY: 720
+Timer: 100.0000
+WrapStyle: 0
 
-    def _get_mv_video_detail(self, mvid):
-        result = {"list": []}
-        try:
-            mv_hash = mvid.replace('mv_detail_', '').replace('mv_', '')
-            
-            song_info = {'name': 'MV', 'artist': ''}
-            try:
-                search_url = "http://mobilecdn.kugou.com/api/v3/search/song?format=json&keyword=" + mv_hash + "&page=1&pagesize=1&showtype=1"
-                res = self.fetch(search_url)
-                data = res.json()
-                info_list = data.get('data', {}).get('info', [])
-                if info_list:
-                    it = info_list[0]
-                    song, artist = self._get_song_name_artist(it)
-                    song_info['name'] = song
-                    song_info['artist'] = artist
-            except:
-                pass
-            
-            mv_name = song_info['name'] + " - " + song_info['artist'] + " [MV]" if song_info['artist'] else song_info['name'] + " [MV]"
-            
-            mv_play_url = self._get_mv_play_url(mv_hash)
-            
-            vod = {
-                'vod_id': mvid,
-                'vod_name': mv_name,
-                'vod_pic': '',
-                'vod_content': '酷狗音乐MV',
-                'vod_remarks': 'MV',
-                'vod_play_from': '酷狗MV',
-                'vod_play_url': "MV播放$" + mv_hash,
-            }
-            result['list'] = [vod]
-        except Exception as e:
-            print("_get_mv_video_detail error:", e)
-        return result
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: WAITING_TOP2,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1,1,2,0,0,180,1
+Style: WAITING_TOP1,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1,1,2,0,0,260,1
+Style: PLAYING_CENTER,Roboto,60,&H0000FF00,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,2,2,2,0,0,340,1
+Style: PLAYED_BOTTOM1,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1,1,2,0,0,420,1
+Style: PLAYED_BOTTOM2,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1,1,2,0,0,500,1
 
-    def _get_mv_play_url(self, mvhash):
-        try:
-            api_url = "https://wwwapi.kugou.com/yy/index.php?r=play/getdata&mvhash=" + mvhash + "&hash=&album_id=&mid=123"
-            r = self.fetch(api_url, timeout=8)
-            data = r.json()
-            if data.get('status') == 1 and data.get('data'):
-                d = data['data']
-                for k in ['mv_url', 'mp4', 'url', 'hdUrl', 'sdUrl']:
-                    v = d.get(k, '')
-                    if v and v.startswith('http'):
-                        return v
-        except Exception:
-            pass
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
 
-        try:
-            api_url = "http://m.kugou.com/app/i/mv.php?cmd=100&hash=" + mvhash
-            r = self.fetch(api_url, headers=self.mobile_headers, timeout=10)
-            data = r.json()
-            if data.get('status') == 1 and data.get('mvdata'):
-                mvdata = data['mvdata']
-                quality_order = ['hd', 'sd', 'sq', 'rq']
-                for q in quality_order:
-                    q_data = mvdata.get(q, {})
-                    if isinstance(q_data, dict):
-                        downurl = q_data.get('downurl', '')
-                        if downurl and downurl.startswith('http'):
-                            return downurl
-                        backup = q_data.get('backupdownurl', [])
-                        if isinstance(backup, list) and len(backup) > 0:
-                            for bu in backup:
-                                if bu and bu.startswith('http'):
-                                    return bu
-        except Exception as e:
-            print("_get_mv_play_url m.kugou error:", e)
+        def format_ssa_time(seconds):
+            h = int(seconds // 3600)
+            m = int((seconds % 3600) // 60)
+            s = int(seconds % 60)
+            cs = int((seconds * 100) % 100)
+            return f"{h}:{m:02d}:{s:02d}.{cs:02d}"
 
-        return ''
+        events = []
+
+        for i in range(len(lines)):
+            current = lines[i]
+            current_end = lines[i + 1]['start'] if i + 1 < len(lines) else current['start'] + 5.0
+
+            wait2 = lines[i + 2] if i + 2 < len(lines) else None
+            wait1 = lines[i + 1] if i + 1 < len(lines) else None
+            played1 = lines[i - 1] if i - 1 >= 0 else None
+            played2 = lines[i - 2] if i - 2 >= 0 else None
+
+            start_str = format_ssa_time(current['start'])
+            end_str = format_ssa_time(current_end)
+
+            if wait2:
+                events.append(f"Dialogue: 1,{start_str},{end_str},WAITING_TOP2,,0,0,0,,{wait2['text']}")
+
+            if wait1:
+                events.append(f"Dialogue: 2,{start_str},{end_str},WAITING_TOP1,,0,0,0,,{wait1['text']}")
+
+            events.append(f"Dialogue: 3,{start_str},{end_str},PLAYING_CENTER,,0,0,0,,{current['text']}")
+
+            if played1:
+                events.append(f"Dialogue: 4,{start_str},{end_str},PLAYED_BOTTOM1,,0,0,0,,{played1['text']}")
+
+            if played2:
+                events.append(f"Dialogue: 5,{start_str},{end_str},PLAYED_BOTTOM2,,0,0,0,,{played2['text']}")
+
+        return ssa_header + "\n".join(events)
 
     def destroy(self):
         pass
