@@ -1404,7 +1404,16 @@
           "searchable": 1,
           "type": 3
         },
-                         {
+		{
+          "key": "汽水 PY",
+          "name": "👌汽水丨PY",
+          "api": "./汽水音乐.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },                
+        {
           "key": "🐶kugou PY",
           "name": "🐶kugou丨PY",
           "api": "./kg.py",
@@ -1413,7 +1422,7 @@
           "searchable": 1,
           "type": 3
         },
-                                 {
+       {
           "key": "bili_mv PY",
           "name": "bili_mv丨PY",
           "api": "./bili_mv.py",
