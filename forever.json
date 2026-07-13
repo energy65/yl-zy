@@ -515,7 +515,7 @@
         },
 		  {
             "key": "星辰",
-            "name": "星辰TV[SM]",
+            "name": "星辰TV",
             "type": 3,
             "searchable": 1,
             "api": "./SM2.py",
@@ -741,7 +741,7 @@
         },
 		        {
             "key": "2影视App",
-            "name": "2影视┃[APP]",
+            "name": "2影视┃app",
             "type": 3,
             "quickSearch": 1,
             "api": "./getapp3.4.1.py",
@@ -1386,12 +1386,6 @@
             "type": 3,
             "api": "./网易云-有MV.py"
         },
-		{
-      "key": "酷我音乐歌手分类",
-      "name": "酷我音乐歌手分类",
-      "type": 3,
-      "api": "https://dogpan.com/f/VO84ig/酷我音乐.py"
-    },
         {
             "key": "爱玩音乐",
             "name": "爱玩🎤音乐",
