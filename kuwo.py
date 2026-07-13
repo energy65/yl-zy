@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 import json
 import sys
 import re
 import base64
 import requests
-sys.path.append('..')
+sys.path.append('yl-main')
 from base.spider import Spider
 
 
@@ -21,10 +22,10 @@ class Spider(Spider):
             'Referer': 'https://m.kuwo.cn/'
         }
         self.quality_config = [
-            ("无损", 2000, "flac"),
-            ("超清", 320, "mp3"),
-            ("高清", 192, "mp3"),
-            ("普通", 128, "mp3"),
+            ("无损APE", 2000, "ape"),
+            ("超清320K", 320, "mp3"),
+            ("高清192K", 192, "mp3"),
+            ("标准128K", 128, "mp3"),
         ]
         self.classes = [
             {'type_id': 'pl_hot', 'type_name': '热门歌单'},
@@ -176,47 +177,27 @@ class Spider(Spider):
                 result["header"] = {}
                 return result
 
-            qualities = []
+            quality_map = {
+                '标准128K': (128, 'mp3'),
+                '高清192K': (192, 'mp3'),
+                '超清320K': (320, 'mp3'),
+                '无损APE': (2000, 'ape'),
+            }
 
-            quality_list = [
-                ("无损FLAC", 2000, "flac"),
-                ("高品质320K", 320, "mp3"),
-                ("标准128K", 128, "mp3")
-            ]
+            if flag and flag in quality_map:
+                bitrate, fmt = quality_map[flag]
+                play_url = self._get_song_url(rid, bitrate)
+            else:
+                play_url = self._get_song_url_with_fallback(rid)
 
-            for quality_name, bitrate, format_type in quality_list:
-                try:
-                    api_url = f"https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid={rid}&bitrate={bitrate}&format={format_type}"
-                    r = self.fetch(api_url, headers=self.mobile_headers, timeout=5)
-                    data = r.json()
-                    if data.get('code') == 200 and data.get('data') and data['data'].get('url'):
-                        qualities.append((quality_name, data['data']['url']))
-                except Exception:
-                    continue
-
-            if not qualities:
+            if not play_url:
                 result["parse"] = 0
                 result["playUrl"] = ""
                 result["url"] = ""
                 result["header"] = {}
                 return result
 
-            urls = []
-            for quality_name, quality_url in qualities:
-                urls.append(quality_name)
-                urls.append(quality_url)
-
-            lrc = ""
-
-            try:
-                lrc_api = f"https://kuwo.cn/openapi/v1/www/lyric/getlyric?musicId={rid}"
-                lr = self.fetch(lrc_api, timeout=5)
-                lj = lr.json()
-                if lj.get('data') and lj['data'].get('lrclist'):
-                    lrc = "\n".join([f"[{self._format_time(float(item.get('time', 0)))}]{item.get('lineLyric', '')}"
-                                   for item in lj['data']['lrclist']])
-            except Exception:
-                pass
+            lrc = self._get_lyric(rid)
 
             if lrc:
                 try:
@@ -235,7 +216,7 @@ class Spider(Spider):
 
             result["parse"] = 0
             result["playUrl"] = ""
-            result["url"] = urls
+            result["url"] = play_url
             result["header"] = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                 "Referer": "https://www.kuwo.cn/"
@@ -257,7 +238,7 @@ class Spider(Spider):
         req_headers = self.headers.copy()
         if headers:
             req_headers.update(headers)
-        return requests.get(url, headers=req_headers, timeout=timeout)
+        return requests.get(url, headers=req_headers, timeout=timeout, verify=False)
 
     def _default_playlists(self):
         default = [
@@ -272,7 +253,6 @@ class Spider(Spider):
             'vod_name': name,
             'vod_pic': '',
             'vod_remarks': '酷我歌单',
-            'vod_tag': 'folder'
         } for name, pid in default]
 
     def _default_artists(self):
@@ -287,7 +267,6 @@ class Spider(Spider):
             'vod_name': name,
             'vod_pic': '',
             'vod_remarks': '歌手',
-            'vod_tag': 'folder'
         } for name, aid in default]
 
     def _default_bang_list(self):
@@ -307,7 +286,6 @@ class Spider(Spider):
                 'vod_name': bname,
                 'vod_pic': '',
                 'vod_remarks': '排行榜',
-                'vod_tag': 'folder'
             })
         return vods
 
@@ -348,38 +326,56 @@ class Spider(Spider):
                 'vod_id': f'pl_detail_{vid}',
                 'vod_pic': pic,
                 'vod_remarks': remarks or '酷我歌单',
-                'vod_tag': 'folder'
             })
         return vods
 
     def _get_playlist_detail(self, pid):
         play_arr = []
-        play_pics = []
         vod_name = '酷我歌单'
         vod_pic = ''
         vod_content = ''
-        
+
         try:
-            api_url = f"http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pid={pid}&pn=0&rn=200&encode=utf8&keyset=pl2012&identity=kuwo&pcmp4=1&vipver=MUSIC_9.1.1.2_BCS2&newver=1"
+            api_url = f"http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pid={pid}&pn=0&rn=100&encode=utf8&keyset=pl2012&identity=kuwo&pcmp4=1&vipver=MUSIC_9.1.1.2_BCS2&newver=1"
             res = self.fetch(api_url)
             d = res.json()
 
-            music_list = d.get('musiclist', [])
             vod_name = d.get('name', d.get('title', '酷我歌单'))
             vod_pic = d.get('pic', d.get('img', ''))
-            vod_content = d.get('info', d.get('desc', ''))
+            vod_content = '微信公众号：源力软件汇\n' + d.get('info', d.get('desc', ''))
+            total = d.get('total', 0)
+            music_list = d.get('musiclist', [])
 
             for it in music_list:
                 rid = str(it.get('id', '')) if it.get('id') is not None else ''
                 song = str(it.get('name', it.get('SONGNAME', it.get('displaysongname', ''))))
                 artist = str(it.get('artist', it.get('ARTIST', it.get('FARTIST', it.get('displayartistname', '')))))
-                albumpic = it.get('albumpic', '')
 
                 if rid and song:
                     display_name = f"{song} - {artist}" if artist else song
                     display_name = re.sub(r'[$#]', '', display_name).strip()
                     play_arr.append(f"{display_name}${rid}")
-                    play_pics.append(albumpic)
+
+            if total > 100:
+                pages = (total + 99) // 100
+                for pg in range(1, min(pages, 20)):
+                    try:
+                        api_url2 = f"http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pid={pid}&pn={pg * 100}&rn=100&encode=utf8&keyset=pl2012&identity=kuwo&pcmp4=1&vipver=MUSIC_9.1.1.2_BCS2&newver=1"
+                        res2 = self.fetch(api_url2)
+                        d2 = res2.json()
+                        music_list2 = d2.get('musiclist', [])
+                        if not music_list2:
+                            break
+                        for it in music_list2:
+                            rid = str(it.get('id', '')) if it.get('id') is not None else ''
+                            song = str(it.get('name', it.get('SONGNAME', it.get('displaysongname', ''))))
+                            artist = str(it.get('artist', it.get('ARTIST', it.get('FARTIST', it.get('displayartistname', '')))))
+                            if rid and song:
+                                display_name = f"{song} - {artist}" if artist else song
+                                display_name = re.sub(r'[$#]', '', display_name).strip()
+                                play_arr.append(f"{display_name}${rid}")
+                    except Exception:
+                        break
         except Exception as e:
             print(f"_get_playlist_detail error: {e}")
 
@@ -388,8 +384,12 @@ class Spider(Spider):
             for item in search_result.get('list', []):
                 rid = item['vod_id'].replace('song_', '')
                 play_arr.append(f"{item['vod_name']}${rid}")
-                play_pics.append(item.get('vod_pic', ''))
             vod_name = vod_name or '热门歌曲'
+
+        song_list = '#'.join(play_arr)
+        qualities = ['标准128K', '高清192K', '超清320K', '无损APE']
+        vod_play_from = '$$$'.join(qualities)
+        vod_play_url = '$$$'.join([song_list for _ in qualities])
 
         vod = {
             'vod_id': pid,
@@ -397,12 +397,9 @@ class Spider(Spider):
             'vod_pic': vod_pic,
             'vod_content': vod_content,
             'vod_remarks': f"歌曲 : {len(play_arr)}首",
-            'vod_play_from': '酷我音乐',
-            'vod_play_url': '#'.join(play_arr),
+            'vod_play_from': vod_play_from,
+            'vod_play_url': vod_play_url,
         }
-        if play_pics:
-            vod['vod_play_pic'] = '#'.join(play_pics)
-            vod['vod_play_pic_ratio'] = 1.5
 
         return {'list': [vod]}
 
@@ -445,25 +442,24 @@ class Spider(Spider):
             res = self.fetch(api_url)
             data = res.json()
             artist_list = data.get('data', {}).get('artistList', []) or []
-            
+
             for it in artist_list:
                 artist_id = str(it.get('id', ''))
                 name = it.get('name', '未知歌手')
                 pic = it.get('pic', it.get('img', it.get('avatar', '')))
-                
+
                 if not artist_id:
                     continue
-                
+
                 vods.append({
                     'vod_name': name,
                     'vod_id': f'artist_detail_{artist_id}',
                     'vod_pic': pic,
                     'vod_remarks': it.get('country', it.get('company', '歌手')),
-                    'vod_tag': 'folder'
                 })
         except Exception as e:
             print(f"_get_artist_list error: {e}")
-        
+
         if not vods:
             vods = self._default_artists()
         return {
@@ -476,34 +472,53 @@ class Spider(Spider):
 
     def _get_artist_detail(self, vid):
         play_arr = []
-        play_pics = []
         artist_name = ''
-        artist_pic = ''
-        
+
         try:
             artist_id = vid.replace('artist_', '')
-            api_url = f"http://wapi.kuwo.cn/api/www/artist/artistMusic?artistid={artist_id}&pn=1&rn=200"
+            api_url = f"http://wapi.kuwo.cn/api/www/artist/artistMusic?artistid={artist_id}&pn=1&rn=100"
             res = self.fetch(api_url)
             data = res.json()
-            
+
             music_data = data.get('data', {})
             music_list = music_data.get('list', [])
-            
+            total = music_data.get('total', 0)
+
             for it in music_list:
                 rid = str(it.get('rid', it.get('id', '')))
                 song = str(it.get('name', ''))
                 artist = str(it.get('artist', it.get('singer', '')))
-                albumPic = it.get('albumPic', it.get('pic', ''))
-                
+
                 if not artist_name and artist:
                     artist_name = artist
-                
+
                 if rid and song:
                     display_name = f"{song} - {artist}" if artist else song
                     display_name = re.sub(r'[$#]', '', display_name).strip()
                     play_arr.append(f"{display_name}${rid}")
-                    play_pics.append(albumPic)
-            
+
+            if total > 100:
+                pages = (total + 99) // 100
+                for pg in range(2, min(pages + 1, 50)):
+                    try:
+                        api_url2 = f"http://wapi.kuwo.cn/api/www/artist/artistMusic?artistid={artist_id}&pn={pg}&rn=100"
+                        res2 = self.fetch(api_url2)
+                        data2 = res2.json()
+                        music_data2 = data2.get('data', {})
+                        music_list2 = music_data2.get('list', [])
+                        if not music_list2:
+                            break
+                        for it in music_list2:
+                            rid = str(it.get('rid', it.get('id', '')))
+                            song = str(it.get('name', ''))
+                            artist = str(it.get('artist', it.get('singer', '')))
+                            if rid and song:
+                                display_name = f"{song} - {artist}" if artist else song
+                                display_name = re.sub(r'[$#]', '', display_name).strip()
+                                play_arr.append(f"{display_name}${rid}")
+                    except Exception:
+                        break
+
             if not artist_name:
                 artist_name = f'歌手_{artist_id}'
         except Exception as e:
@@ -514,23 +529,24 @@ class Spider(Spider):
             for item in search_result.get('list', []):
                 rid = item['vod_id'].replace('song_', '')
                 play_arr.append(f"{item['vod_name']}${rid}")
-                play_pics.append(item.get('vod_pic', ''))
             artist_name = artist_name or '热门歌手'
+
+        song_list = '#'.join(play_arr)
+        qualities = ['标准128K', '高清192K', '超清320K', '无损APE']
+        vod_play_from = '$$$'.join(qualities)
+        vod_play_url = '$$$'.join([song_list for _ in qualities])
 
         vod = {
             'vod_id': vid,
             'vod_name': artist_name,
-            'vod_pic': play_pics[0] if play_pics else '',
-            'vod_content': f"共 {len(play_arr)} 首歌曲",
+            'vod_pic': '',
+            'vod_content': f"微信公众号：源力软件汇\n共 {len(play_arr)} 首歌曲",
             'vod_remarks': f"歌曲 : {len(play_arr)}首",
             'vod_actor': artist_name,
-            'vod_play_from': '酷我音乐',
-            'vod_play_url': '#'.join(play_arr),
+            'vod_play_from': vod_play_from,
+            'vod_play_url': vod_play_url,
         }
-        if play_pics:
-            vod['vod_play_pic'] = '#'.join(play_pics)
-            vod['vod_play_pic_ratio'] = 1.5
-        
+
         return {'list': [vod]}
 
     def _get_artist_songs(self, artist_id, pg):
@@ -539,16 +555,16 @@ class Spider(Spider):
             api_url = f"http://wapi.kuwo.cn/api/www/artist/artistMusic?artistid={artist_id}&pn={pg}&rn=30"
             res = self.fetch(api_url)
             data = res.json()
-            
+
             music_data = data.get('data', {})
             music_list = music_data.get('list', [])
-            
+
             for it in music_list:
                 rid = str(it.get('rid', it.get('id', '')))
                 song = str(it.get('name', ''))
                 artist = str(it.get('artist', it.get('singer', '')))
                 albumPic = it.get('albumPic', it.get('pic', ''))
-                
+
                 if rid and song:
                     display_name = f"{song} - {artist}" if artist else song
                     display_name = re.sub(r'[$#]', '', display_name).strip()
@@ -590,11 +606,10 @@ class Spider(Spider):
                 'vod_id': f'bang_detail_{bang_id}',
                 'vod_pic': pic,
                 'vod_remarks': '排行榜',
-                'vod_tag': 'folder'
             }]
         except Exception as e:
             print(f"_get_bang_list error: {e}")
-        
+
         if not vods:
             vods = self._default_bang_list()
         return {'list': vods, 'page': pg, 'pagecount': 1, 'limit': 30, 'total': len(vods)}
@@ -668,7 +683,7 @@ class Spider(Spider):
                 play_pic_arr.append(pic)
 
             lrc = self._get_lyric(song_id)
-            content = f"歌曲：{song_name}\n歌手：{artist}\n专辑：{album}\n来源：酷我音乐"
+            content = f"微信公众号：源力软件汇\n歌曲：{song_name}\n歌手：{artist}\n专辑：{album}\n来源：酷我音乐"
             if lrc:
                 lrc_lines = lrc.split('\n')
                 clean_lines = []
@@ -703,7 +718,7 @@ class Spider(Spider):
                 "vod_id": vid,
                 "vod_name": f"歌曲_{song_id}",
                 "vod_pic": '',
-                "vod_content": '酷我音乐',
+                "vod_content": '微信公众号：源力软件汇',
                 "vod_remarks": '酷我音乐',
                 "vod_actor": '',
                 "vod_play_from": '标准音质',
@@ -753,9 +768,61 @@ class Spider(Spider):
             pass
         return {}
 
+    def _get_song_url_with_fallback(self, rid):
+        methods = [
+            self._get_song_url_v1,
+            self._get_song_url_v2,
+            self._get_song_url_v3,
+        ]
+        for method in methods:
+            try:
+                url = method(rid)
+                if url and url.startswith('http'):
+                    return url
+            except Exception:
+                continue
+        return ''
+
+    def _get_song_url_v1(self, rid):
+        try:
+            api_url = f"https://www.kuwo.cn/api/v1/www/music/playInfo?mid={rid}"
+            r = self.fetch(api_url, timeout=8)
+            data = r.json()
+            if data.get('data') and data['data'].get('url'):
+                return data['data']['url']
+        except Exception:
+            pass
+        return ''
+
+    def _get_song_url_v2(self, rid):
+        try:
+            api_url = f"https://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId={rid}"
+            r = self.fetch(api_url, headers=self.mobile_headers, timeout=8)
+            data = r.json()
+            if data.get('data') and data['data'].get('songinfo'):
+                info = data['data']['songinfo']
+                if info.get('rid'):
+                    return self._get_song_url_v3(str(info['rid']))
+            if data.get('data') and data['data'].get('url'):
+                return data['data']['url']
+        except Exception:
+            pass
+        return ''
+
+    def _get_song_url_v3(self, rid):
+        try:
+            api_url = f"https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid={rid}&br=320kmp3"
+            r = self.fetch(api_url, headers=self.mobile_headers, timeout=8)
+            data = r.json()
+            if data.get('data') and data['data'].get('url'):
+                return data['data']['url']
+        except Exception:
+            pass
+        return ''
+
     def _get_song_url(self, rid, bitrate=320):
         try:
-            format_type = 'flac' if bitrate >= 1000 else 'mp3'
+            format_type = 'ape' if bitrate >= 1000 else 'mp3'
             api_url = f"https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid={rid}&bitrate={bitrate}&format={format_type}"
             r = self.fetch(api_url, headers=self.mobile_headers, timeout=5)
             data = r.json()
@@ -767,7 +834,7 @@ class Spider(Spider):
 
     def _get_lyric(self, rid):
         lrc_text = ''
-        
+
         try:
             lrc_api = f"https://kuwo.cn/openapi/v1/www/lyric/getlyric?musicId={rid}"
             r = self.fetch(lrc_api, timeout=8)
@@ -788,7 +855,7 @@ class Spider(Spider):
                         lrc_text = '\n'.join(lines)
         except Exception:
             pass
-        
+
         if not lrc_text:
             try:
                 api_url = f"https://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId={rid}"
@@ -810,7 +877,7 @@ class Spider(Spider):
                             lrc_text = '\n'.join(lines)
             except Exception:
                 pass
-        
+
         if not lrc_text:
             try:
                 lrc_api2 = f"https://www.kuwo.cn/api/v1/www/music/playInfo?mid={rid}"
@@ -820,7 +887,7 @@ class Spider(Spider):
                     lrc_text = d['data']['lrc']
             except Exception:
                 pass
-        
+
         if lrc_text and not lrc_text.strip().startswith('['):
             lines = lrc_text.strip().split('\n')
             formatted = []
@@ -833,7 +900,7 @@ class Spider(Spider):
                 else:
                     formatted.append(line)
             lrc_text = '\n'.join(formatted)
-        
+
         return lrc_text
 
     def _get_search_songs(self, keyword, pg=1):
@@ -882,7 +949,7 @@ class Spider(Spider):
     def _create_ssa_subtitle(self, lrc_text):
         lines = []
         pattern = r'\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)'
-        
+
         for line in lrc_text.split('\n'):
             match = re.match(pattern, line)
             if match:
@@ -894,17 +961,17 @@ class Spider(Spider):
                 else:
                     hundredths = int(ms_str)
                 text = match.group(4).strip()
-                
+
                 total_seconds = minutes * 60 + seconds + hundredths / 100.0
                 if text:
                     lines.append({
                         'start': total_seconds,
                         'text': text
                     })
-        
+
         if not lines:
             return ""
-        
+
         ssa_header = """[Script Info]
 ScriptType: v4.00+
 Collisions: Normal
@@ -924,42 +991,42 @@ Style: PLAYED_BOTTOM2,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
-        
+
         def format_ssa_time(seconds):
             h = int(seconds // 3600)
             m = int((seconds % 3600) // 60)
             s = int(seconds % 60)
             cs = int((seconds * 100) % 100)
             return f"{h}:{m:02d}:{s:02d}.{cs:02d}"
-        
+
         events = []
-        
+
         for i in range(len(lines)):
             current = lines[i]
             current_end = lines[i+1]['start'] if i+1 < len(lines) else current['start'] + 5.0
-            
+
             wait2 = lines[i+2] if i+2 < len(lines) else None
             wait1 = lines[i+1] if i+1 < len(lines) else None
             played1 = lines[i-1] if i-1 >= 0 else None
             played2 = lines[i-2] if i-2 >= 0 else None
-            
+
             start_str = format_ssa_time(current['start'])
             end_str = format_ssa_time(current_end)
-            
+
             if wait2:
                 events.append(f"Dialogue: 1,{start_str},{end_str},WAITING_TOP2,,0,0,0,,{wait2['text']}")
-            
+
             if wait1:
                 events.append(f"Dialogue: 2,{start_str},{end_str},WAITING_TOP1,,0,0,0,,{wait1['text']}")
-            
+
             events.append(f"Dialogue: 3,{start_str},{end_str},PLAYING_CENTER,,0,0,0,,{current['text']}")
-            
+
             if played1:
                 events.append(f"Dialogue: 4,{start_str},{end_str},PLAYED_BOTTOM1,,0,0,0,,{played1['text']}")
-            
+
             if played2:
                 events.append(f"Dialogue: 5,{start_str},{end_str},PLAYED_BOTTOM2,,0,0,0,,{played2['text']}")
-        
+
         return ssa_header + "\n".join(events)
 
     def destroy(self):
