@@ -67,6 +67,7 @@ class Spider(Spider):
             {"type_id": "咪咕音乐MV", "type_name": "咪咕MV"},
             {"type_id": "网易云音乐MV", "type_name": "网易云MV"},
             {"type_id": "artist_mv", "type_name": "歌手MV"},
+            {"type_id": "KTV必点", "type_name": "KTV必点"},
         ]}
         return result
 
@@ -95,6 +96,69 @@ class Spider(Spider):
         {'name': '洛天依', 'keyword': '洛天依MV4K', 'pic': ''},
         {'name': '中岛美雪', 'keyword': '中岛美雪MV4K', 'pic': ''},
         {'name': '坂井泉水', 'keyword': '坂井泉水MV4K', 'pic': ''},
+        {'name': '许嵩', 'keyword': '许嵩MV4K', 'pic': ''},
+        {'name': '李荣浩', 'keyword': '李荣浩MV4K', 'pic': ''},
+        {'name': '张靓颖', 'keyword': '张靓颖MV4K', 'pic': ''},
+        {'name': '张惠妹', 'keyword': '张惠妹MV4K', 'pic': ''},
+        {'name': '刘若英', 'keyword': '刘若英MV4K', 'pic': ''},
+        {'name': '孙燕姿', 'keyword': '孙燕姿MV4K', 'pic': ''},
+        {'name': '五月天', 'keyword': '五月天MV4K', 'pic': ''},
+        {'name': '汪峰', 'keyword': '汪峰MV4K', 'pic': ''},
+        {'name': '韩红', 'keyword': '韩红MV4K', 'pic': ''},
+        {'name': '杨坤', 'keyword': '杨坤MV4K', 'pic': ''},
+        {'name': '朴树', 'keyword': '朴树MV4K', 'pic': ''},
+        {'name': '许巍', 'keyword': '许巍MV4K', 'pic': ''},
+        {'name': '王力宏', 'keyword': '王力宏MV4K', 'pic': ''},
+        {'name': '陶喆', 'keyword': '陶喆MV4K', 'pic': ''},
+        {'name': '谢霆锋', 'keyword': '谢霆锋MV4K', 'pic': ''},
+        {'name': 'Twins', 'keyword': 'TwinsMV4K', 'pic': ''},
+        {'name': 'S.H.E', 'keyword': 'S.H.EMV4K', 'pic': ''},
+        {'name': '任贤齐', 'keyword': '任贤齐MV4K', 'pic': ''},
+        {'name': '梁静茹', 'keyword': '梁静茹MV4K', 'pic': ''},
+        {'name': '张韶涵', 'keyword': '张韶涵MV4K', 'pic': ''},
+        {'name': '蔡依林', 'keyword': '蔡依林MV4K', 'pic': ''},
+        {'name': '罗志祥', 'keyword': '罗志祥MV4K', 'pic': ''},
+        {'name': '周杰伦', 'keyword': '周杰伦MV', 'pic': ''},
+        {'name': 'BTS', 'keyword': 'BTSMV4K', 'pic': ''},
+        {'name': 'BigBang', 'keyword': 'BigBangMV4K', 'pic': ''},
+        {'name': 'EXO', 'keyword': 'EXOMV4K', 'pic': ''},
+        {'name': 'IU', 'keyword': 'IUMV4K', 'pic': ''},
+        {'name': '李知恩', 'keyword': '李知恩MV4K', 'pic': ''},
+        {'name': 'NCT', 'keyword': 'NCTMV4K', 'pic': ''},
+        {'name': 'Red Velvet', 'keyword': 'RedVelvetMV4K', 'pic': ''},
+        {'name': '少女时代', 'keyword': '少女时代MV4K', 'pic': ''},
+        {'name': 'F(x)', 'keyword': 'f(x)MV4K', 'pic': ''},
+        {'name': '2NE1', 'keyword': '2NE1MV4K', 'pic': ''},
+        {'name': 'Wonder Girls', 'keyword': 'WonderGirlsMV4K', 'pic': ''},
+        {'name': 'AKB48', 'keyword': 'AKB48MV4K', 'pic': ''},
+        {'name': '乃木坂46', 'keyword': '乃木坂46MV4K', 'pic': ''},
+        {'name': 'LiSA', 'keyword': 'LiSAMV4K', 'pic': ''},
+        {'name': 'YOASOBI', 'keyword': 'YOASOBIMV4K', 'pic': ''},
+        {'name': '米津玄师', 'keyword': '米津玄师MV4K', 'pic': ''},
+        {'name': '宇多田光', 'keyword': '宇多田光MV4K', 'pic': ''},
+        {'name': '滨崎步', 'keyword': '滨崎步MV4K', 'pic': ''},
+        {'name': '仓木麻衣', 'keyword': '仓木麻衣MV4K', 'pic': ''},
+        {'name': 'Avril Lavigne', 'keyword': 'AvrilLavigneMV4K', 'pic': ''},
+        {'name': 'Lady Gaga', 'keyword': 'LadyGagaMV4K', 'pic': ''},
+        {'name': 'Britney Spears', 'keyword': 'BritneySpearsMV4K', 'pic': ''},
+        {'name': 'Justin Bieber', 'keyword': 'JustinBieberMV4K', 'pic': ''},
+        {'name': 'Ed Sheeran', 'keyword': 'EdSheeranMV4K', 'pic': ''},
+        {'name': 'Ariana Grande', 'keyword': 'ArianaGrandeMV4K', 'pic': ''},
+        {'name': 'Billie Eilish', 'keyword': 'BillieEilishMV4K', 'pic': ''},
+        {'name': 'Dua Lipa', 'keyword': 'DuaLipaMV4K', 'pic': ''},
+        {'name': 'Coldplay', 'keyword': 'ColdplayMV4K', 'pic': ''},
+        {'name': 'Maroon 5', 'keyword': 'Maroon5MV4K', 'pic': ''},
+        {'name': 'Linkin Park', 'keyword': 'LinkinParkMV4K', 'pic': ''},
+        {'name': 'Queen', 'keyword': 'QueenMV4K', 'pic': ''},
+        {'name': 'Elvis Presley', 'keyword': 'ElvisPresleyMV4K', 'pic': ''},
+        {'name': 'Madonna', 'keyword': 'MadonnaMV4K', 'pic': ''},
+        {'name': 'Rihanna', 'keyword': 'RihannaMV4K', 'pic': ''},
+        {'name': 'Katy Perry', 'keyword': 'KatyPerryMV4K', 'pic': ''},
+        {'name': 'Shakira', 'keyword': 'ShakiraMV4K', 'pic': ''},
+        {'name': 'Bruno Mars', 'keyword': 'BrunoMarsMV4K', 'pic': ''},
+        {'name': 'Charlie Puth', 'keyword': 'CharliePuthMV4K', 'pic': ''},
+        {'name': 'Post Malone', 'keyword': 'PostMaloneMV4K', 'pic': ''},
+        {'name': 'Doja Cat', 'keyword': 'DojaCatMV4K', 'pic': ''},
     ]
 
     def format_views(self, num):
@@ -166,7 +230,7 @@ class Spider(Spider):
                     remarks = f"{num:.1f}播放量"
 
                 video = {
-                    "vod_id": id,
+                    "vod_id": f"{cid}|{id}",
                     "vod_name": name.replace('<em class="keyword">', '').replace('</em>', ''),
                     "vod_pic": pic,
                     "vod_remarks": remarks
@@ -208,7 +272,7 @@ class Spider(Spider):
                 remarks = f"{num:.1f}播放量"
 
             video = {
-                "vod_id": id,
+                "vod_id": f"{cid}|{id}",
                 "vod_name": name.replace('<em class="keyword">', '').replace('</em>', ''),
                 "vod_pic": pic,
                 "vod_remarks": remarks
@@ -226,7 +290,15 @@ class Spider(Spider):
         result = {}
         videos = []
         did = ids[0]
-        url = f'https://www.bilibili.com/video/{did}'
+
+        category_keyword = ""
+        bvid = did
+        if '|' in did:
+            parts = did.split('|', 1)
+            category_keyword = parts[0]
+            bvid = parts[1]
+
+        url = f'https://www.bilibili.com/video/{bvid}'
         res = requests.get(url=url, headers=headerx)
         res.encoding = "utf-8"
         res_text = res.text
@@ -286,10 +358,42 @@ class Spider(Spider):
         available_video_list = kjson.get('availableVideoList', [])
         if available_video_list and len(available_video_list) > 0:
             for i in available_video_list[0]['list']:
-                play_url += i['title'] + '$' + f'https://www.bilibili.com/video/{did}?p=' + str(i['p']) + '#'
+                play_url += i['title'] + '$' + f'https://www.bilibili.com/video/{bvid}?p=' + str(i['p']) + '#'
             play_url = play_url[:-1]
         else:
-            play_url = f"正片$https://www.bilibili.com/video/{did}"
+            play_url = f"正片$https://www.bilibili.com/video/{bvid}"
+
+        category_videos_url = ""
+        if category_keyword:
+            try:
+                keyword = category_keyword.replace('artist_', '', 1) if category_keyword.startswith('artist_') else category_keyword
+                keyword = keyword.replace('search_', '', 1) if keyword.startswith('search_') else keyword
+                category_api = f'{xurl}/x/web-interface/wbi/search/type?search_type=video&__refresh__=true&page=1&page_size=100&keyword={keyword}'
+                category_res = requests.get(url=category_api, headers=headers)
+                category_res.encoding = "utf-8"
+                category_kjson = json.loads(category_res.text)
+
+                seen_bvids = set()
+                for item in category_kjson.get('data', {}).get('result', []):
+                    item_bvid = str(item.get('bvid', ''))
+                    if not item_bvid or item_bvid in seen_bvids:
+                        continue
+                    seen_bvids.add(item_bvid)
+
+                    item_title = item.get('title', '未知视频').replace('<em class="keyword">', '').replace('</em>', '')
+                    item_title = item_title.replace('#', '﹟').replace('$', '﹩')
+                    item_play = item.get('play', 0)
+                    item_url = f"https://www.bilibili.com/video/{item_bvid}"
+
+                    if item_bvid == bvid:
+                        category_videos_url = f"{item_title}【{self.format_number(item_play)}】${item_url}#" + category_videos_url
+                    else:
+                        category_videos_url += f"{item_title}【{self.format_number(item_play)}】${item_url}#"
+
+                category_videos_url = category_videos_url.rstrip("#")
+
+            except Exception as e:
+                category_videos_url = ""
 
         related_play_url = ""
         aid = video_data.get('aid', '')
@@ -302,7 +406,7 @@ class Spider(Spider):
                     related_data = related_res.get("data", [])
                     for i, related_video in enumerate(related_data[:99999]):
                         related_title = related_video.get("title", f"相关视频{i+1}")
-                        related_bvid = related_video.get("bvid", "")
+                        related_bvid_item = related_video.get("bvid", "")
 
                         if not related_title or related_title == f"相关视频{i+1}":
                             related_title = f"相关推荐{i+1}"
@@ -312,8 +416,8 @@ class Spider(Spider):
                         related_stat = related_video.get('stat', {})
                         related_views = related_stat.get('view', 0)
 
-                        if related_bvid:
-                            related_video_url = f"https://www.bilibili.com/video/{related_bvid}"
+                        if related_bvid_item:
+                            related_video_url = f"https://www.bilibili.com/video/{related_bvid_item}"
                             related_play_url += f"{related_title}【{self.format_number(related_views)}】${related_video_url}#"
 
                     related_play_url = related_play_url.rstrip("#")
@@ -321,11 +425,17 @@ class Spider(Spider):
             except Exception:
                 pass
 
-        if related_play_url:
-            vod_play_from = "B站MV$$$相关推荐"
-            vod_play_url = f"{play_url}$$${related_play_url}"
+        if category_videos_url and related_play_url:
+            vod_play_from = "当前分类[源力软件汇]$$$相关推荐"
+            vod_play_url = f"{category_videos_url}$$$${related_play_url}"
+        elif category_videos_url:
+            vod_play_from = '当前分类[源力软件汇]'
+            vod_play_url = category_videos_url
+        elif related_play_url:
+            vod_play_from = "相关推荐[源力软件汇]"
+            vod_play_url = related_play_url
         else:
-            vod_play_from = 'B站MV'
+            vod_play_from = 'B站MV[源力软件汇]'
             vod_play_url = play_url
 
         remark_info = f"播放:{self.format_number(view_count)} · 弹幕:{self.format_number(danmaku_count)} · 点赞:{self.format_number(like_count)} · 投币:{self.format_number(coin_count)}"
@@ -432,7 +542,7 @@ class Spider(Spider):
                 remarks = f"{num:.1f}播放量"
 
             video = {
-                "vod_id": id,
+                "vod_id": f"search_{key}|{id}",
                 "vod_name": name.replace('<em class="keyword">', '').replace('</em>', ''),
                 "vod_pic": pic,
                 "vod_remarks": remarks
