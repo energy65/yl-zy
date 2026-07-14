@@ -45,6 +45,31 @@ class Spider(Spider):
             ("超清320K", "exhigh", 320000),
             ("无损APE", "lossless", 999000),
         ]
+        self._precache_data()
+
+    def _precache_data(self):
+        try:
+            precache_urls = [
+                "https://music.163.com/api/personalized/playlist?limit=30&offset=0",
+                "https://music.163.com/api/toplist",
+                "https://music.163.com/api/personalized/newsong",
+            ]
+            futures = []
+            for url in precache_urls:
+                future = self.executor.submit(self._get, url, timeout=10)
+                futures.append(future)
+            
+            for i, future in enumerate(futures):
+                try:
+                    data = future.result()
+                    if data.get("code") == 200:
+                        print(f"预缓存成功: {precache_urls[i]}")
+                    else:
+                        print(f"预缓存失败: {precache_urls[i]}")
+                except Exception as e:
+                    print(f"预缓存异常: {precache_urls[i]} - {e}")
+        except Exception as e:
+            print("预缓存初始化失败:", e)
 
     def getName(self):
         return "网易云音乐"
@@ -147,6 +172,9 @@ class Spider(Spider):
                 aid = tid.replace("artist_detail_", "")
                 detail = self._get_artist_detail(aid)
                 result["list"] = detail["list"]
+            elif tid == "new_songs_detail":
+                detail = self._get_new_songs_detail()
+                result["list"] = detail["list"]
             else:
                 result["list"] = self._get_playlists(pg)
         except Exception as e:
@@ -245,33 +273,25 @@ class Spider(Spider):
             data = self._get("https://music.163.com/api/personalized/newsong", timeout=8)
             if data.get("code") == 200:
                 result_list = data.get("result", [])
-                for item in result_list[:30]:
-                    song = item.get("song", item)
-                    sid = song.get("id", "")
-                    name = song.get("name", "")
-                    artist = self._get_song_artist(song)
-                    pic = self._get_song_pic(song)
-                    full_name = name + (" - " + artist if artist else "")
+                if result_list:
                     result.append({
-                        "vod_id": "song_" + str(sid),
-                        "vod_name": full_name,
-                        "vod_pic": pic,
-                        "vod_remarks": "新歌",
-                        "style": {"type": "rect", "ratio": 1.33}
+                        "vod_id": "new_songs_detail",
+                        "vod_name": "新歌速递",
+                        "vod_pic": "",
+                        "vod_remarks": "最新发布",
+                        "vod_tag": "folder"
                     })
         except Exception as e:
             print("_get_new_songs error:", e)
 
         if not result:
-            default = [("新歌榜", "3779629"), ("飙升榜", "19723756"), ("热歌榜", "3778678")]
-            for name, pid in default:
-                result.append({
-                    "vod_id": "bang_detail_" + pid,
-                    "vod_name": name,
-                    "vod_pic": "",
-                    "vod_remarks": "官方榜单",
-                    "vod_tag": "folder"
-                })
+            result.append({
+                "vod_id": "new_songs_detail",
+                "vod_name": "新歌速递",
+                "vod_pic": "",
+                "vod_remarks": "最新发布",
+                "vod_tag": "folder"
+            })
         return result
 
     def _get_mv_list(self, pg=1):
@@ -409,6 +429,8 @@ class Spider(Spider):
             elif vid.startswith("mv_"):
                 mvid = vid.replace("mv_", "")
                 return self._get_mv_detail_vod(mvid)
+            elif vid == "new_songs_detail":
+                return self._get_new_songs_detail()
             else:
                 return self._get_song_detail_vod(vid)
         except Exception as e:
@@ -584,6 +606,45 @@ class Spider(Spider):
         except Exception as e:
             print("_get_fallback_songs error:", e)
         return songs
+
+    def _get_new_songs_detail(self):
+        songs = []
+        vod_name = "新歌速递"
+        vod_pic = ""
+        vod_content = ""
+
+        try:
+            data = self._get("https://music.163.com/api/personalized/newsong", timeout=15)
+            if data.get("code") == 200:
+                result_list = data.get("result", [])
+                seen = set()
+                for item in result_list:
+                    song = item.get("song", item)
+                    sid = str(song.get("id", ""))
+                    if sid and sid not in seen:
+                        seen.add(sid)
+                        name = song.get("name", "")
+                        artist = self._get_song_artist(song)
+                        pic = self._get_song_pic(song)
+                        songs.append({"id": sid, "name": name, "artist": artist, "pic": pic})
+        except Exception as e:
+            print("_get_new_songs_detail error:", e)
+
+        if not songs:
+            songs = self._get_fallback_songs("新歌")
+
+        play_arr, play_pics = self._build_play_lines(songs)
+        vod = self._build_vod_with_qualities(
+            "new_songs_detail",
+            vod_name,
+            vod_pic or (play_pics[0] if play_pics else ""),
+            vod_content,
+            "歌曲 : " + str(len(play_arr)) + "首",
+            "网易云音乐",
+            play_arr,
+            play_pics
+        )
+        return {"list": [vod]}
 
     def _get_song_detail_vod(self, song_id):
         songs = []
