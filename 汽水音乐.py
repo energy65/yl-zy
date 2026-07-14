@@ -44,7 +44,6 @@ class Spider(Spider):
             ("无损APE", 2000, "ape"),
         ]
         self.classes = [
-            {'type_id': 'hot', 'type_name': '热门推荐'},
             {'type_id': 'douyin_hot', 'type_name': '抖音热歌'},
             {'type_id': 'new_song', 'type_name': '新歌速递'},
             {'type_id': 'pl_kuwo', 'type_name': '酷我歌单'},
@@ -108,7 +107,7 @@ class Spider(Spider):
         return result
 
     def homeVideoContent(self):
-        return self.categoryContent('hot', 1, False, {})
+        return self.categoryContent('douyin_hot', 1, False, {})
 
     def categoryContent(self, tid, pg, filter, extend):
         try:
@@ -121,8 +120,6 @@ class Spider(Spider):
             elif tid.startswith('pl_detail_'):
                 playlist_id = tid.replace('pl_detail_', '')
                 return self._get_playlist_songs_list(playlist_id, pg)
-            elif tid == 'hot':
-                return self._get_hot_songs(pg)
             elif tid == 'douyin_hot':
                 return self._get_douyin_hot(pg)
             elif tid == 'new_song':
@@ -130,7 +127,7 @@ class Spider(Spider):
             elif tid == 'pl_kuwo':
                 return self._get_kuwo_playlist_list(pg)
             else:
-                return self._get_hot_songs(pg)
+                return {'list': [], 'page': pg, 'pagecount': 0, 'limit': 30, 'total': 0}
         except Exception as e:
             print(f"categoryContent error: {e}")
             return {'list': [], 'page': pg, 'pagecount': 0, 'limit': 30, 'total': 0}
@@ -138,7 +135,11 @@ class Spider(Spider):
     def detailContent(self, ids):
         try:
             vid = ids[0].strip() if isinstance(ids, list) else ids.strip()
-            if vid.startswith('song_'):
+            if vid.startswith('douyin_hot_'):
+                return self._get_douyin_hot_all_songs_detail(vid)
+            elif vid.startswith('new_song_'):
+                return self._get_new_songs_all_songs_detail(vid)
+            elif vid.startswith('song_'):
                 return self._get_song_detail(vid)
             elif vid.startswith('artist_detail_'):
                 artist_id = vid.replace('artist_detail_', '')
@@ -417,13 +418,17 @@ class Spider(Spider):
     def _get_douyin_hot(self, pg=1):
         vods = self._search_kuwo('抖音热歌', pg)
         if not vods.get('list'):
-            return self._get_hot_songs(pg)
+            vods = self._get_hot_songs(pg)
+        for item in vods['list']:
+            item['vod_id'] = 'douyin_hot_' + item['vod_id']
         return vods
 
     def _get_new_songs(self, pg=1):
         vods = self._search_kuwo('2024新歌', pg)
         if not vods.get('list'):
-            return self._get_hot_songs(pg)
+            vods = self._get_hot_songs(pg)
+        for item in vods['list']:
+            item['vod_id'] = 'new_song_' + item['vod_id']
         return vods
 
     def _get_kuwo_playlist_list(self, pg=1):
@@ -655,6 +660,80 @@ class Spider(Spider):
         if pl_pic:
             vod['vod_play_pic'] = '$$$'.join([pl_pic for _ in qualities])
             vod['vod_play_pic_ratio'] = 1.5
+
+        return {'list': [vod]}
+
+    def _get_douyin_hot_all_songs_detail(self, vid):
+        all_songs = []
+        try:
+            for pg in range(1, 10):
+                vods = self._search_kuwo('抖音热歌', pg)
+                song_list = vods.get('list', [])
+                if not song_list:
+                    break
+                for item in song_list:
+                    rid = item['vod_id'].replace('song_', '')
+                    all_songs.append(f"{item['vod_name']}${rid}")
+                if len(all_songs) >= 200:
+                    break
+        except Exception as e:
+            print(f"_get_douyin_hot_all_songs_detail error: {e}")
+
+        if not all_songs:
+            return {'list': []}
+
+        song_list_str = '#'.join(all_songs)
+        qualities = ['标准128K', '高清192K', '超清320K', '无损APE']
+        vod_play_from = '$$$'.join(qualities)
+        vod_play_url = '$$$'.join([song_list_str for _ in qualities])
+
+        prefix = '微信公众号"源力软件汇" '
+        vod = {
+            'vod_id': vid,
+            'vod_name': '抖音热歌',
+            'vod_pic': '',
+            'vod_content': f'{prefix}抖音热歌分类，共{len(all_songs)}首歌曲',
+            'vod_remarks': f"歌曲 : {len(all_songs)}首",
+            'vod_play_from': vod_play_from,
+            'vod_play_url': vod_play_url,
+        }
+
+        return {'list': [vod]}
+
+    def _get_new_songs_all_songs_detail(self, vid):
+        all_songs = []
+        try:
+            for pg in range(1, 10):
+                vods = self._search_kuwo('2024新歌', pg)
+                song_list = vods.get('list', [])
+                if not song_list:
+                    break
+                for item in song_list:
+                    rid = item['vod_id'].replace('song_', '')
+                    all_songs.append(f"{item['vod_name']}${rid}")
+                if len(all_songs) >= 200:
+                    break
+        except Exception as e:
+            print(f"_get_new_songs_all_songs_detail error: {e}")
+
+        if not all_songs:
+            return {'list': []}
+
+        song_list_str = '#'.join(all_songs)
+        qualities = ['标准128K', '高清192K', '超清320K', '无损APE']
+        vod_play_from = '$$$'.join(qualities)
+        vod_play_url = '$$$'.join([song_list_str for _ in qualities])
+
+        prefix = '微信公众号"源力软件汇" '
+        vod = {
+            'vod_id': vid,
+            'vod_name': '新歌速递',
+            'vod_pic': '',
+            'vod_content': f'{prefix}新歌速递分类，共{len(all_songs)}首歌曲',
+            'vod_remarks': f"歌曲 : {len(all_songs)}首",
+            'vod_play_from': vod_play_from,
+            'vod_play_url': vod_play_url,
+        }
 
         return {'list': [vod]}
 
