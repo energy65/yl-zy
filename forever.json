@@ -274,7 +274,33 @@
           "searchable": 1,
           "type": 3
         },
-		
+				                     {
+          "key": "枫叶影院 PY",
+          "name": "👌枫叶影院丨PY[4k影视]",
+          "api": "./枫叶影院.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+		                        {
+          "key": "4k-av PY",
+          "name": "4k-av丨PY",
+          "api": "./4k-av.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+		                 {
+          "key": "pomo666 PY",
+          "name": "👌pomo666丨PY",
+          "api": "./pomo666.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
 		 {
             "key": "鹊桥",
             "name": "👌鹊桥｜json[影视] ",
