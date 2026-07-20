@@ -27,6 +27,7 @@ class Spider(Spider):
             ("高清192K", 192, "mp3"),
             ("标准128K", 128, "mp3"),
         ]
+        self.DEFAULT_SONG_PIC = "https://img.kuwo.cn/star/albumcover/500/673009.jpg"
         self.classes = [
             {'type_id': 'pl_hot', 'type_name': '热门歌单'},
             {'type_id': 'pl_new', 'type_name': '新歌歌单'},
@@ -184,10 +185,36 @@ class Spider(Spider):
                 '无损APE': (2000, 'ape'),
             }
 
+            unsupported_formats = ['ape']
+
+            def get_valid_url(rid, target_bitrate, target_format):
+                play_url = self._get_song_url(rid, target_bitrate)
+                if play_url and play_url.startswith('http'):
+                    url_lower = play_url.lower()
+                    for fmt in unsupported_formats:
+                        if f'.{fmt}' in url_lower or f'format${fmt}' in url_lower or f'format={fmt}' in url_lower:
+                            return None
+                    return play_url
+                return None
+
+            play_url = ""
             if flag and flag in quality_map:
                 bitrate, fmt = quality_map[flag]
-                play_url = self._get_song_url(rid, bitrate)
-            else:
+                play_url = get_valid_url(rid, bitrate, fmt)
+                if not play_url:
+                    for q_name, (br, f) in quality_map.items():
+                        if q_name != flag:
+                            play_url = get_valid_url(rid, br, f)
+                            if play_url:
+                                break
+
+            if not play_url:
+                for q_name, (br, f) in quality_map.items():
+                    play_url = get_valid_url(rid, br, f)
+                    if play_url:
+                        break
+
+            if not play_url:
                 play_url = self._get_song_url_with_fallback(rid)
 
             if not play_url:
@@ -331,6 +358,7 @@ class Spider(Spider):
 
     def _get_playlist_detail(self, pid):
         play_arr = []
+        pic_arr = []
         vod_name = '酷我歌单'
         vod_pic = ''
         vod_content = ''
@@ -350,11 +378,13 @@ class Spider(Spider):
                 rid = str(it.get('id', '')) if it.get('id') is not None else ''
                 song = str(it.get('name', it.get('SONGNAME', it.get('displaysongname', ''))))
                 artist = str(it.get('artist', it.get('ARTIST', it.get('FARTIST', it.get('displayartistname', '')))))
+                albumpic = it.get('albumpic', '')
 
                 if rid and song:
                     display_name = f"{song} - {artist}" if artist else song
                     display_name = re.sub(r'[$#]', '', display_name).strip()
                     play_arr.append(f"{display_name}${rid}")
+                    pic_arr.append(albumpic if albumpic else self.DEFAULT_SONG_PIC)
 
             if total > 100:
                 pages = (total + 99) // 100
@@ -370,10 +400,12 @@ class Spider(Spider):
                             rid = str(it.get('id', '')) if it.get('id') is not None else ''
                             song = str(it.get('name', it.get('SONGNAME', it.get('displaysongname', ''))))
                             artist = str(it.get('artist', it.get('ARTIST', it.get('FARTIST', it.get('displayartistname', '')))))
+                            albumpic = it.get('albumpic', '')
                             if rid and song:
                                 display_name = f"{song} - {artist}" if artist else song
                                 display_name = re.sub(r'[$#]', '', display_name).strip()
                                 play_arr.append(f"{display_name}${rid}")
+                                pic_arr.append(albumpic if albumpic else self.DEFAULT_SONG_PIC)
                     except Exception:
                         break
         except Exception as e:
@@ -384,12 +416,15 @@ class Spider(Spider):
             for item in search_result.get('list', []):
                 rid = item['vod_id'].replace('song_', '')
                 play_arr.append(f"{item['vod_name']}${rid}")
+                pic_arr.append(item.get('vod_pic', '') or self.DEFAULT_SONG_PIC)
             vod_name = vod_name or '热门歌曲'
 
         song_list = '#'.join(play_arr)
+        pic_list = '#'.join(pic_arr)
         qualities = ['标准128K', '高清192K', '超清320K', '无损APE']
         vod_play_from = '$$$'.join(qualities)
         vod_play_url = '$$$'.join([song_list for _ in qualities])
+        vod_play_pic = '$$$'.join([pic_list for _ in qualities])
 
         vod = {
             'vod_id': pid,
@@ -399,6 +434,8 @@ class Spider(Spider):
             'vod_remarks': f"歌曲 : {len(play_arr)}首",
             'vod_play_from': vod_play_from,
             'vod_play_url': vod_play_url,
+            'vod_play_pic': vod_play_pic,
+            'vod_play_pic_ratio': 1.0,
         }
 
         return {'list': [vod]}
@@ -472,6 +509,7 @@ class Spider(Spider):
 
     def _get_artist_detail(self, vid):
         play_arr = []
+        pic_arr = []
         artist_name = ''
 
         try:
@@ -488,6 +526,7 @@ class Spider(Spider):
                 rid = str(it.get('rid', it.get('id', '')))
                 song = str(it.get('name', ''))
                 artist = str(it.get('artist', it.get('singer', '')))
+                albumPic = it.get('albumPic', it.get('pic', ''))
 
                 if not artist_name and artist:
                     artist_name = artist
@@ -496,6 +535,7 @@ class Spider(Spider):
                     display_name = f"{song} - {artist}" if artist else song
                     display_name = re.sub(r'[$#]', '', display_name).strip()
                     play_arr.append(f"{display_name}${rid}")
+                    pic_arr.append(albumPic if albumPic else self.DEFAULT_SONG_PIC)
 
             if total > 100:
                 pages = (total + 99) // 100
@@ -512,10 +552,12 @@ class Spider(Spider):
                             rid = str(it.get('rid', it.get('id', '')))
                             song = str(it.get('name', ''))
                             artist = str(it.get('artist', it.get('singer', '')))
+                            albumPic = it.get('albumPic', it.get('pic', ''))
                             if rid and song:
                                 display_name = f"{song} - {artist}" if artist else song
                                 display_name = re.sub(r'[$#]', '', display_name).strip()
                                 play_arr.append(f"{display_name}${rid}")
+                                pic_arr.append(albumPic if albumPic else self.DEFAULT_SONG_PIC)
                     except Exception:
                         break
 
@@ -529,12 +571,15 @@ class Spider(Spider):
             for item in search_result.get('list', []):
                 rid = item['vod_id'].replace('song_', '')
                 play_arr.append(f"{item['vod_name']}${rid}")
+                pic_arr.append(item.get('vod_pic', '') or self.DEFAULT_SONG_PIC)
             artist_name = artist_name or '热门歌手'
 
         song_list = '#'.join(play_arr)
+        pic_list = '#'.join(pic_arr)
         qualities = ['标准128K', '高清192K', '超清320K', '无损APE']
         vod_play_from = '$$$'.join(qualities)
         vod_play_url = '$$$'.join([song_list for _ in qualities])
+        vod_play_pic = '$$$'.join([pic_list for _ in qualities])
 
         vod = {
             'vod_id': vid,
@@ -545,6 +590,8 @@ class Spider(Spider):
             'vod_actor': artist_name,
             'vod_play_from': vod_play_from,
             'vod_play_url': vod_play_url,
+            'vod_play_pic': vod_play_pic,
+            'vod_play_pic_ratio': 1.0,
         }
 
         return {'list': [vod]}
@@ -653,7 +700,7 @@ class Spider(Spider):
             song_name = song_info.get('name', '')
             artist = song_info.get('artist', '')
             album = song_info.get('album', '')
-            pic = song_info.get('pic', '')
+            pic = song_info.get('pic', '') or self.DEFAULT_SONG_PIC
 
             if not song_name:
                 song_name = f"歌曲_{song_id}"
@@ -717,12 +764,14 @@ class Spider(Spider):
             vod = {
                 "vod_id": vid,
                 "vod_name": f"歌曲_{song_id}",
-                "vod_pic": '',
+                "vod_pic": self.DEFAULT_SONG_PIC,
                 "vod_content": '微信公众号：源力软件汇',
                 "vod_remarks": '酷我音乐',
                 "vod_actor": '',
                 "vod_play_from": '标准音质',
                 "vod_play_url": f"歌曲_{song_id}${song_id}",
+                "vod_play_pic": self.DEFAULT_SONG_PIC,
+                "vod_play_pic_ratio": 1.0,
             }
             result["list"] = [vod]
 
@@ -811,7 +860,7 @@ class Spider(Spider):
 
     def _get_song_url_v3(self, rid):
         try:
-            api_url = f"https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid={rid}&br=320kmp3"
+            api_url = f"https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid={rid}&br=320kmp3&format=mp3"
             r = self.fetch(api_url, headers=self.mobile_headers, timeout=8)
             data = r.json()
             if data.get('data') and data['data'].get('url'):
@@ -822,7 +871,7 @@ class Spider(Spider):
 
     def _get_song_url(self, rid, bitrate=320):
         try:
-            format_type = 'ape' if bitrate >= 1000 else 'mp3'
+            format_type = 'mp3'
             api_url = f"https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid={rid}&bitrate={bitrate}&format={format_type}"
             r = self.fetch(api_url, headers=self.mobile_headers, timeout=5)
             data = r.json()
