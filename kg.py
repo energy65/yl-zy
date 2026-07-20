@@ -30,7 +30,8 @@ class Spider(Spider):
             ("超清320K", "320", 320),
             ("无损APE", "ape", 2000),
         ]
-        self.wx_gzh = "源力软件汇"
+        self.wx_gzh = "与哪里软件汇"
+        self.default_pic = "https://cdn-icons-png.flaticon.com/512/2111/2111270.png"
         self.artist_type_map = {
             'artist_hot': '0',
             'artist_cn': '1',
@@ -194,12 +195,21 @@ class Spider(Spider):
                 clean_flag = flag.split(' - ')[0].strip()
 
             play_url = ''
+            
             if clean_flag and clean_flag in quality_map:
                 bitrate, fmt = quality_map[clean_flag]
                 play_url = self._get_play_url_by_quality(hash_val, bitrate, fmt, song_name_hint, artist_hint)
 
             if not play_url:
                 play_url = self._get_play_url(hash_val, song_name_hint, artist_hint)
+
+            if not play_url:
+                for q_name, (bitrate, fmt) in quality_map.items():
+                    if q_name == clean_flag:
+                        continue
+                    play_url = self._get_play_url_by_quality(hash_val, bitrate, fmt, song_name_hint, artist_hint)
+                    if play_url:
+                        break
 
             if not play_url:
                 result["parse"] = 0
@@ -421,8 +431,9 @@ class Spider(Spider):
             'vod_play_from': vod_play_from,
             'vod_play_url': vod_play_url,
         }
-        if play_pics:
-            vod['vod_play_pic'] = '$$$'.join([play_pics[0] for _ in qualities])
+        play_pic_list = [p if p and p.startswith('http') else self.default_pic for p in play_pics]
+        if play_pic_list:
+            vod['vod_play_pic'] = '$$$'.join(['#'.join(play_pic_list) for _ in qualities])
             vod['vod_play_pic_ratio'] = 1.5
 
         return {'list': [vod]}
@@ -660,8 +671,9 @@ class Spider(Spider):
             'vod_play_from': vod_play_from,
             'vod_play_url': vod_play_url,
         }
-        if play_pics:
-            vod['vod_play_pic'] = '$$$'.join([play_pics[0] for _ in qualities])
+        play_pic_list = [p if p and p.startswith('http') else self.default_pic for p in play_pics]
+        if play_pic_list:
+            vod['vod_play_pic'] = '$$$'.join(['#'.join(play_pic_list) for _ in qualities])
             vod['vod_play_pic_ratio'] = 1.5
 
         return {'list': [vod]}
@@ -865,8 +877,9 @@ class Spider(Spider):
             'vod_play_from': vod_play_from,
             'vod_play_url': vod_play_url,
         }
-        if play_pics:
-            vod['vod_play_pic'] = '$$$'.join([play_pics[0] for _ in qualities])
+        play_pic_list = [p if p and p.startswith('http') else self.default_pic for p in play_pics]
+        if play_pic_list:
+            vod['vod_play_pic'] = '$$$'.join(['#'.join(play_pic_list) for _ in qualities])
             vod['vod_play_pic_ratio'] = 1.5
 
         return {'list': [vod]}
@@ -949,19 +962,19 @@ class Spider(Spider):
                 if clean_lines:
                     content += "\n\n--- 歌词 ---\n" + '\n'.join(clean_lines[:30])
 
+            song_pic = pic if pic and pic.startswith('http') else self.default_pic
             vod = {
                 "vod_id": vid,
                 "vod_name": song_name,
-                "vod_pic": pic,
+                "vod_pic": song_pic,
                 "vod_content": content,
                 "vod_remarks": album or '酷狗音乐',
                 "vod_actor": artist,
                 "vod_play_from": '$$$'.join(play_from_arr),
                 "vod_play_url": '$$$'.join(play_url_arr),
             }
-            if pic:
-                vod['vod_play_pic'] = '$$$'.join([pic for _ in play_from_arr])
-                vod['vod_play_pic_ratio'] = 1.0
+            vod['vod_play_pic'] = '$$$'.join([song_pic for _ in play_from_arr])
+            vod['vod_play_pic_ratio'] = 1.0
 
             result["list"] = [vod]
         except Exception as e:
@@ -972,7 +985,7 @@ class Spider(Spider):
             vod = {
                 "vod_id": vid,
                 "vod_name": "歌曲_" + hash_val[:8],
-                "vod_pic": '',
+                "vod_pic": self.default_pic,
                 "vod_content": '微信公众号：' + self.wx_gzh + '\n福利多多，精彩多多\n酷狗音乐',
                 "vod_remarks": '酷狗音乐',
                 "vod_actor": '',
@@ -1249,6 +1262,8 @@ class Spider(Spider):
                         pic = 'https://' + pic.lstrip('/')
                     if pic and '{size}' in pic:
                         pic = pic.replace('{size}', '400')
+                    if not pic or not pic.startswith('http'):
+                        pic = self.default_pic
                     vods.append({
                         'vod_name': display_name,
                         'vod_id': 'song_' + hash_val,
