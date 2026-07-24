@@ -66,6 +66,26 @@
         ]
       }
     },
+	{ 
+             "key": "新腾极4k",
+      "name": "踏天中原4k-双煞🔥",
+      "type": 3,
+      "api": "http://wang.qijiyun.vip/yun2k/drpy_libs/drpy2.min.js",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "order_num": 0,
+      "changeable": 0,
+"ext": "http://8.148.229.212:802/4k踏天s1/lib/4k踏天TX.js"
+         },
+    {
+
+    "key": "芒果弹幕",
+   "name": "踏天中原4k-火舞🔥",
+      "type": 3,
+     "api": "http://8.148.229.212:802/tianyun4k/drpy_libs/drpy2.min.js",
+      "ext": "http://8.148.229.212:802/4k踏天s1/lib/4k踏天MG.js"
+	},
         {
             "key": "csp_iqiyi",
             "name": "👌爱qi艺[1080P]",
@@ -156,8 +176,17 @@
         },
 		{
           "key": "瓜子优质 PY",
-          "name": "👌瓜子优质丨PY[影视]",
+          "name": "👌瓜子优质丨[1080p]",
           "api": "./瓜子优质.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+        },
+		{
+          "key": "泥视频PY",
+          "name": "👌泥视频-优质丨[1080p]",
+          "api": "./泥视频.py",
           "filterable": 1,
           "quickSearch": 1,
           "searchable": 1,
