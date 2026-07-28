@@ -1684,12 +1684,6 @@
       "quickSearch": 0,
       "filterable": 0
     },
-	        {
-            "key": "网易云音乐",
-            "name": "🐬网易云｜音乐[音乐]",
-            "type": 3,
-            "api": "./网易云音乐.py"
-        },
 		{
             "key": "网易云音乐有MV",
             "name": "🐬网易云有MV｜音乐[音乐]",
@@ -1742,9 +1736,9 @@
           "type": 3
         },
 		                                         {
-          "key": "全民k歌 PY",
-          "name": "全民k歌丨PY[音乐]",
-          "api": "./全民k歌.py",
+          "key": "全民K歌 PY",
+          "name": "全民K歌丨PY[音乐]",
+          "api": "./全民K歌.py",
           "filterable": 1,
           "quickSearch": 1,
           "searchable": 1,
