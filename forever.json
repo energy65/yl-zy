@@ -260,7 +260,7 @@
         }, 
 		{
             "key": "哔嘀 PY",
-            "name": "哔嘀电影丨PY",
+            "name": "哔嘀电影丨[1080P]",
             "api": "./哔嘀电影.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -487,7 +487,17 @@
             "quickSearch": 1,
             "filterable": 1,
             "genre": "shortdrama"
-        }, {
+        }, 
+		{
+            "key": "红果PY",
+            "name": "👌红果丨PY",
+            "api": "./hongguo.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "藤藤",
             "name": "🐮4K线路1[4k影视]",
             "type": 3,
