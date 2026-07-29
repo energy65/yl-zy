@@ -66,7 +66,7 @@
         },
         {
             "key": "csp_iqiyi",
-            "name": "👌爱qi艺[1080P]",
+            "name": "👌爱qi艺[官源]",
             "type": 3,
             "api": "csp_iqiyi",
             "searchable": 1,
@@ -75,7 +75,7 @@
             "jar": "./琪琪家.jar"
         }, {
             "key": "csp_mgtv",
-            "name": "👌芒guotv[1080P]",
+            "name": "👌芒guotv[官源]",
             "type": 3,
             "api": "csp_mgtv",
             "searchable": 1,
@@ -84,7 +84,7 @@
             "jar": "./果果家.jar"
         }, {
             "key": "csp-youku",
-            "name": "👌youku[1080P]",
+            "name": "👌youku[官源]",
             "type": 3,
             "api": "csp_youku",
             "searchable": 1,
@@ -93,7 +93,7 @@
             "jar": "./库库家.jar"
         }, {
             "key": "爱腾讯",
-            "name": "👌腾xun[1080P]",
+            "name": "👌腾xun[官源]",
             "type": 3,
             "api": "./drpy2.min.js",
             "ext": "./qq.js"
@@ -123,7 +123,7 @@
             "type": 3
         }, {
             "key": "韩剧狗 PY",
-            "name": "韩剧狗丨PY[1080P]",
+            "name": "韩剧狗丨[1080P]",
             "api": "./韩剧狗.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -131,14 +131,14 @@
             "type": 3
         }, {
             "key": "奇乐影视",
-            "name": "奇乐影视[json]",
+            "name": "奇乐|[1080P]",
             "type": 3,
             "jar": "https://gh-proxy.org/https://raw.githubusercontent.com/energy65/yl/refs/heads/main/svip.txt",
             "api": "csp_XBPQ",
             "ext": "https://gh-proxy.org/https://raw.githubusercontent.com/energy65/yl/refs/heads/main/奇乐.json"
         }, {
             "key": "新闪雷js",
-            "name": "👌🏻新闪雷|影视[json]",
+            "name": "👌🏻新闪雷|[1080P]",
             "type": 3,
             "api": "https://gh-proxy.org/https://raw.githubusercontent.com/energy65/yl/refs/heads/main/drpy2.min.js",
             "ext": "https://gh-proxy.org/https://raw.githubusercontent.com/energy65/yl/refs/heads/main/闪雷.js"
@@ -152,7 +152,7 @@
             "type": 3
         }, {
             "key": "瓜子影视",
-            "name": "👌瓜子影视|[1080p影视]",
+            "name": "👌瓜子影视|[1080P]",
             "type": 3,
             "api": "csp_Gz360",
             "jar": "./yl6.jar"
@@ -166,20 +166,20 @@
             "type": 3
         }, {
             "key": "瓜子js",
-            "name": "👌瓜子|影视①[json]",
+            "name": "👌瓜子|[1080p]",
             "type": 3,
             "api": "https://ghfast.top/https://raw.githubusercontent.com/IY-CPU/IY/main/lib/drpy2.min.js",
             "ext": "./瓜子.js"
         }, {
             "key": "csp_Guazi",
-            "name": "👌🏻瓜子┃影视②[json]",
+            "name": "👌🏻瓜子┃[1080p]",
             "type": 3,
             "api": "csp_Guazi",
             "searchable": 1,
             "changeable": 1
         }, {
             "key": "csp_Jianpian",
-            "name": "👌🏻荐片┃影视[json]",
+            "name": "👌🏻荐片┃[1080P]",
             "type": 3,
             "api": "csp_Jianpian",
             "jar": "./ylnew.jar",
@@ -192,7 +192,7 @@
             }
         }, {
             "key": "永乐JS",
-            "name": "👌永乐丨JS[影视]",
+            "name": "👌永乐丨[1080p]",
             "type": 3,
             "api": "https://mpimg.cn/down.php/0338609bd59d7b27226f5a269ec97936.js",
             "style": {
@@ -202,7 +202,7 @@
             "changeable": 1
         }, {
             "key": "猎手PY",
-            "name": "👌猎手丨PY[影视]",
+            "name": "👌猎手丨[1080p]",
             "api": "https://mpimg.cn/down.php/60fab5ff33f0b0fd88f099ae3be708bf.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -210,7 +210,7 @@
             "type": 3
         }, {
             "key": "兄弟PY",
-            "name": "👌兄弟丨PY[影视]",
+            "name": "👌兄弟丨[1080p]",
             "api": "https://mpimg.cn/down.php/b1cdcf76574a0cb24d5b937d46458cdf.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -218,7 +218,7 @@
             "type": 3
         }, {
             "key": "袋鼠PY",
-            "name": "👌袋鼠丨PY[影视]",
+            "name": "👌袋鼠丨[1080p]",
             "api": "./袋鼠.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -226,7 +226,7 @@
             "type": 3
         }, {
             "key": "王者PY",
-            "name": "👌王者丨PY[影视]",
+            "name": "👌王者丨[1080p]",
             "api": "./王者TV.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -234,7 +234,7 @@
             "type": 3
         }, {
             "key": "布布PY",
-            "name": "👌布布丨PY[4k影视]",
+            "name": "👌布布丨[4k影视]",
             "api": "./布布.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -242,7 +242,7 @@
             "type": 3
         }, {
             "key": "libvioPY",
-            "name": "👌libvio丨PY[影视]",
+            "name": "👌libvio丨[1080P]",
             "api": "./libvio.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -250,7 +250,7 @@
             "type": 3
         }, {
             "key": "novip PY",
-            "name": "👌novip丨PY[影视]",
+            "name": "👌novip丨[1080P]",
             "api": "./novip.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -258,7 +258,7 @@
             "type": 3
         }, {
             "key": "开心影院PY",
-            "name": "👌开心影院丨PY[影视]",
+            "name": "👌开心影院丨[1080P]",
             "api": "./开心影院.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -266,7 +266,7 @@
             "type": 3
         }, {
             "key": "lsys PY",
-            "name": "👌绿色影视丨PY[影视]",
+            "name": "👌绿色影视丨[1080P]",
             "api": "./lsys.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -274,7 +274,7 @@
             "type": 3
         }, {
             "key": "韩剧TV PY",
-            "name": "👌韩剧TV丨PY[1080P]",
+            "name": "👌韩剧TV丨[1080P]",
             "api": "./韩剧TV.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -282,7 +282,7 @@
             "type": 3
         }, {
             "key": "枫叶影院 PY",
-            "name": "👌枫叶影院丨PY[4k影视]",
+            "name": "👌枫叶影院丨[4k影视]",
             "api": "./枫叶影院.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -290,7 +290,7 @@
             "type": 3
         }, {
             "key": "蝴蝶影视4k PY",
-            "name": "👌蝴蝶影视4k丨PY[4k影视]",
+            "name": "👌蝴蝶影视4k丨[4k影视]",
             "api": "./枫叶影院.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -298,14 +298,14 @@
             "type": 3
         }, {
             "key": "电影侠4k PY",
-            "name": "👌电影侠4k丨PY[4k影视]",
+            "name": "👌电影侠4k丨[4k影视]",
             "api": "./电影侠.py",
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
         }, {
             "key": "4k-av PY",
-            "name": "4k-av丨PY",
+            "name": "4k-av丨[4k影视]",
             "api": "./4k-av.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -321,7 +321,7 @@
             "type": 3
         }, {
             "key": "鹊桥",
-            "name": "👌鹊桥｜json[影视] ",
+            "name": "👌鹊桥｜[1080P] ",
             "type": 3,
             "api": "csp_XBPQ",
             "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
@@ -336,7 +336,7 @@
             }
         }, {
             "key": "四叶草",
-            "name": "👌四叶草[影视]",
+            "name": "👌四叶草[1080P]",
             "type": 3,
             "api": "https://pan.szfx.top/down.php/08343ea7d5d8d12da1c16f9ccf03040d.js",
             "ext": {
@@ -348,7 +348,7 @@
             }
         }, {
             "key": "好好看App",
-            "name": "好好看App[影视]",
+            "name": "好好看App[1080P]",
             "type": 3,
             "jar": "./hhk.jar",
             "api": "csp_XBPQ",
@@ -360,14 +360,14 @@
             }
         }, {
             "key": "可可影视",
-            "name": "可可影视[影视]",
+            "name": "可可影视[1080P]",
             "type": 3,
             "api": "csp_XBPQ",
             "jar": "./1118.jar",
             "ext": "./kkys.json"
         }, {
             "key": "奈飞电影",
-            "name": "奈飞电影[影视]",
+            "name": "奈飞电影[1080P]",
             "type": 3,
             "api": "csp_XBPQ",
             "timeout": 60,
@@ -376,14 +376,14 @@
             "类型": "电影"
         }, {
             "key": "柠檬",
-            "name": "👌柠檬|影视[影视]",
+            "name": "👌柠檬|影视[1080P]",
             "type": 3,
             "api": "csp_Nmvod",
             "playerType": 2,
             "jar": "./柠檬.jar",
             "ext": "7lj763gg402i7942503g839jg74h8h88highi40799jh6i6k454419l0l5184k0g549h0kg2i01i838i2h42g891lgg1"
         }, {
-            "name": "👌橘汁|影视[影视]",
+            "name": "👌橘汁|影视[1080P]",
             "key": "Juzhi",
             "type": 3,
             "jar": "./Juzhi_spider.jar",
@@ -399,13 +399,13 @@
             }
         }, {
             "key": "csp_SaoHuo",
-            "name": "👌骚火|影视[影视]",
+            "name": "👌骚火|影视[1080P]",
             "type": 3,
             "jar": "./骚火🔥.jar",
             "api": "csp_SaoHuo"
         }, {
             "key": "狐狸磁力",
-            "name": "🦊狐狸|磁力[影视]",
+            "name": "🦊狐狸|磁力[1080P]",
             "type": 3,
             "api": "csp_XBPQ",
             "searchable": 1,
@@ -415,7 +415,7 @@
             "ext": "./狐狸磁力.json"
         }, {
             "key": "New6v",
-            "name": "🐮New6V｜磁力[影视]",
+            "name": "🐮New6V｜磁力[1080P]",
             "type": 3,
             "api": "csp_New6v",
             "searchable": 1,
@@ -425,7 +425,7 @@
             "ext": "https://www.xb6v.com"
         }, {
             "key": "美剧迷",
-            "name": "🦅美剧迷｜磁力[影视]",
+            "name": "🦅美剧迷｜磁力[1080P]",
             "type": 3,
             "api": "csp_MeijuMi",
             "jar": "./svip.jar",
@@ -523,7 +523,7 @@
             "playUrl": "json:https://jiexi.jdyx.pro/api/?key=69db80070c205190ba29265369377793&url="
         }, {
             "key": "星辰",
-            "name": "星辰TV[影视]",
+            "name": "星辰TV[1080P]",
             "type": 3,
             "searchable": 1,
             "api": "./SM2.py",
@@ -538,7 +538,7 @@
             }
         }, {
             "key": "剧圈圈⁹⁹",
-            "name": " ᵖʸ剧圈圈⁹⁹| APP[影视]",
+            "name": " ᵖʸ剧圈圈⁹⁹| APP[1080P]",
             "type": 3,
             "api": "./99APP.py",
             "ext": {
@@ -1334,7 +1334,7 @@
             "type": 3
         }, {
             "key": "DJ音乐网 PY",
-            "name": "👌DJ音乐网丨PY[音乐]",
+            "name": "👌DJ音乐网丨[音乐]",
             "api": "./DJ音乐网.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1373,7 +1373,7 @@
             "type": 3
         }, {
             "key": "kuwo PY",
-            "name": "👌kuwo丨PY[音乐]",
+            "name": "👌kuwo丨[音乐]",
             "api": "./kuwo.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1381,7 +1381,7 @@
             "type": 3
         }, {
             "key": "布谷音乐 PY",
-            "name": "👌布谷音乐丨PY[音乐]",
+            "name": "👌布谷音乐丨[音乐]",
             "api": "./布谷音乐.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1389,7 +1389,7 @@
             "type": 3
         }, {
             "key": "汽水 PY",
-            "name": "👌汽水丨PY[音乐]",
+            "name": "👌汽水丨[音乐]",
             "api": "./汽水音乐.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1397,7 +1397,7 @@
             "type": 3
         }, {
             "key": "🐶kugou PY",
-            "name": "🐶kugou丨PY[音乐]",
+            "name": "🐶kugou丨[音乐]",
             "api": "./kg.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1405,14 +1405,14 @@
             "type": 3
         }, {
             "key": "全民K歌 PY",
-            "name": "全民K歌丨PY[音乐]",
+            "name": "全民K歌丨[音乐]",
             "api": "./全民K歌.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
         }, {
-            "key": "hige-捐赠版 | PY[音乐]",
+            "key": "hige-捐赠版 | [音乐]",
             "name": "👌hige-捐赠版丨PY",
             "api": "./hige-捐赠版.py",
             "filterable": 1,
@@ -1421,7 +1421,7 @@
             "type": 3
         }, {
             "key": "喜马拉雅 PY",
-            "name": "喜马拉雅丨PY[音乐]",
+            "name": "喜马拉雅丨[音乐]",
             "api": "./喜马拉雅.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1429,7 +1429,7 @@
             "type": 3
         }, {
             "key": "悦听 PY",
-            "name": "👌悦听丨PY[音乐]",
+            "name": "👌悦听丨[音乐]",
             "api": "./悦听.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1437,7 +1437,7 @@
             "type": 3
         }, {
             "key": "bili_mv PY",
-            "name": "bili_mv丨PY[音乐]",
+            "name": "bili_mv丨[音乐]",
             "api": "./bili_mv.py",
             "filterable": 1,
             "quickSearch": 1,
