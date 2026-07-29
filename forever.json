@@ -799,9 +799,9 @@
                  # "sites": "https://www.xn--wcv59z.com/",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "csp_QiWei",
              # "name": "👀其他┃4K",
@@ -811,7 +811,7 @@
              # "searchable": 1,
              # "changeable": 0
              #
-        },
+        #},
          # {
              # "key": "csp_SeedHub",
              # "name": "🧲Seed┃Hub",
@@ -821,7 +821,7 @@
              # "searchable": 1,
              # "changeable": 0
              #
-        },
+        #},
          # {
              # "key": "csp_Xxzn",
              # "name": "👀4K┃指南",
@@ -835,9 +835,9 @@
                  # "filters": "./xxzn.json",
                  # "sites": "https://4kzn.com"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "csp_Wogg",
              # "name": "👀玩偶┃哥哥",
@@ -852,9 +852,9 @@
                  # "filters": "./wogg.json",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "欧歌网盘",
              # "name": "👀欧歌┃网盘",
@@ -869,9 +869,9 @@
                  # "filters": "./wogg2.json",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "蜡笔网盘",
              # "name": "👀蜡笔┃网盘",
@@ -886,9 +886,9 @@
                  # "filters": "./wogg2.json",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "闪电网盘",
              # "name": "👀闪电┃网盘",
@@ -903,9 +903,9 @@
                  # "filters": "./wogg2.json",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "二小网盘",
              # "name": "👀二小┃网盘",
@@ -920,9 +920,9 @@
                  # "filters": "./wogg2.json",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "木偶网盘",
              # "name": "👀木偶┃网盘",
@@ -937,9 +937,9 @@
                  # "filters": "./wogg2.json",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "至臻网盘",
              # "name": "👀至臻┃网盘",
@@ -954,9 +954,9 @@
                  # "filters": "./wogg2.json",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        },
+        #},
          # {
              # "key": "多多网盘",
              # "name": "👀多多┃网盘",
@@ -971,9 +971,10 @@
                  # "filters": "./wogg2.json",
                  # "proxy": "noproxy"
                  #
-            }
+            #}
              #
-        }, {
+        #}, 
+		{
             "key": "玩耦",
             "name": "👀玩偶｜[4K扫码]",
             "type": 3,
