@@ -1699,7 +1699,7 @@
             "searchable": 1,
             "type": 3
         },
-		                      {
+		{
           "key": "kuwo PY",
           "name": "👌kuwo丨PY[音乐]",
           "api": "./kuwo.py",
@@ -1708,7 +1708,7 @@
           "searchable": 1,
           "type": 3
         },
-		                      {
+		{
           "key": "布谷音乐 PY",
           "name": "👌布谷音乐丨PY[音乐]",
           "api": "./布谷音乐.py",
@@ -1735,7 +1735,7 @@
           "searchable": 1,
           "type": 3
         },
-		                                         {
+		{
           "key": "全民K歌 PY",
           "name": "全民K歌丨PY[音乐]",
           "api": "./全民K歌.py",
@@ -1744,7 +1744,16 @@
           "searchable": 1,
           "type": 3
         },
-                                                 {
+		{
+            "key": "hige-捐赠版 | PY[音乐]",
+            "name": "👌hige-捐赠版丨PY",
+            "api": "./hige-捐赠版.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+        {
           "key": "喜马拉雅 PY",
           "name": "喜马拉雅丨PY[音乐]",
           "api": "./喜马拉雅.py",
