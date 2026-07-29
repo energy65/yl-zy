@@ -248,7 +248,8 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
             "key": "novip PY",
             "name": "👌novip丨[1080P]",
             "api": "./novip.py",
@@ -256,7 +257,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "哔嘀 PY",
+            "name": "哔嘀电影丨PY",
+            "api": "./哔嘀电影.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
             "key": "开心影院PY",
             "name": "👌开心影院丨[1080P]",
             "api": "./开心影院.py",
