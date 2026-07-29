@@ -1453,7 +1453,7 @@
             "type": 3
         }, {
             "key": "美食bili",
-            "name": "🎶美食|py",
+            "name": "🎶美食|[美食]",
             "api": "./美食.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1461,7 +1461,7 @@
             "type": 3
         }, {
             "key": "李子柒bili",
-            "name": "🎶李子柒|py",
+            "name": "🎶李子柒|[美食]",
             "api": "./李子柒.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1469,7 +1469,7 @@
             "type": 3
         }, {
             "key": "yirisc",
-            "name": "一日三餐┃PY",
+            "name": "一日三餐┃[美食]",
             "type": 3,
             "api": "./一日三餐.py",
             "searchable": 1,
@@ -1477,7 +1477,7 @@
             "ext": ""
         }, {
             "key": "yuzhou",
-            "name": "宇宙太空┃PY",
+            "name": "宇宙太空┃[课外博学]",
             "type": 3,
             "api": "./宇宙太空.py",
             "searchable": 1,
@@ -1485,7 +1485,7 @@
             "ext": ""
         }, {
             "key": "国学bili",
-            "name": "国学┃PY",
+            "name": "国学┃[课外博学]",
             "type": 3,
             "api": "./国学.py",
             "searchable": 1,
@@ -1493,7 +1493,7 @@
             "ext": ""
         }, {
             "key": "书法bili",
-            "name": "书法┃PY",
+            "name": "书法┃[课外博学]",
             "type": 3,
             "api": "./书法.py",
             "searchable": 1,
@@ -1501,7 +1501,7 @@
             "ext": ""
         }, {
             "key": "中医bili",
-            "name": "中医┃PY",
+            "name": "中医┃[课外博学]",
             "type": 3,
             "api": "./中医.py",
             "searchable": 1,
@@ -1509,7 +1509,7 @@
             "ext": ""
         }, {
             "key": "天文地理bili",
-            "name": "天文地理┃PY",
+            "name": "天文地理┃[课外博学]",
             "type": 3,
             "api": "./天文地理.py",
             "searchable": 1,
