@@ -129,7 +129,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        },
+		         {
+            "key": "葵花影视网 PY",
+            "name": "葵花影视网丨PY",
+            "api": "./葵花影视网.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "奇乐影视",
             "name": "奇乐|[1080P]",
             "type": 3,
@@ -267,6 +277,15 @@
             "searchable": 1,
             "type": 3
         }, 
+		{
+            "key": "cnflixPY",
+            "name": "👌cnflix丨PY",
+            "api": "./cnflix.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
 		{
             "key": "开心影院PY",
             "name": "👌开心影院丨[1080P]",
@@ -490,7 +509,7 @@
         }, 
 		{
             "key": "红果PY",
-            "name": "👌红果丨PY",
+            "name": "👌红果丨[短剧]",
             "api": "./hongguo.py",
             "filterable": 1,
             "quickSearch": 1,
