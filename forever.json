@@ -185,6 +185,15 @@
             "type": 3
         },
 		{
+            "key": "臻彩4k PY",
+            "name": "臻彩4k丨PY",
+            "api": "./臻彩4K.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "奇乐影视",
             "name": "奇乐|[1080P]",
             "type": 3,
