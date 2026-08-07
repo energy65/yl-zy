@@ -199,7 +199,7 @@
         }, 
 		{
             "key": "山楂 PY",
-            "name": "山楂丨PY",
+            "name": "山楂丨[1080P]",
             "api": "./山楂影视.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -208,8 +208,26 @@
         }, 
 		{
             "key": "真狼 PY",
-            "name": "真狼丨PY",
+            "name": "真狼丨[1080P]",
             "api": "./真狼.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+			{
+            "key": "aeete影视 PY",
+            "name": "aeete影视|[1080P]",
+            "api": "./aeete影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
+            "key": "weishi PY",
+            "name": "weishi丨[1080P]",
+            "api": "./weishi.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
