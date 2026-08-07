@@ -248,7 +248,7 @@
             "ext": "https://gh-proxy.org/https://raw.githubusercontent.com/energy65/yl/refs/heads/main/闪雷.js"
         }, {
             "key": "瓜子优质 PY",
-            "name": "👌瓜子优质丨[1080p]",
+            "name": "👌瓜子优质丨[1080P]",
             "api": "./瓜子优质.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -262,7 +262,7 @@
             "jar": "./yl6.jar"
         }, {
             "key": "泥视频PY",
-            "name": "👌泥视频-优质丨[1080p]",
+            "name": "👌泥视频-优质丨[1080P]",
             "api": "./泥视频.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -270,13 +270,13 @@
             "type": 3
         }, {
             "key": "瓜子js",
-            "name": "👌瓜子|[1080p]",
+            "name": "👌瓜子|[1080P]",
             "type": 3,
             "api": "https://ghfast.top/https://raw.githubusercontent.com/IY-CPU/IY/main/lib/drpy2.min.js",
             "ext": "./瓜子.js"
         }, {
             "key": "csp_Guazi",
-            "name": "👌🏻瓜子┃[1080p]",
+            "name": "👌🏻瓜子┃[1080P]",
             "type": 3,
             "api": "csp_Guazi",
             "searchable": 1,
@@ -296,7 +296,7 @@
             }
         }, {
             "key": "永乐JS",
-            "name": "👌永乐丨[1080p]",
+            "name": "👌永乐丨[1080P]",
             "type": 3,
             "api": "https://mpimg.cn/down.php/0338609bd59d7b27226f5a269ec97936.js",
             "style": {
@@ -306,7 +306,7 @@
             "changeable": 1
         }, {
             "key": "猎手PY",
-            "name": "👌猎手丨[1080p]",
+            "name": "👌猎手丨[1080P]",
             "api": "https://mpimg.cn/down.php/60fab5ff33f0b0fd88f099ae3be708bf.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -314,7 +314,7 @@
             "type": 3
         }, {
             "key": "兄弟PY",
-            "name": "👌兄弟丨[1080p]",
+            "name": "👌兄弟丨[1080P]",
             "api": "https://mpimg.cn/down.php/b1cdcf76574a0cb24d5b937d46458cdf.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -322,7 +322,7 @@
             "type": 3
         }, {
             "key": "袋鼠PY",
-            "name": "👌袋鼠丨[1080p]",
+            "name": "👌袋鼠丨[1080P]",
             "api": "./袋鼠.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -330,7 +330,7 @@
             "type": 3
         }, {
             "key": "王者PY",
-            "name": "👌王者丨[1080p]",
+            "name": "👌王者丨[1080P]",
             "api": "./王者TV.py",
             "filterable": 1,
             "quickSearch": 1,
