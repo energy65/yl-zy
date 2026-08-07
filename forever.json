@@ -198,6 +198,24 @@
             "type": 3
         }, 
 		{
+            "key": "山楂 PY",
+            "name": "山楂丨PY",
+            "api": "./山楂影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
+            "key": "真狼 PY",
+            "name": "真狼丨PY",
+            "api": "./真狼.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
             "key": "奇乐影视",
             "name": "奇乐|[1080P]",
             "type": 3,
