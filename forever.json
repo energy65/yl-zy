@@ -488,7 +488,8 @@
             "playerType": 2,
             "jar": "./柠檬.jar",
             "ext": "7lj763gg402i7942503g839jg74h8h88highi40799jh6i6k454419l0l5184k0g549h0kg2i01i838i2h42g891lgg1"
-        }, {
+        }, 
+		{
             "name": "👌橘汁|影视[1080P]",
             "key": "Juzhi",
             "type": 3,
@@ -509,7 +510,7 @@
       "name": "橘子2|影视[1080P]",
       "type": 3,
       "api": "csp_AppDrama",
-            "jar": "./橘子.jar",
+      "jar": "./橘子.jar",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -523,7 +524,8 @@
         "site": "./app.txt",
         "version": "3.0.2.1",
         "decrypt": "1"
-      },
+      }
+		 },
 		{
             "key": "csp_SaoHuo",
             "name": "👌骚火|影视[1080P]",
