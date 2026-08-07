@@ -188,7 +188,7 @@
             "searchable": 1,
             "type": 3
         },
-		                {
+		{
             "key": "蓝光影视网 PY",
             "name": "蓝光影视网丨[1080P]",
             "api": "./蓝光影视网.py",
@@ -523,7 +523,7 @@
         "site": "./app.txt",
         "version": "3.0.2.1",
         "decrypt": "1"
-      }
+      },
 		{
             "key": "csp_SaoHuo",
             "name": "👌骚火|影视[1080P]",
