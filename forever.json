@@ -97,31 +97,26 @@
             "type": 3,
             "api": "./drpy2.min.js",
             "ext": "./qq.js"
-        }, {
-            "key": "fengye1 PY",
-            "name": "🍁fengye1[1080P]",
-            "api": "./fengye1.py",
+        },  
+		{
+            "key": "ai看剧 PY",
+            "name": "ai看剧丨[1080P]",
+            "api": "./ai看剧.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "fengye2 PY",
-            "name": "🍁fengye2[1080P]",
-            "api": "./fengye2.py",
+        },
+		{
+            "key": "秒看 PY",
+            "name": "秒看丨[1080P]",
+            "api": "./秒看.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "fengye3 PY",
-            "name": "🍁fengye3[1080P]",
-            "api": "./fengye3.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },
+		{
             "key": "韩剧狗 PY",
             "name": "韩剧狗丨[1080P]",
             "api": "./韩剧狗.py",
@@ -132,7 +127,7 @@
         },
 		         {
             "key": "葵花影视网 PY",
-            "name": "葵花影视网丨PY",
+            "name": "葵花影视网丨[1080P]",
             "api": "./葵花影视网.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -141,7 +136,7 @@
         },
 		        {
             "key": "水月影视 PY",
-            "name": "水月影视丨PY",
+            "name": "水月影视丨[1080P]",
             "api": "./水月影视.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -150,7 +145,7 @@
         },
                 {
             "key": "葵花影院 PY",
-            "name": "葵花影院丨PY",
+            "name": "葵花影院丨[1080P]",
             "api": "./葵花影院.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -159,7 +154,7 @@
         },
                 {
             "key": "琪琪影视 PY",
-            "name": "琪琪影视丨PY",
+            "name": "琪琪影视丨[1080P]",
             "api": "./琪琪影视.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -168,7 +163,7 @@
         },
                 {
             "key": "绮梦短剧 PY",
-            "name": "绮梦短剧丨PY",
+            "name": "绮梦短剧丨[短剧]",
             "api": "./绮梦短剧.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -177,7 +172,7 @@
         },
 		{
             "key": "影视天堂 PY",
-            "name": "影视天堂丨PY",
+            "name": "影视天堂丨[1080P]",
             "api": "./影视天堂.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -186,7 +181,7 @@
         },
 		{
             "key": "臻彩4k PY",
-            "name": "臻彩4k丨PY",
+            "name": "臻彩4k丨[1080P]",
             "api": "./臻彩4K.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -195,7 +190,7 @@
         },
 		                {
             "key": "蓝光影视网 PY",
-            "name": "蓝光影视网丨PY",
+            "name": "蓝光影视网丨[1080P]",
             "api": "./蓝光影视网.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1618,7 +1613,17 @@
             "searchable": 1,
             "filterable": 0,
             "ext": ""
-        }, {
+        }, 
+		                {
+            "key": "跑步游戏 PY",
+            "name": "跑步游戏丨[游戏运动]",
+            "api": "./跑步游戏.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "csp_Bili",
             "name": "🅱️哔哩┃合集",
             "type": 3,
