@@ -234,6 +234,15 @@
             "type": 3
         }, 
 		{
+            "key": "乌云影视 PY",
+            "name": "乌云影视丨[1080P]",
+            "api": "./乌云影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
             "key": "奇乐影视",
             "name": "奇乐|[1080P]",
             "type": 3,
