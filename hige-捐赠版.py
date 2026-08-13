@@ -49,7 +49,6 @@ class Spider(Spider):
             ("极品电音榜", "/jpdy/"),
             ("跑步健身榜", "/pbjs/"),
             ("KTV点唱榜", "/ktvdc/"),
-            ("The Billboard", "/bill/"),
         ]
         self.default_pic = "https://higequ.com/static/images/default_cover.png"
 
@@ -75,12 +74,7 @@ class Spider(Spider):
     def categoryContent(self, tid, pg, filter, extend):
         pg = int(pg or 1)
         try:
-            url = f"{self.host}{tid}"
-            if pg > 1:
-                if tid.endswith('/'):
-                    url = f"{self.host}{tid}index_{pg}.html"
-                else:
-                    url = f"{self.host}{tid}/index_{pg}.html"
+            url = f"{self.host}{tid}?p={pg}"
             r = self.session.get(url, timeout=30)
             r.encoding = 'utf-8'
             doc = pq(r.text)
@@ -109,8 +103,9 @@ class Spider(Spider):
                 })
                 if len(vod_list) >= 50:
                     break
-            pagecount = 999
-            total = 99999
+            pagecount_el = doc('#total-pages')
+            pagecount = int(pagecount_el.text().strip()) if pagecount_el and pagecount_el.text().strip().isdigit() else 10
+            total = pagecount * 30
             return {
                 "list": vod_list,
                 "page": pg,
@@ -125,9 +120,7 @@ class Spider(Spider):
     def searchContent(self, key, quick, pg="1"):
         pg = int(pg or 1)
         try:
-            search_url = f"{self.host}/s/{quote(key)}/"
-            if pg > 1:
-                search_url = f"{self.host}/s/{quote(key)}/index_{pg}.html"
+            search_url = f"{self.host}/s/{quote(key)}/?p={pg}"
             r = self.session.get(search_url, timeout=30)
             r.encoding = 'utf-8'
             doc = pq(r.text)
