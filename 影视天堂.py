@@ -1,478 +1,498 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# 影视天堂.py — TVBox 爬虫（影视天堂 ysttv.com）
-# 适配苹果CMS（MacCMS）标准采集接口 /api.php/provide/vod/
-# 输出符合 TVBox JsonXYZ 规范的 JSON
-#
-# 用法（TVBox 本地 PY 插件）：
-#   直接运行: python3 影视天堂.py                 # 交互式自检
-#   TVBox 调用: python3 影视天堂.py               # 从 stdin 读取 JSON 请求
-#
-# TVBox 配置（site.json）示例：
-#   {
-#       "key": "影视天堂 PY",
-#       "name": "影视天堂丨PY",
-#       "api": "./影视天堂.py",
-#       "filterable": 1,
-#       "quickSearch": 1,
-#       "searchable": 1,
-#       "type": 3
-#   }
-#
-# 说明：ysttv.com 为 Cloudflare 防护站点，本脚本在用户本地网络运行时可正常访问；
-#       沙箱环境无法直连，故采用 MacCMS 标准接口规范编写，不依赖具体 HTML 结构。
 
-import sys
+import re
 import json
+import math
 import time
-import base64
-import random
-import argparse
+import ssl
+import gzip
+import urllib.request
 import urllib.parse
-from http.server import BaseHTTPRequestHandler, HTTPServer
+import html as html_mod
 
 try:
-    import requests
+    from base.spider import Spider as BaseSpider
 except ImportError:
-    requests = None  # HTTP 服务模式下用 urllib 兜底
+    class BaseSpider:
+        def init(self, extend=""): pass
+        def getName(self): return ""
+        def homeContent(self, filter): return {}
+        def homeVideoContent(self): return {}
+        def categoryContent(self, tid, pg, filter, extend): return {}
+        def detailContent(self, ids): return {}
+        def searchContent(self, key, quick, pg="1"): return {}
+        def playerContent(self, flag, id, vipFlags): return {}
 
-# ============================================================
-#  加密模块：对公众号 / Q群 / 宣传语做 Base64 + 异或 双层加密
-#  代码中不出现任何明文宣传文字，运行时解密后注入影片简介
-# ============================================================
 
-# 异或密钥（与明文等长的伪随机种子，由固定种子生成，保证可复现）
-_XOR_KEY_SEED = 0x5A  # 固定种子，保证加密结果稳定
+class Spider(BaseSpider):
+    BASE_URL = "http://ysttv.com"
+    UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 
-def _xor_bytes(data: bytes, key_byte: int) -> bytes:
-    """对字节序列逐字节异或"""
-    return bytes(b ^ key_byte for b in data)
+    _w_key = b"wechat_2026_key"
+    _w_data = [0x92, 0xdb, 0xcd, 0x8c, 0xde, 0xd5, 0xba, 0xb7, 0x9c, 0xd6, 0x8a, 0xc8, 0x8e, 0xea, 0xce, 0x55,
+               0x83, 0xd9, 0xf8, 0x84, 0xfe, 0xc4, 0xda, 0x8d, 0x9d, 0xd2, 0xe4, 0xdd, 0x83, 0xc8, 0xf0, 0x47,
+               0x8c, 0xd4, 0xed, 0x05, 0xb8, 0x8c, 0x94, 0x03, 0x06, 0x6a, 0x5f, 0x50, 0x40, 0x45, 0x54, 0x56,
+               0x5a, 0x85, 0xc8, 0xeb, 0xdb, 0xaa, 0xbd, 0xd0, 0xc4, 0xdf, 0x80, 0xdd, 0xed, 0x81, 0xdf, 0xf0,
+               0x89, 0xc0, 0xf7, 0xda, 0x85, 0xb6, 0xd0, 0xe5, 0xfb, 0x80, 0xc9, 0xca, 0x80, 0xff, 0xc0, 0x87,
+               0xce, 0xcf, 0xd7, 0xba, 0xa9]
 
-def _enc(plain: str) -> str:
-    """加密：UTF-8 -> 异或 -> Base64"""
-    xored = _xor_bytes(plain.encode('utf-8'), _XOR_KEY_SEED)
-    return base64.b64encode(xored).decode('ascii')
+    CATEGORIES = [
+        {"type_id": "movie", "type_name": "电影", "url": "/vod/movie"},
+        {"type_id": "teleplay", "type_name": "电视剧", "url": "/vod/teleplay"},
+        {"type_id": "variety", "type_name": "综艺", "url": "/vod/variety"},
+        {"type_id": "anime", "type_name": "动漫", "url": "/vod/anime"},
+        {"type_id": "playlet", "type_name": "短剧", "url": "/vod/playlet"},
+        {"type_id": "library", "type_name": "片库", "url": "/vod"},
+        {"type_id": "latest", "type_name": "最近更新", "url": "/vod/latest"},
+        {"type_id": "rating", "type_name": "高分推荐", "url": "/vod/rating"},
+        {"type_id": "tianwendili", "type_name": "天文地理", "url": ""},
+    ]
 
-def _dec(cipher: str) -> str:
-    """解密：Base64 -> 异或 -> UTF-8"""
-    try:
-        raw = base64.b64decode(cipher.encode('ascii'))
-        return _xor_bytes(raw, _XOR_KEY_SEED).decode('utf-8')
-    except Exception:
-        return ''
+    TIANWEN_KEYWORDS = ["天文", "地理", "宇宙", "太空", "地球", "气象", "地质", "海洋", "自然", "科学"]
 
-# 加密后的宣传文字（明文已抹除，仅保留密文，运行时解密注入影片简介）
-_C_GZH    = _enc('\u6e90\u529b\u8f6f\u4ef6\u6c47')
-_C_QQ     = _enc('\u0031\u0030\u0035\u0034\u0035\u0039\u0032\u0031\u0035\u0032')
-_C_SLOGAN = _enc('\u4f34\u968f\u66f4\u591a\u4f18\u8d28\u8d44\u6e90\u5c3d\u5728\u6e90\u529b')
+    def init(self, extend=""):
+        pass
 
-def _promo_text() -> str:
-    """运行时解密，拼装宣传文案，注入影片简介"""
-    gzh    = _dec(_C_GZH)
-    qq     = _dec(_C_QQ)
-    slogan = _dec(_C_SLOGAN)
-    return (
-        '\n\n━━━━━━━━━━━━━━━━━━\n'
-        '【微信公众号】{gzh}\n'
-        '【Q群】{qq}\n'
-        '{slogan}\n'
-        '━━━━━━━━━━━━━━━━━━'
-    ).format(gzh=gzh, qq=qq, slogan=slogan)
+    def getName(self):
+        return "影视天堂"
 
-def _inject_promo(vod_desc: str) -> str:
-    """把宣传文案追加到影片简介末尾"""
-    if vod_desc is None:
-        vod_desc = ''
-    return str(vod_desc).rstrip() + _promo_text()
+    def _get_wechat_info(self):
+        result = bytearray()
+        for i, b in enumerate(self._w_data):
+            key_byte = self._w_key[i % len(self._w_key)]
+            result.append(b ^ key_byte)
+        return result.decode('utf-8')
 
-# ============================================================
-#  站点配置
-# ============================================================
+    def getHtml(self, url, timeout=20, retries=3):
+        last_error = None
+        for attempt in range(retries):
+            try:
+                ctx = ssl.create_default_context()
+                ctx.check_hostname = False
+                ctx.verify_mode = ssl.CERT_NONE
+                try:
+                    ctx.set_ciphers("DEFAULT@SECLEVEL=1:HIGH:!aNULL:!MD5")
+                except Exception:
+                    pass
+                url = urllib.parse.quote(url, safe=":/?&=%+~-._")
+                req = urllib.request.Request(url, headers={
+                    "User-Agent": self.UA,
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                    "Accept-Language": "zh-CN,zh;q=0.9",
+                    "Accept-Encoding": "gzip, deflate",
+                    "Connection": "keep-alive",
+                    "Referer": self.BASE_URL + "/",
+                })
+                with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
+                    data = resp.read()
+                    content_encoding = resp.headers.get("Content-Encoding", "")
+                    if "gzip" in content_encoding:
+                        try:
+                            data = gzip.decompress(data)
+                        except Exception:
+                            pass
+                    return self._decode_bytes(data)
+            except Exception as e:
+                last_error = e
+                time.sleep(1)
+        return ""
 
-SITE_BASE = 'https://ysttv.com'
-# MacCMS 标准采集接口（苹果CMS 通用 vod 接口）
-API_VOD   = SITE_BASE + '/api.php/provide/vod/'
+    def _decode_bytes(self, data):
+        # 站点实际返回 GBK 字节却声明 UTF-8，按声明解码会导致中文乱码。
+        # 通过统计各编码解码后 CJK 字符数量，自动选择最匹配的实际编码。
+        candidates = ["utf-8", "gb18030", "gbk", "gb2312", "big5", "latin-1"]
+        best_text = None
+        best_score = -1
+        for enc in candidates:
+            try:
+                text = data.decode(enc)
+            except Exception:
+                continue
+            # latin-1 永远能解码，仅用作兜底
+            if enc == "latin-1" and best_text is not None:
+                continue
+            score = sum(1 for c in text if "\u4e00" <= c <= "\u9fff")
+            if score > best_score:
+                best_score = score
+                best_text = text
+        if best_text is None:
+            best_text = data.decode("utf-8", errors="replace")
+        return best_text
 
-# 分类类型映射（MacCMS type_id -> 名称），运行时从接口动态获取，此处为兜底
-_TYPE_FALLBACK = {
-    1: '电影', 2: '电视剧', 3: '综艺', 4: '动漫', 5: '纪录片',
-    6: '天文地理', 7: '少儿', 8: '教育', 9: '戏曲', 10: '短剧',
-}
+    def clean(self, text):
+        if not text:
+            return ""
+        text = html_mod.unescape(str(text))
+        return re.sub(r"\s+", " ", text).strip()
 
-# "天文地理"类目关键词（搜索时使用）
-SKY_KEYWORDS = ['天文', '地理', '宇宙', '星球', '地球', '太空', '自然', '探索', '国家地理', 'BBC']
+    def _extract_video_cards(self, html):
+        items = []
+        seen = set()
+        if not html:
+            return items
+        pattern = re.compile(r'<a[^>]*class="[^"]*video-card[^"]*"[^>]*>', re.I)
+        for m in pattern.finditer(html):
+            end = html.find('</a>', m.end())
+            if end < 0:
+                end = min(len(html), m.end() + 3000)
+            block = html[m.start():end]
+            href_m = re.search(r'href="(/detail/(\d+)/?)"', block)
+            if not href_m:
+                continue
+            vid = href_m.group(2)
+            if vid in seen:
+                continue
+            seen.add(vid)
 
-UA = (
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-    'AppleWebKit/537.36 (KHTML, like Gecko) '
-    'Chrome/120.0.0.0 Safari/537.36'
-)
-HEADERS = {
-    'User-Agent': UA,
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'zh-CN,zh;q=0.9',
-    'Referer': SITE_BASE + '/',
-}
+            name = ""
+            title_m = re.search(r'title="([^"]*)"', block)
+            if title_m:
+                name = self.clean(title_m.group(1))
+            if not name:
+                h3_m = re.search(r'<h3[^>]*>(.*?)</h3>', block, re.S)
+                if h3_m:
+                    name = self.clean(re.sub(r'<[^>]+>', '', h3_m.group(1)))
 
-# ============================================================
-#  HTTP 请求封装（requests 优先，urllib 兜底）
-# ============================================================
+            pic = ""
+            pic_m = re.search(r'data-src="([^"]+)"', block)
+            if pic_m:
+                pic = pic_m.group(1)
 
-def _http_get(url: str, timeout: int = 15) -> dict:
-    """GET 请求并解析 JSON，失败返回空 dict"""
-    try:
-        if requests is not None:
-            r = requests.get(url, headers=HEADERS, timeout=timeout)
-        else:
-            import urllib.request
-            req = urllib.request.Request(url, headers=HEADERS)
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                r = type('R', (), {
-                    'text': resp.read().decode('utf-8', 'ignore'),
-                    'status_code': resp.status,
-                })()
-        if r.status_code != 200:
-            return {}
-        # MacCMS 接口返回 JSON
-        return json.loads(r.text)
-    except Exception as e:
-        sys.stderr.write('[WARN] GET {} failed: {}\n'.format(url, e))
-        return {}
+            remark = ""
+            sub_m = re.search(r'class="[^"]*subtitle[^"]*"[^>]*>\s*([^<]+)', block)
+            if sub_m:
+                remark = self.clean(sub_m.group(1))
+            if not remark:
+                tw_m = re.search(r'class="[^"]*text-white[^"]*"[^>]*>\s*([^<]+)', block)
+                if tw_m:
+                    remark = self.clean(tw_m.group(1))
+            if remark in ("My post subtitle", "My Post Subtitle"):
+                remark = ""
 
-# ============================================================
-#  MacCMS 接口适配
-# ============================================================
-
-def get_categories() -> list:
-    """获取所有分类数据
-    MacCMS 接口：?ac=list 返回 class 列表
-    返回 TVBox 规范的 class 数组
-    """
-    data = _http_get(API_VOD + '?ac=list')
-    classes = []
-    # 接口标准字段：class_list
-    raw = data.get('class') or data.get('class_list') or []
-    for item in raw:
-        tid = item.get('type_id') or item.get('list_id')
-        name = item.get('type_name') or item.get('name')
-        if tid and name:
-            classes.append({
-                'type_id':   int(tid),
-                'type_name': name,
-                'type_pid':  int(item.get('type_pid', 0) or 0),
+            items.append({
+                "vod_id": vid,
+                "vod_name": name,
+                "vod_pic": pic,
+                "vod_remarks": remark,
             })
-    # 兜底：接口未返回 class 时用本地映射
-    if not classes:
-        for tid, name in _TYPE_FALLBACK.items():
-            classes.append({'type_id': tid, 'type_name': name, 'type_pid': 0})
-    return classes
+        return items
 
-def get_list(tid: int, page: int = 1, wd: str = '') -> dict:
-    """获取分类下影片列表 / 搜索
-    MacCMS 接口：
-      分类列表：?ac=list&pg=<page>          （全站列表，前端按 type 过滤）
-      分类过滤：?ac=list&pg=<page>&t=<tid>
-      搜索：    ?ac=list&wd=<keyword>&pg=<page>
-    返回 TVBox 规范的 list + pagecount
-    """
-    params = {'ac': 'list', 'pg': page}
-    if wd:
-        params['wd'] = wd
-    elif tid:
-        params['t'] = tid
-    url = API_VOD + '?' + urllib.parse.urlencode(params)
-    data = _http_get(url)
+    def _extract_search_items(self, html):
+        items = []
+        seen = set()
+        if not html:
+            return items
+        pattern = re.compile(r'<a[^>]*class="[^"]*not-link[^"]*"[^>]*>', re.I)
+        for m in pattern.finditer(html):
+            end = html.find('</a>', m.end())
+            if end < 0:
+                end = min(len(html), m.end() + 3000)
+            block = html[m.start():end]
+            href_m = re.search(r'href="/detail/(\d+)"', block)
+            if not href_m:
+                continue
+            vid = href_m.group(1)
+            if vid in seen:
+                continue
+            seen.add(vid)
 
-    vod_list = data.get('list') or []
-    out = []
-    for v in vod_list:
-        # 搜索/列表项字段
-        item = {
-            'vod_id':         v.get('vod_id') or v.get('id'),
-            'vod_name':       v.get('vod_name') or v.get('name', ''),
-            'vod_pic':        v.get('vod_pic') or v.get('pic', ''),
-            'vod_remarks':    v.get('vod_remarks') or v.get('remarks', ''),
-            'type_id':        v.get('type_id', tid),
-            'type_name':      v.get('type_name', ''),
-            'vod_year':       v.get('vod_year', ''),
-            'vod_area':       v.get('vod_area', ''),
-            'vod_actor':      v.get('vod_actor', ''),
-            'vod_director':   v.get('vod_director', ''),
-        }
-        # 列表项不带简介，避免冗余
-        out.append({k: val for k, val in item.items() if val not in (None, '')})
+            name = ""
+            title_m = re.search(r'title="([^"]*)"', block)
+            if title_m:
+                name = self.clean(title_m.group(1))
+            if not name:
+                h2_m = re.search(r'<h2[^>]*>(.*?)</h2>', block, re.S)
+                if h2_m:
+                    name = self.clean(re.sub(r'<[^>]+>', '', h2_m.group(1)))
 
-    pagecount = data.get('pagecount') or data.get('pagecount') or 1
-    total = data.get('total') or len(out)
-    return {
-        'list':      out,
-        'pagecount': int(pagecount),
-        'total':     int(total),
-        'page':      page,
-        'limit':     data.get('limit', 20),
-    }
+            pic = ""
+            pic_m = re.search(r'data-src="([^"]+)"', block)
+            if pic_m:
+                pic = pic_m.group(1)
 
-def get_detail(ids) -> dict:
-    """获取影片详情（含播放地址）
-    MacCMS 接口：?ac=detail&ids=<id1,id2,...>
-    返回 TVBox 规范的 list（含 vod_play_url）
-    """
-    if isinstance(ids, (list, tuple)):
-        ids_str = ','.join(str(i) for i in ids)
-    else:
-        ids_str = str(ids)
-    url = API_VOD + '?ac=detail&ids=' + urllib.parse.quote(ids_str)
-    data = _http_get(url)
+            remark = ""
+            spans = re.findall(r'<span>([^<]+)</span>', block)
+            parts = [self.clean(x) for x in spans if self.clean(x)]
+            if parts:
+                remark = "/".join(parts[:3])
 
-    vod_list = data.get('list') or []
-    out = []
-    for v in vod_list:
-        # 播放地址解析：MacCMS 格式 "线路名$播放串#..." 或 "名称$地址#..."
-        play_url = v.get('vod_play_url') or ''
-        play_from = v.get('vod_play_from') or ''
-        # 构造 TVBox 期望的 play_url 结构
-        parsed_play = _parse_play_url(play_url, play_from)
+            items.append({
+                "vod_id": vid,
+                "vod_name": name,
+                "vod_pic": pic,
+                "vod_remarks": remark,
+            })
+        return items
 
-        # 简介注入加密宣传文案
-        vod_content = _inject_promo(v.get('vod_content') or v.get('vod_blurb') or '')
+    def _add_wechat(self, videos):
+        wechat = self._get_wechat_info()
+        for v in videos:
+            v["vod_content"] = wechat
+        return videos
 
-        item = {
-            'vod_id':         v.get('vod_id') or v.get('id'),
-            'vod_name':       v.get('vod_name') or v.get('name', ''),
-            'vod_pic':        v.get('vod_pic') or v.get('pic', ''),
-            'vod_remarks':    v.get('vod_remarks') or v.get('remarks', ''),
-            'type_id':        v.get('type_id', 0),
-            'type_name':      v.get('type_name', ''),
-            'vod_year':       v.get('vod_year', ''),
-            'vod_area':       v.get('vod_area', ''),
-            'vod_actors':     v.get('vod_actor') or v.get('vod_actors', ''),
-            'vod_director':   v.get('vod_director', ''),
-            'vod_content':    vod_content,
-            'vod_play_from':  parsed_play['from'],
-            'vod_play_url':   parsed_play['url'],
-            'vod_down_from':  v.get('vod_down_from', ''),
-            'vod_down_url':   v.get('vod_down_url', ''),
-        }
-        out.append({k: val for k, val in item.items() if val not in (None, '')})
-    return {'list': out}
+    def homeContent(self, filter):
+        return {"class": self.CATEGORIES, "filters": {}}
 
-def _parse_play_url(play_url: str, play_from: str) -> dict:
-    """解析 MacCMS 播放地址
-    格式1（多线路）：线路A$集1$地址1#集2$地址2$$$线路B$集1$地址1#...
-    格式2（单线路）：集1$地址1#集2$地址2#...
-    输出 TVBox 规范：
-      from = "线路A$$$线路B"
-      url  = "集1$地址1#集2$地址2$$$集1$地址1#..."
-    """
-    if not play_url:
-        return {'from': '', 'url': ''}
-    # 按线路分隔
-    lines = play_url.split('$$$')
-    froms = []
-    urls = []
-    for idx, line in enumerate(lines):
-        line = line.strip()
-        if not line:
-            continue
-        # 线路名：优先用 play_from 对应位置，否则用"线路N"
-        if play_from:
-            fl = play_from.split('$$$')
-            fname = fl[idx] if idx < len(fl) else '线路{}'.format(idx + 1)
-        else:
-            fname = '线路{}'.format(idx + 1)
-        froms.append(fname)
-        urls.append(line)
-    return {
-        'from': '$$$'.join(froms),
-        'url':  '$$$'.join(urls),
-    }
-
-# ============================================================
-#  搜索：天文地理类视频
-# ============================================================
-
-def search_sky(page: int = 1) -> dict:
-    """搜索天文地理类视频
-    策略：遍历天文地理关键词，聚合去重
-    """
-    seen = set()
-    merged = []
-    pagecount = 1
-    for kw in SKY_KEYWORDS:
-        res = get_list(tid=0, page=page, wd=kw)
-        for v in res.get('list', []):
-            vid = v.get('vod_id')
-            if vid and vid not in seen:
-                seen.add(vid)
-                merged.append(v)
-        pc = res.get('pagecount', 1)
-        if pc > pagecount:
-            pagecount = pc
-    return {
-        'list':      merged,
-        'pagecount': pagecount,
-        'page':      page,
-        'total':     len(merged),
-    }
-
-# ============================================================
-#  TVBox HTTP 服务模式
-# ============================================================
-
-class TVBoxHandler(BaseHTTPRequestHandler):
-    """TVBox 标准 HTTP 接口
-    GET /?ac=...&t=...&pg=...&wd=...&ids=...
-    """
-
-    def log_message(self, fmt, *args):
-        sys.stderr.write('[%s] %s\n' % (time.strftime('%H:%M:%S'), fmt % args))
-
-    def _send_json(self, obj):
-        body = json.dumps(obj, ensure_ascii=False).encode('utf-8')
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json; charset=utf-8')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Content-Length', str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
-
-    def do_GET(self):
+    def homeVideoContent(self):
+        result = {"list": []}
         try:
-            q = urllib.parse.urlparse(self.path).query
-            p = urllib.parse.parse_qs(q)
-            ac = (p.get('ac') or [''])[0]
-            wd = (p.get('wd') or [''])[0]
-            tid = (p.get('t') or ['0'])[0]
-            pg = int((p.get('pg') or ['1'])[0])
-            ids = (p.get('ids') or [''])[0]
+            html = self.getHtml(self.BASE_URL + "/")
+            videos = self._extract_video_cards(html)
+            result["list"] = self._add_wechat(videos)
+        except Exception:
+            pass
+        return result
 
-            if ac == 'list' and wd:
-                # 搜索
-                if wd in ('天文地理', '天文', '地理'):
-                    self._send_json(search_sky(pg))
-                else:
-                    self._send_json(get_list(0, pg, wd))
-            elif ac == 'list':
-                # 分类列表
-                self._send_json(get_list(int(tid) if tid else 0, pg))
-            elif ac == 'detail':
-                # 详情
-                self._send_json(get_detail(ids))
-            elif ac == 'class' or not ac:
-                # 分类目录（TVBox 首次加载）
-                self._send_json({'class': get_categories()})
-            else:
-                self._send_json({'list': []})
-        except Exception as e:
-            sys.stderr.write('[ERR] {}\n'.format(e))
-            self._send_json({'list': [], 'msg': str(e)})
-
-def serve(port: int = 9988):
-    httpd = HTTPServer(('0.0.0.0', port), TVBoxHandler)
-    sys.stderr.write('影视天堂 TVBox 服务已启动: http://0.0.0.0:{}\n'.format(port))
-    sys.stderr.write('TVBox 配置 api 填: http://<本机IP>:{}\n'.format(port))
-    httpd.serve_forever()
-
-# ============================================================
-#  自检 / 入口
-# ============================================================
-
-def _selftest():
-    """交互式自检：打印分类、搜索天文地理、详情样例"""
-    print('=' * 60)
-    print('影视天堂 TVBox 爬虫 自检')
-    print('=' * 60)
-
-    # 1. 宣传文案解密验证
-    print('\n[1] 宣传文案解密验证（代码中为密文，运行时解密）:')
-    print(_promo_text())
-
-    # 2. 分类
-    print('\n[2] 获取所有分类:')
-    cats = get_categories()
-    for c in cats:
-        print('  - type_id={type_id}  type_name={type_name}'.format(**c))
-    if not cats:
-        print('  (站点不可达，使用兜底分类)')
-
-    # 3. 搜索天文地理
-    print('\n[3] 搜索"天文地理"类视频:')
-    res = search_sky(1)
-    print('  共 {} 条, pagecount={}'.format(res['total'], res['pagecount']))
-    for v in res['list'][:5]:
-        print('  - {vod_name}  [{vod_remarks}]  pic={vod_pic}'.format(
-            vod_name=v.get('vod_name', ''), vod_remarks=v.get('vod_remarks', ''),
-            vod_pic=(v.get('vod_pic', '') or '')[:40]))
-
-    # 4. 详情样例（取搜索结果第一条）
-    if res['list']:
-        first_id = res['list'][0].get('vod_id')
-        print('\n[4] 影片详情样例 (vod_id={}):'.format(first_id))
-        det = get_detail(first_id)
-        for d in det.get('list', []):
-            print('  名称: {vod_name}'.format(**d))
-            print('  年份: {vod_year}  地区: {vod_area}'.format(
-                vod_year=d.get('vod_year', ''), vod_area=d.get('vod_area', '')))
-            print('  简介（含加密宣传文案）:')
-            print('  ' + (d.get('vod_content', '') or '').replace('\n', '\n  '))
-            print('  播放线路: {vod_play_from}'.format(**d))
-            pu = (d.get('vod_play_url', '') or '')[:80]
-            print('  播放地址(截断): {}...'.format(pu))
-    else:
-        print('\n[4] 站点不可达，跳过详情样例（脚本逻辑已就绪，本地运行可正常获取）')
-
-    print('\n' + '=' * 60)
-    print('自检完成。脚本可在用户本地网络正常访问 ysttv.com 时使用。')
-    print('启动服务模式: python3 影视天堂.py --serve 9988')
-    print('=' * 60)
-
-def _py_plugin_main():
-    """TVBox PY 插件标准入口：从 stdin 读取 JSON 请求，输出 JSON 响应
-    TVBox 调用方式: python3 影视天堂.py
-    请求格式: {"action":"home/vod/detail/search"[, "tid":..., "pg":..., "wd":..., "ids":...]}
-    """
-    import select
-    # 检查 stdin 是否有数据（TVBox 调用时会有 JSON 输入）
-    if select.select([sys.stdin], [], [], 0.1)[0]:
+    def _search_page(self, keyword, page):
         try:
-            req = json.loads(sys.stdin.read())
-            action = req.get('action', '')
-            tid = int(req.get('tid', 0) or 0)
-            pg = int(req.get('pg', 1) or 1)
-            wd = req.get('wd', '')
-            ids = req.get('ids', '')
+            url = "{}/search/video/{}/{}".format(self.BASE_URL, urllib.parse.quote(keyword), page)
+            html = self.getHtml(url)
+            return self._extract_search_items(html)
+        except Exception:
+            return []
 
-            if action == 'home' or action == 'class':
-                # 首页/分类
-                res = {'class': get_categories()}
-            elif action == 'vod':
-                # 分类列表
-                res = get_list(tid, pg)
-            elif action == 'search':
-                # 搜索
-                if wd in ('天文地理', '天文', '地理'):
-                    res = search_sky(pg)
+    def _tianwen_category(self, page):
+        items = []
+        seen = set()
+        for kw in self.TIANWEN_KEYWORDS:
+            try:
+                videos = self._search_page(kw, page)
+                for v in videos:
+                    if v["vod_id"] not in seen:
+                        seen.add(v["vod_id"])
+                        items.append(v)
+            except Exception:
+                continue
+        return items
+
+    def categoryContent(self, tid, pg, filter, extend):
+        result = {"list": [], "page": str(pg), "pagecount": "1", "total": "0"}
+        try:
+            page = int(pg) if str(pg).isdigit() else 1
+
+            if str(tid) == "tianwendili":
+                videos = self._tianwen_category(page)
+                videos = self._add_wechat(videos)
+                result["list"] = videos
+                result["pagecount"] = str(page + 1)
+                result["total"] = str(len(videos))
+                return result
+
+            cat = None
+            for c in self.CATEGORIES:
+                if c["type_id"] == str(tid):
+                    cat = c
+                    break
+            if not cat:
+                return result
+
+            url = "{}{}/{}".format(self.BASE_URL, cat["url"], page)
+            html = self.getHtml(url)
+            videos = self._extract_video_cards(html)
+
+            pagecount = page + 1
+            total_m = re.search(r'data-rec-total="(\d+)"', html)
+            per_m = re.search(r'data-rec-per-page="(\d+)"', html)
+            if total_m and per_m:
+                try:
+                    total = int(total_m.group(1))
+                    per = int(per_m.group(1))
+                    if per > 0 and total > 0:
+                        pagecount = max(page, math.ceil(total / per))
+                except Exception:
+                    pass
+
+            videos = self._add_wechat(videos)
+            result["list"] = videos
+            result["pagecount"] = str(pagecount)
+            result["total"] = str(len(videos))
+            return result
+        except Exception:
+            return result
+
+    def _extract_detail_field(self, html, label):
+        m = re.search(label + r'[：:]\s*(.*?)(?=<|$)', html, re.S)
+        if not m:
+            return ""
+        val = self.clean(re.sub(r'<[^>]+>', '', m.group(1)))
+        return val
+
+    def detailContent(self, ids):
+        result = {"list": []}
+        try:
+            vid = ids[0] if isinstance(ids, list) and ids else ids
+            vid = re.sub(r'\D', '', str(vid))
+            if not vid:
+                return result
+
+            wechat = self._get_wechat_info()
+
+            html = self.getHtml("{}/detail/{}/".format(self.BASE_URL, vid))
+            if not html:
+                return result
+
+            vod = {"vod_id": vid}
+
+            name = ""
+            h1_m = re.search(r'<h1[^>]*title="([^"]*)"', html)
+            if h1_m:
+                name = self.clean(h1_m.group(1))
+            if not name:
+                h1b = re.search(r'<h1[^>]*>(.*?)</h1>', html, re.S)
+                if h1b:
+                    name = self.clean(re.sub(r'<[^>]+>', '', h1b.group(1))).strip('《》 ')
+            if not name:
+                title_m = re.search(r'<title>([^<]+)</title>', html)
+                if title_m:
+                    name = self.clean(title_m.group(1))
+                    name = re.sub(r'\s*[-_－—].*影视天堂.*', '', name).strip()
+            vod["vod_name"] = name if name else vid
+
+            pic = ""
+            pic_m = re.search(r'<img[^>]*poster_loading\.png[^>]*data-src="([^"]+)"', html, re.I)
+            if pic_m:
+                pic = pic_m.group(1)
+            if not pic:
+                pic_m = re.search(r'data-src="(https?://[^"]*(?:images\.7dgirl\.org|jinyingimage)[^"]*)"', html)
+                if pic_m:
+                    pic = pic_m.group(1)
+            if not pic:
+                pic_m = re.search(r'data-src="([^"]+)"', html)
+                if pic_m:
+                    pic = pic_m.group(1)
+            vod["vod_pic"] = pic
+
+            vod["vod_director"] = self._extract_detail_field(html, "导演")
+            vod["vod_actor"] = self._extract_detail_field(html, "主演")
+
+            h1_end = 0
+            h1_m = re.search(r'<h1[^>]*>.*?</h1>', html, re.S)
+            if h1_m:
+                h1_end = h1_m.end()
+            info_zone = html[h1_end:h1_end + 3000]
+            info_links = re.findall(r'href="(/vod/[^"]*)"[^>]*>([^<]+)</a>', info_zone)
+            class_parts = []
+            for path, label in info_links:
+                label = self.clean(label)
+                if not label:
+                    continue
+                seg = path.strip('/').split('/')[-1]
+                if re.match(r'^year\d+$', seg):
+                    if not vod.get("vod_year"):
+                        vod["vod_year"] = label
+                elif re.match(r'^area', seg):
+                    if not vod.get("vod_area"):
+                        vod["vod_area"] = label
+                elif re.match(r'^type', seg):
+                    if not vod.get("vod_lang"):
+                        vod["vod_lang"] = label
                 else:
-                    res = get_list(0, pg, wd)
-            elif action == 'detail':
-                # 详情
-                res = get_detail(ids)
+                    class_parts.append(label)
+            if class_parts:
+                vod["vod_class"] = "/".join(class_parts)
+
+            score_m = re.search(r'class="text-4xl">([^<]+)</span>', html)
+            if score_m:
+                vod["vod_score"] = self.clean(score_m.group(1))
+
+            desc = self._extract_detail_field(html, "剧情")
+            vod["vod_content"] = wechat + ("\n" + desc if desc else "")
+
+            ep_links = self._build_episodes(vid)
+
+            if ep_links:
+                vod["vod_play_from"] = "影视天堂"
+                vod["vod_play_url"] = "#".join(ep_links[:999])
             else:
-                res = {'list': []}
-            print(json.dumps(res, ensure_ascii=False))
-        except Exception as e:
-            print(json.dumps({'list': [], 'msg': str(e)}, ensure_ascii=False))
-    else:
-        # 无 stdin 输入，走自检模式
-        _selftest()
+                vod["vod_play_from"] = "影视天堂"
+                vod["vod_play_url"] = "播放${}/play/{}".format(self.BASE_URL, vid)
 
-def main():
-    parser = argparse.ArgumentParser(description='影视天堂 TVBox 爬虫')
-    parser.add_argument('--serve', type=int, metavar='PORT', help='启动 HTTP 服务模式，供 TVBox 配置 api 指向')
-    args = parser.parse_args()
-    if args.serve:
-        serve(args.serve)
-    else:
-        _py_plugin_main()
+            result["list"] = [vod]
+            return result
+        except Exception:
+            return result
 
-if __name__ == '__main__':
-    main()
+    def _get_video_src(self, html):
+        # 从播放页提取真实视频地址（m3u8 / 直链），忽略站点自带的点赞收藏等 data-url
+        if not html:
+            return ""
+        for m in re.finditer(r'data-url="([^"]*)"', html):
+            u = m.group(1)
+            if "m3u8" in u or u.startswith("http"):
+                return u
+        m = re.search(r'data-url="(https?://[^"]*)"', html)
+        return m.group(1) if m else ""
+
+    def _build_episodes(self, vid):
+        # 真实播放地址位于 /play/{vid}/{集数}，逐集探测可播放源（快速请求，容忍偶发拦截）
+        ep_links = []
+        n = 1
+        miss = 0
+        while n <= 80 and miss < 2:
+            url = "{}/play/{}/{}".format(self.BASE_URL, vid, n)
+            html = self.getHtml(url, timeout=10, retries=2)
+            src = self._get_video_src(html)
+            if src:
+                ep_links.append("第{}集${}".format(n, url))
+                miss = 0
+            else:
+                miss += 1
+            n += 1
+        return ep_links
+
+    def searchContent(self, key, quick, pg="1"):
+        result = {"list": [], "page": str(pg), "pagecount": "1", "total": "0"}
+        try:
+            page = int(pg) if str(pg).isdigit() else 1
+            videos = self._search_page(key, page)
+            videos = self._add_wechat(videos)
+            result["list"] = videos
+            result["pagecount"] = str(page + 1)
+            result["total"] = str(len(videos))
+            return result
+        except Exception:
+            return result
+
+    def playerContent(self, flag, id, vipFlags):
+        try:
+            play_url = id
+            if not play_url.startswith("http"):
+                play_url = self.BASE_URL + "/" + play_url.lstrip("/")
+
+            html = self.getHtml(play_url)
+            if html:
+                video_url = self._get_video_src(html)
+                if not video_url:
+                    time.sleep(1)
+                    html = self.getHtml(play_url)
+                    video_url = self._get_video_src(html)
+                if video_url:
+                    if video_url.startswith("//"):
+                        video_url = "https:" + video_url
+                    video_url = video_url.replace('\\/', '/')
+                    if video_url and (".m3u8" in video_url or ".mp4" in video_url or video_url.startswith("http")):
+                        headers = {
+                            "User-Agent": self.UA,
+                            "Referer": self.BASE_URL + "/",
+                        }
+                        return {
+                            "url": video_url,
+                            "parse": "0",
+                            "header": json.dumps(headers),
+                            "playUrl": "",
+                            "subtitle": "",
+                        }
+        except Exception:
+            pass
+
+        return {
+            "url": id,
+            "parse": "0",
+            "header": "",
+            "playUrl": "",
+            "subtitle": "",
+        }
+
+    def __jsEvalReturn(self):
+        return {"proxy": None}
