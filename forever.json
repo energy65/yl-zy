@@ -199,13 +199,24 @@
         }, 
 		{
             "key": "山楂 PY",
-            "name": "山楂丨[1080P]",
+            "name": "山楂丨[1080P&&4k]",
             "api": "./山楂影视.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
         }, 
+		{
+            "key": "py_星辰4k",
+            "name": "🦅星辰4k|[1080p]",
+            "type": 3,
+            "api": "./星辰4k.py",
+            "searchable": 1,
+            "changeable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "playerType": 2
+        },
 		{
             "key": "真狼 PY",
             "name": "真狼丨[1080P]",
