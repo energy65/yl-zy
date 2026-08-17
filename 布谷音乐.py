@@ -304,10 +304,13 @@ class Spider(Spider):
                 vod_play_from = '$$$'.join(qualities)
                 vod_play_url = '$$$'.join([song_list_str for _ in qualities])
                 
+                singer_pic = songs[0].get("pic", "") if songs else ""
+                if not singer_pic and songs:
+                    singer_pic = self._get_cover(songs[0].get("title", ""), singer_name, songs[0].get("rid", ""))
                 vod = {
                     "vod_id": vod_id,
                     "vod_name": singer_name,
-                    "vod_pic": songs[0].get("pic", "") if songs else "",
+                    "vod_pic": singer_pic,
                     "vod_play_from": vod_play_from,
                     "vod_play_url": vod_play_url,
                     "vod_content": "",
@@ -327,6 +330,11 @@ class Spider(Spider):
                 better_lrc = self._get_lyric(rid, title, singer)
                 if better_lrc and self._is_valid_lrc(better_lrc):
                     lrc = better_lrc
+            
+            if not pic:
+                cover = self._get_cover(title, singer, rid)
+                if cover:
+                    pic = cover
             
             if category:
                 songs = self._get_songs_by_category(category)
@@ -429,6 +437,10 @@ class Spider(Spider):
             lrc = self._get_lyric(rid, title_hint, singer_hint)
             if lrc:
                 result["lrc"] = lrc
+            if not result.get("pic"):
+                cover = self._get_cover(title_hint, singer_hint, rid)
+                if cover:
+                    result["pic"] = cover
         except Exception as e:
             print("playerContent error:", e)
         return result
@@ -468,10 +480,124 @@ class Spider(Spider):
         except Exception as e:
             print("_get_lyric(kuwo) error:", e)
         if not self._is_valid_lrc(lrc) and title:
+            bug_lrc = self._buguyy_lyric(title, singer)
+            if self._is_valid_lrc(bug_lrc):
+                lrc = bug_lrc
+        if not self._is_valid_lrc(lrc) and title:
             fallback = self._search_lyric_fallback(title, singer)
             if fallback:
                 lrc = fallback
         return lrc
+
+    def _buguyy_lyric(self, title, singer=""):
+        lrc = ""
+        try:
+            params = {"keyword": title}
+            r = self.session.get(self.search_api, params=params, timeout=15)
+            data = r.json()
+            if data.get("success") and data.get("data"):
+                best = ""
+                best_score = -1
+                for item in data["data"]:
+                    t = item.get("title", "")
+                    s = item.get("singer", "")
+                    about = item.get("about", "")
+                    if not about:
+                        continue
+                    cand = self._parse_lrc_from_about(about)
+                    if not self._is_valid_lrc(cand):
+                        continue
+                    score = 0
+                    if t == title:
+                        score += 10
+                    elif title and title in t:
+                        score += 5
+                    if singer and s == singer:
+                        score += 10
+                    elif singer and singer and singer in s:
+                        score += 3
+                    if score > best_score:
+                        best_score = score
+                        best = cand
+                lrc = best
+        except Exception as e:
+            print("_buguyy_lyric error:", e)
+        return lrc
+
+    def _get_cover(self, title, singer="", rid=""):
+        pic = ""
+        try:
+            params = {"keyword": title}
+            r = self.session.get(self.search_api, params=params, timeout=15)
+            data = r.json()
+            if data.get("success") and data.get("data"):
+                best = ""
+                best_score = -1
+                for item in data["data"]:
+                    t = item.get("title", "")
+                    s = item.get("singer", "")
+                    pu = item.get("picurl") or ""
+                    if not pu:
+                        continue
+                    score = 0
+                    if t == title:
+                        score += 10
+                    elif title and title in t:
+                        score += 5
+                    if singer and s == singer:
+                        score += 10
+                    elif singer and singer in s:
+                        score += 3
+                    if score > best_score:
+                        best_score = score
+                        best = pu
+                pic = best
+        except Exception as e:
+            print("_get_cover(buguyy) error:", e)
+        if not pic and title:
+            try:
+                keyword = title
+                if singer:
+                    keyword = title + " " + singer
+                search_url = "https://music.163.com/api/search/get/web"
+                data = {
+                    "s": keyword,
+                    "type": 1,
+                    "offset": 0,
+                    "limit": 5,
+                    "total": "true"
+                }
+                headers = {
+                    "Referer": "https://music.163.com/",
+                    "User-Agent": "Mozilla/5.0"
+                }
+                r = self.session.post(search_url, data=data, headers=headers, timeout=8)
+                if r.status_code == 200:
+                    result = r.json()
+                    songs = result.get("result", {}).get("songs", [])
+                    best = ""
+                    best_score = -1
+                    for song in songs[:5]:
+                        s_name = song.get("name", "")
+                        s_artists = song.get("artists", [])
+                        s_artist = s_artists[0].get("name", "") if s_artists else ""
+                        s_pic = song.get("album", {}).get("picUrl") or song.get("picUrl") or ""
+                        score = 0
+                        if title and title in s_name:
+                            score += 10
+                        if singer and singer in s_artist:
+                            score += 10
+                        if s_name == title:
+                            score += 5
+                        if s_artist == singer:
+                            score += 5
+                        if score > best_score:
+                            best_score = score
+                            best = s_pic
+                    pic = best
+            except Exception as e:
+                print("_get_cover(netease) error:", e)
+        return pic
 
     def _search_lyric_fallback(self, title, singer=""):
         try:
@@ -537,6 +663,7 @@ class Spider(Spider):
             lines = text.split('\n')
             result_lines = []
             has_lrc = False
+            meta_re = re.compile(r'(作词|作曲|编曲|制作人|出品|发行|监制|混音|录音|和声|弦乐|钢琴|吉他|贝斯|鼓|母带|OP|SP|所属|专辑|原唱|翻唱|编写|统筹|企划|出品人|总策划|联合|特别鸣谢|voice|vocal|guitar|drum|bass|piano|strings|mix|master|produce|arrange|compose|lyric|word|music by|lyric by|arranged by)', re.I)
             for line in lines:
                 line = line.strip()
                 if not line:
@@ -548,11 +675,18 @@ class Spider(Spider):
                     has_lrc = True
                     seconds = int(m.group(1)) + int(m.group(2)) / (10 ** len(m.group(2)))
                     content = line[m.end():].strip()
+                    if meta_re.search(content):
+                        continue
                     result_lines.append("[" + self._format_time(seconds) + "]" + content)
                 elif re.match(r'^\[\d{2}:\d{2}', line):
                     has_lrc = True
+                    content = re.sub(r'^\[\d{2}:\d{2}(?:[\.:]\d{1,3})?\]\s*', '', line).strip()
+                    if meta_re.search(content):
+                        continue
                     result_lines.append(line)
                 else:
+                    if meta_re.search(line):
+                        continue
                     result_lines.append(line)
             result = "\n".join([l for l in result_lines if l or (result_lines and l == "")])
             result = result.strip()
