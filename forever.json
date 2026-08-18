@@ -2403,9 +2403,9 @@
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
         }, {
-            "name": "源力zb2",
+            "name": "易发",
             "type": 0,
-            "url": "./ylzb.txt",
+            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/fafa002/yf2025/refs/heads/main/yiyifafa.txt",
             "playerType": 2,
             "timeout": 10,
             "ua": "okhttp/3",
