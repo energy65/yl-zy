@@ -465,7 +465,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		        {
+            "key": "星耀 PY",
+            "name": "星耀丨PY",
+            "api": "./星耀.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "4k-av PY",
             "name": "4k-av丨[4k影视]",
             "api": "./4k-av.py",
