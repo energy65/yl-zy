@@ -98,6 +98,15 @@
             "api": "./drpy2.min.js",
             "ext": "./qq.js"
         },  
+		        {
+            "key": "bili影视PY",
+            "name": "👌bili影视丨PY",
+            "api": "./bili影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
 		{
             "key": "ai看剧 PY",
             "name": "ai看剧丨[1080P]",
