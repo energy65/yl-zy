@@ -2300,31 +2300,11 @@
             "name": "VIP解析(随机4k)",
             "type": 1,
             "url": "https://vip.jiexi.dpdns.org/?url="
-        }, {
-            "name": "VIP解析(随机4k)",
-            "type": 1,
-            "url": "https://vip.jiexi.dpdns.org/?url="
-        }, {
-            "name": "YYNB解析",
-            "type": 1,
-            "url": "https://json.cfysoft.cc/api/?key=5249e5bb3cb34032040224799dae6d45&url="
-        }, {
-            "name": "YYNB解析2",
-            "type": 1,
-            "url": "https://json.cfysoft.cc/api/?key=6294df9ba1f2c6da489bd78fdd9f6d46&url="
-        }, {
+        },  {
             "name": "ikun",
             "type": 0,
             "url": "https://jx.hls.one/?url="
-        }, {
-            "name": "77",
-            "type": 0,
-            "url": "https://jx.77flv.cc/?url="
-        }, {
-            "name": "A6",
-            "type": 0,
-            "url": "https://pl.a6club.com/player/analysis.php?v="
-        }, {
+        },  {
             "name": "8090",
             "type": 0,
             "url": "https://www.8090g.cn/?url="
@@ -2356,51 +2336,6 @@
             "name": "优选",
             "type": 1,
             "url": "http://1.94.221.189:88/algorithm.php?url="
-        }, {
-            "name": "hd解析①",
-            "type": 0,
-            "url": "https://jx.xmflv.com/?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.57"
-                }
-            }
-        }, {
-            "name": "hd解析②",
-            "type": 0,
-            "url": "https://jx.nnxv.cn/tv.php?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.57"
-                }
-            }
-        }, {
-            "name": "hd解析③",
-            "type": 0,
-            "url": "https://jx.m3u8.tv/jiexi/?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.57"
-                }
-            }
-        }, {
-            "name": "hd解析④",
-            "type": 0,
-            "url": "https://www.ckplayer.vip/jiexi/?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.57"
-                }
-            }
-        }, {
-            "name": "hd解析⑤",
-            "type": 0,
-            "url": "https://okjx.cc/?url=",
-            "ext": {
-                "header": {
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.57"
-                }
-            }
         }
     ],
     "lives": [{
