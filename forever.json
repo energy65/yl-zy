@@ -307,12 +307,6 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "瓜子js",
-            "name": "👌瓜子|[1080P]",
-            "type": 3,
-            "api": "https://ghfast.top/https://raw.githubusercontent.com/IY-CPU/IY/main/lib/drpy2.min.js",
-            "ext": "./瓜子.js"
-        }, {
             "key": "csp_Guazi",
             "name": "👌🏻瓜子┃[1080P]",
             "type": 3,
@@ -413,6 +407,15 @@
             "key": "cnflixPY",
             "name": "👌cnflix丨PY",
             "api": "./cnflix.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
+            "key": "1905 PY",
+            "name": "1905电影网丨[720p]",
+            "api": "./1905.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
