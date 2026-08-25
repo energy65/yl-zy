@@ -299,6 +299,15 @@
             "type": 3
         }, 
 		{
+            "key": "影视工厂PY",
+            "name": "👌影视工厂丨PY",
+            "api": "./影视工厂.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "奇乐影视",
             "name": "奇乐|[1080P]",
             "type": 3,
@@ -2317,6 +2326,16 @@
             "name": "解析2",
             "type": 1,
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
+        }, 
+		{
+            "name": "huayong",
+            "type": 1,
+            "url": "https://huayong.net/999/?v="
+        }, 
+		{
+            "name": "TXNP",
+            "type": 1,
+            "url": "https://bfq.txnp.cn/player?url="
         }, 
 	     {
         name: '线路1',
