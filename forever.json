@@ -108,6 +108,15 @@
             "type": 3
         },
 		{
+            "key": "1905 PY",
+            "name": "1905电影网丨[720p]",
+            "api": "./1905.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "ai看剧 PY",
             "name": "ai看剧丨[1080P]",
             "api": "./ai看剧.py",
@@ -416,15 +425,6 @@
             "key": "cnflixPY",
             "name": "👌cnflix丨PY",
             "api": "./cnflix.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        },
-		{
-            "key": "1905 PY",
-            "name": "1905电影网丨[720p]",
-            "api": "./1905.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
