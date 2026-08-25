@@ -2337,82 +2337,10 @@
             "type": 1,
             "url": "https://bfq.txnp.cn/player?url="
         }, 
-	     {
-        name: '线路1',
-        url: 'http://quanminjiexi.com/jx/?url=',
-        priority: 1,
-        timeout: 8000
-    },
     {
-        name: '线路2(可解析bilibili会员视频)',
-        url: 'https://jx.playerjy.com/?url=',
-        priority: 2,
-        timeout: 8000
-    },
-    {
-        name: '线路3',
-        url: 'http://player.cmov.cn/?url=',
-        priority: 3,
-        timeout: 8000
-    },
-    {
-        name: '线路4',
-        url: 'https://jx.aidouer.net/?url=',
-        priority: 4,
-        timeout: 8000
-    },
-    {
-        name: '线路5',
-        url: 'https://jx.nnxv.cn/tv.php?url=',
-        priority: 5,
-        timeout: 8000
-    },
-    {
-        name: '线路6',
-        url: 'https://jx.xmflv.com/?url=',
-        priority: 6,
-        timeout: 8000
-    },
-    {
-        name: '线路7',
+        name: '虾米2',
         url: 'https://jx.xmflv.cc/?url=',
         priority: 7,
-        timeout: 8000
-    },
-    {
-        name: '线路8',
-        url: 'https://www.pouyun.com/?url=',
-        priority: 8,
-        timeout: 8000
-    },
-    {
-        name: '线路9',
-        url: 'https://jx.77flv.cc/?url=',
-        priority: 9,
-        timeout: 8000
-    },
-    {
-        name: '线路10',
-        url: 'https://jx.dmflv.cc/?url=',
-        priority: 10,
-        timeout: 8000
-    },
-    {
-        name: '线路11',
-        url: 'https://jx.xymp4.cc/?url=',
-        priority: 11,
-        timeout: 8000
-    },
-    {
-        name: '线路12',
-        url: 'https://jx.mmkv.cn/tv.php?url=',
-        priority: 12,
-        timeout: 8000
-    },
-    {
-        name: '线路13',
-        url: 'https://z1.m1907.top/?jx=',
-        priority: 13,
         timeout: 8000
     },	
 		{
