@@ -2319,10 +2319,17 @@
                 }
             }
         }, {
-            "name": "解析1",
+            "name": "解析0",
             "type": 1,
             "url": "http://ui6.970088.xyz/api.php?laiyuan=jiying&key=aini&url="
-        }, {
+        }, 
+		{
+        name: '解析1',
+        url: 'https://jx.xmflv.cc/?url=',
+        priority: 7,
+        timeout: 8000
+        },
+		{
             "name": "解析2",
             "type": 1,
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
@@ -2336,13 +2343,7 @@
             "name": "TXNP",
             "type": 1,
             "url": "https://bfq.txnp.cn/player?url="
-        }, 
-    {
-        name: '虾米2',
-        url: 'https://jx.xmflv.cc/?url=',
-        priority: 7,
-        timeout: 8000
-    },	
+        }, 	
 		{
             "name": "VIP解析(随机4k)",
             "type": 1,
