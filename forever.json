@@ -2324,7 +2324,7 @@
             "url": "http://ui6.970088.xyz/api.php?laiyuan=jiying&key=aini&url="
         }, 
 		{
-        name: '解析1',
+        name: '虾米2',
         url: 'https://jx.xmflv.cc/?url=',
         priority: 7,
         timeout: 8000
@@ -2333,7 +2333,13 @@
             "name": "解析2",
             "type": 1,
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
+        }, 		 
+		 {
+            "name": "im1907",
+            "type": 1,
+            "url": "hhttps://im1907.top/?jx="
         }, 
+		 
 		{
             "name": "huayong",
             "type": 1,
