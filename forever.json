@@ -3,7 +3,8 @@
     "warningText": "禁止任何商业用途，后果自负",
     "logo": "./1.gif",
     "wallpaper": "http://饭太硬.top/深色壁纸/api.php",
-    "sites": [{
+    "sites": [
+          {
             "key": "csp_Douban",
             "name": "自用",
             "type": 3,
@@ -25,7 +26,8 @@
             "style": {
                 "type": "oval"
             }
-        }, {
+        }, 
+	     {
             "name": "小白弹幕",
             "key": "小白弹幕",
             "type": 3,
@@ -64,7 +66,7 @@
                 ]
             }
         },
-        {
+	     {
             "key": "csp_iqiyi",
             "name": "👌爱qi艺[官源]",
             "type": 3,
@@ -2330,6 +2332,12 @@
         timeout: 8000
         },
 		{
+        name: 'playm3u8',
+        url: 'https://www.playm3u8.cn/jiexi.php?url=',
+        priority: 7,
+        timeout: 8000
+        },
+		{
             "name": "解析2",
             "type": 1,
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
@@ -2396,6 +2404,16 @@
             "name": "源力zb1",
             "type": 0,
             "url": "./ylzb-zy.txt",
+            "playerType": 2,
+            "timeout": 10,
+            "ua": "okhttp/3",
+            "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
+            "logo": "https://epg.112114.eu.org/logo/{name}.png"
+        }, 
+		{
+            "name": "zb",
+            "type": 0,
+            "url": "./zb.txt",
             "playerType": 2,
             "timeout": 10,
             "ua": "okhttp/3",
