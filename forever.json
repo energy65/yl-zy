@@ -310,6 +310,28 @@
             "type": 3
         },
 		{
+            "key": "新新影视json",
+            "name": "新新影视|json",
+            "type": 3,
+            "api": "csp_XBPQ",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "jar": "./xbpq.jar",
+            "ext": "./新新影视.json"
+        },
+		{
+            "key": "风筝影视json",
+            "name": "风筝影视|json",
+            "type": 3,
+            "api": "csp_XBPQ",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "jar": "./xbpq.jar",
+            "ext": "./风筝影视.json"
+        },
+		{
             "key": "奇乐影视",
             "name": "奇乐|[1080P]",
             "type": 3,
