@@ -569,6 +569,17 @@
             "ext": "./kkys.json"
         }, 
 		{
+            "key": "iysdq",
+            "name": "iysdq",
+            "type": 3,
+            "api": "csp_XBPQ",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "jar": "./xyqxbpq新.jar",
+            "ext": "./iysdq.json"
+        },
+		{
             "key": "可可影视 PY",
             "name": "可可影视py丨[1080P]",
             "api": "./可可影视.py",
@@ -648,17 +659,19 @@
             "filterable": 1,
             "jar": "./svip.jar",
             "ext": "./狐狸磁力.json"
-        }, {
-            "key": "New6v",
-            "name": "🐮New6V｜磁力[1080P]",
+        }, 
+		 {
+            "key": "hipy_js_6V新版[磁]",
+            "name": "New6V｜js磁力[1080P]",
             "type": 3,
-            "api": "csp_New6v",
+            "api": "./js/drpy2.min.js",
             "searchable": 1,
             "quickSearch": 1,
             "filterable": 1,
-            "jar": "./svip.jar",
-            "ext": "https://www.xb6v.com"
-        }, {
+            "order_num": 0,
+            "ext": "./js/6V新版[磁].js"
+        },
+		{
             "key": "美剧迷",
             "name": "🦅美剧迷｜磁力[1080P]",
             "type": 3,
