@@ -10,6 +10,7 @@
 # -*- coding: utf-8 -*-
 import re
 import json
+import base64
 from urllib.parse import quote
 from base.spider import Spider as BaseSpider
 
@@ -30,12 +31,30 @@ class Spider(BaseSpider):
             '4': '综艺纪录',
             '6': '短剧',
         }
+        self._encrypt_key = b'YLSOFT2026'
+        self._search_token = ''
 
     def getName(self):
         return '电影侠'
 
     def isVideoFormat(self, url):
         return False
+
+    def _xor_encrypt(self, text):
+        key = self._encrypt_key
+        text_bytes = text.encode('utf-8')
+        encrypted = bytearray()
+        for i in range(len(text_bytes)):
+            encrypted.append(text_bytes[i] ^ key[i % len(key)])
+        return base64.b64encode(encrypted).decode('utf-8')
+
+    def _xor_decrypt(self, encrypted_text):
+        key = self._encrypt_key
+        encrypted_bytes = base64.b64decode(encrypted_text)
+        decrypted = bytearray()
+        for i in range(len(encrypted_bytes)):
+            decrypted.append(encrypted_bytes[i] ^ key[i % len(key)])
+        return decrypted.decode('utf-8')
 
     def manualVideoCheck(self):
         return False
@@ -236,51 +255,70 @@ class Spider(BaseSpider):
         result = {"parse": 0, "playUrl": "", "url": "", "header": ""}
         try:
             play_url = ''
-            if id.startswith('http'):
-                if '.m3u8' in id:
-                    play_url = id
-                else:
-                    play_page = id
+            play_page = ''
+            is_decrypted = False
+            
+            if id.startswith('enc:'):
+                try:
+                    decrypted = self._xor_decrypt(id[4:])
+                    if decrypted.startswith('http') and '.m3u8' in decrypted:
+                        play_url = decrypted
+                        is_decrypted = True
+                    elif decrypted.startswith('/'):
+                        play_page = self.host + decrypted
+                        html = self._fetch(play_page)
+                        if html:
+                            play_url = self._extract_m3u8(html)
+                            is_decrypted = True
+                except Exception:
+                    pass
+            
+            if not play_url:
+                if id.startswith('http'):
+                    if '.m3u8' in id:
+                        play_url = id
+                    else:
+                        play_page = id
+                        html = self._fetch(play_page)
+                        if html:
+                            play_url = self._extract_m3u8(html)
+                elif id.startswith('/'):
+                    play_page = self.host + id
                     html = self._fetch(play_page)
                     if html:
                         play_url = self._extract_m3u8(html)
-            elif id.startswith('/'):
-                play_page = self.host + id
-                html = self._fetch(play_page)
-                if html:
-                    play_url = self._extract_m3u8(html)
-            else:
-                play_page = self.host + '/' + id
-                html = self._fetch(play_page)
-                if html:
-                    play_url = self._extract_m3u8(html)
+                else:
+                    play_page = self.host + '/' + id
+                    html = self._fetch(play_page)
+                    if html:
+                        play_url = self._extract_m3u8(html)
 
             if play_url:
                 if play_url.startswith('//'):
                     play_url = 'https:' + play_url
-                if play_url.startswith('http'):
-                    result["url"] = play_url
-                    result["parse"] = 0
-
-                    play_headers = {
-                        "User-Agent": self.headers["User-Agent"],
-                        "Referer": self.host + "/",
-                    }
-                    result["header"] = json.dumps(play_headers)
-                else:
-                    result["url"] = self.host + play_url if play_url.startswith('/') else play_url
-                    result["parse"] = 1
+                if not play_url.startswith('http') and play_url.startswith('/'):
+                    play_url = self.host + play_url
+                referer = play_page if play_page and play_page.startswith('http') else self.host + "/"
+                result["url"] = play_url
+                result["parse"] = 0
+                play_headers = {
+                    "User-Agent": self.headers["User-Agent"],
+                    "Referer": referer,
+                }
+                result["header"] = json.dumps(play_headers)
         except Exception as e:
             print(f'playerContent error: {e}')
         return result
 
     def _extract_m3u8(self, html):
         patterns = [
-            r'src:\s*["\'](https?://[^"\']+\.m3u8[^"\']*)["\']',
-            r'url:\s*["\'](https?://[^"\']+\.m3u8[^"\']*)["\']',
+            r'src:\s*["\']([^"\']+\.m3u8[^"\']*)["\']',
+            r'url:\s*["\']([^"\']+\.m3u8[^"\']*)["\']',
+            r'file:\s*["\']([^"\']+\.m3u8[^"\']*)["\']',
+            r'video\s*[=:]\s*["\']([^"\']+\.m3u8[^"\']*)["\']',
+            r'playUrl\s*[=:]\s*["\']([^"\']+\.m3u8[^"\']*)["\']',
             r'["\'](https?://[^"\']+\.m3u8[^"\']*)["\']',
             r'url\s*[=:]\s*["\']([^"\']+\.m3u8[^"\']*)["\']',
-            r'playUrl\s*[=:]\s*["\']([^"\']+\.m3u8[^"\']*)["\']',
         ]
 
         for pat in patterns:
@@ -293,6 +331,10 @@ class Spider(BaseSpider):
                     return url
                 if url.startswith('/'):
                     return self.host + url
+
+        m_generic = re.search(r'(https?://[^\s"\'\\]+?\.m3u8[^\s"\'\\]*)', html, re.I)
+        if m_generic:
+            return m_generic.group(1).strip()
 
         iframe_pattern = r'<iframe[^>]+src=["\']([^"\']+)["\']'
         m_iframe = re.search(iframe_pattern, html, re.I)
@@ -307,14 +349,35 @@ class Spider(BaseSpider):
 
         return ''
 
+    def _get_search_token(self):
+        try:
+            if self._search_token:
+                return self._search_token
+            html = self._fetch('/')
+            if html:
+                m = re.search(r'(?:[?&]|&amp;)t=([A-Za-z0-9+/=%]+)', html)
+                if m:
+                    self._search_token = m.group(1)
+                    return self._search_token
+        except Exception:
+            pass
+        return 'vwxL9rYOg9CWEmwmLAuVug%3D%3D'
+
     def searchContent(self, key, quick, pg="1"):
         try:
-            search_url = f'/search?k={quote(key)}&t=KBiVyDnKlJpM7AdDjEhZPA%3D%3D'
+            token = self._get_search_token()
             page = int(pg) if pg and str(pg).isdigit() else 1
+            search_url = f'/search?k={quote(key)}&t={token}'
             if page > 1:
-                search_url = f'/search?k={quote(key)}&t=KBiVyDnKlJpM7AdDjEhZPA%3D%3D&page={page}'
+                search_url = f'/search?k={quote(key)}&t={token}&page={page}'
             html = self._fetch(search_url)
             items = self._parse_search_list(html)
+            if not items and self._search_token:
+                self._search_token = ''
+                token = self._get_search_token()
+                search_url = f'/search?k={quote(key)}&t={token}' + (f'&page={page}' if page > 1 else '')
+                html = self._fetch(search_url)
+                items = self._parse_search_list(html)
             page_count = page if len(items) < 20 else page + 2
             return {"list": items, "page": page, "pagecount": page_count, "limit": 20, "total": 99999}
         except Exception as e:
