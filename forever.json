@@ -25,45 +25,7 @@
             "style": {
                 "type": "oval"
             }
-        }, {
-            "name": "小白弹幕",
-            "key": "小白弹幕",
-            "type": 3,
-            "api": "csp_SecureDanmu",
-            "jar": "./弹幕.jar",
-            "ext": {
-                "apiUrls": [
-                    "https://logdanmu.kongcheng666.dpdns.org/a123456",
-                    "https://api.dandanplay.net",
-                    "https://danmu.lily.lat/lilyemby",
-                    "https://danmu.longemby.com/lilyemby",
-                    "https://dmk.liuuu.top/api/v1/OGCnm8lTKga8WcgmN8wc",
-                    "https://ybdm.saodu.wang:9999/api/v1/IN5H9udKhmMMklvDYVPs",
-                    "https://danmu.wangziyang.top/020116",
-                    "https://fjj0417.dpdns.org/87654321",
-                    "https://313236.xyz/87654321",
-                    "http://frp3.ccszxc.xin:61292/",
-                    "https://danmuapi123.netlify.app",
-                    "https://Dm.bbbrb.com/luosen",
-                    "https://dm.823520.xyz/87654321",
-                    "https://dudu.coolgua.cloud",
-                    "https://danmu.ystel.cn",
-                    "https://logo.saodu.work:8888/87654321",
-                    "https://stevendanmuapi.netlify.app/steven",
-                    "https://steven-dm.steven037.xyz/steven",
-                    "https://logvarrn.steven037.xyz/steven",
-                    "https://logo.saodu.work:8888/87654321/api/v2",
-                    "https://dm.jiedaibao.gs/dkvnGMoeve",
-                    "https://danmu.appp.pp.ua/danmuapi",
-                    "https://dmapi.6565n.xyz/87654321",
-                    "https://dm.626258.xyz/87654321",
-                    "https://dandan.wenjian.de/wenjian",
-                    "https://dm.liuuu.top/99",
-                    "http://69.165.68.165:9321/87654321|夕阳弹幕",
-                    "https://1233.hhfnj.dpdns.org"
-                ]
-            }
-        },
+        }, 
         {
             "key": "csp_iqiyi",
             "name": "👌爱qi艺[官源]",
@@ -73,16 +35,17 @@
             "quickSearch": 1,
             "filterable": 1,
             "jar": "./琪琪家.jar"
-        }, {
-            "key": "csp_mgtv",
-            "name": "👌芒guotv[官源]",
-            "type": 3,
-            "api": "csp_mgtv",
-            "searchable": 1,
-            "quickSearch": 1,
+        }, 
+		{
+            "key": "果果家②PY",
+            "name": "guoguo丨[1080P&&4k]",
+            "api": "./T3芒果TV.py",
             "filterable": 1,
-            "jar": "./果果家.jar"
-        }, {
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "csp-youku",
             "name": "👌youku[官源]",
             "type": 3,
