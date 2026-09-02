@@ -1204,7 +1204,9 @@
                 "type": "list"
             },
             "timeout": 60
-        }, {
+        }, 
+		{"key":"百度资源","name":"百度资源(切)","type":1,"api":"https://api.apibdzy.com/api.php/provide/vod/","searchable":1,"quickSearch":1},
+		{
             "key": "fy",
             "name": "飞鱼",
             "type": 1,
