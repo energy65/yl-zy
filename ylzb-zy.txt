@@ -1650,6 +1650,86 @@ E1i-Fun動漫台,https://litv.tzh911.qzz.io/litv.php?id=litv-ftv15&token=https:/
 影迷數位電影台,https://litv.tzh911.qzz.io/litv.php?id=4gtv-4gtv011&token=https://t.me/GPT_858
 好消息2台,https://litv.tzh911.qzz.io/litv.php?id=litv-ftv17&token=https://t.me/GPT_858
 半島國際新聞台,https://litv.tzh911.qzz.io/litv.php?id=litv-ftv10&token=https://t.me/GPT_858
+港台（联通）,#genre#,DE=3
+凤凰中文,https://cdn6.cc.cd/163189/fhzw
+TVB Plus(字幕),https://cdn3.indevs.in/stream/tvb/tvbp/
+HOY TV,https://cdn6.cc.cd/163189/hoy
+HOY TV,https://fast.hidns.vip/163189/hoy
+HOY资讯台,https://fast.hidns.vip/163189/hoy78
+HOY国际财经台,https://cdn11.163189.xyz/163189/hoy76
+ViuTV,https://10.fast.hidns.vip/163189/viu/
+ViuTVsix,https://10.fast.hidns.vip/163189/viu6/
+NOW新闻台,https://fast.hidns.vip/163189/now
+RTHK31,https://fast.hidns.vip/163189/rthk31
+RTHK32,https://fast.hidns.vip/163189/rthk32
+澳视澳门,https://cdn6.cc.cd/163189/asam
+澳视卫星,https://cdn6.cc.cd/163189/as
+澳门体育,https://cdn6.cc.cd/163189/amty
+澳门综艺,https://cdn6.cc.cd/163189/amzy
+澳门莲花,https://cdn6.cc.cd/163189/amlh
+重温经典,https://cdn6.cc.cd/163189/cwjd
+凤凰资讯,https://cdn6.cc.cd/163189/fhzx
+凤凰香港,https://cdn6.cc.cd/163189/fhhk
+TVB1,https://cdn6.cc.cd/163189/tvb1
+TVBJ1,https://cdn6.cc.cd/163189/j1
+翡翠剧集台,https://cdn6.cc.cd/163189/tvbd
+翡翠台,https://cdn6.cc.cd/163189/fct
+翡翠台(字幕),https://cdn3.indevs.in/stream/tvb/fct/
+明珠台(字幕),https://cdn3.indevs.in/stream/tvb/mzt/
+无线新闻台,https://cdn6.cc.cd/163189/wxxw
+广东珠江,https://2.fast.hidns.vip/163189/gdzj
+广东体育,https://2.fast.hidns.vip/163189/gdty
+八度空间,https://cdn6.cc.cd/163189/8tv
+CH5,https://cdn6.cc.cd/163189/ch5
+CH8,https://cdn6.cc.cd/163189/ch8
+CHU,https://cdn6.cc.cd/163189/chu
+华丽翡翠台,https://cdn6.cc.cd/163189/hlfct
+TVB亚洲武侠,https://cdn6.cc.cd/163189/yzwx
+TVB娱乐新闻台,https://cdn6.cc.cd/163189/ylxw
+无线新闻台,https://cdn6.cc.cd/163189/wxxwt
+TVB星河,https://cdn6.cc.cd/163189/tvbxh
+海峡卫视,https://10.fast.hidns.vip/163189/hxws/
+海峡卫视,https://168.sryze.cc/163189/hxws
+TVB星河,https://10.fast.hidns.vip/163189/xinghe/
+天映新加坡,https://10.fast.hidns.vip/163189/typd/
+天映经典,https://10.fast.hidns.vip/163189/ccm/
+华丽翡翠台,https://cdn3.indevs.in/stream/live/hlt/
+华丽翡翠台(硬字幕),https://cdn6.cc.cd/163189/jade
+华丽翡翠台(新加坡),https://cdn3.indevs.in/stream/live/jade/
+Astro AOD,https://cdn3.indevs.in/stream/live/aod/
+Astro AEC,https://cdn3.indevs.in/stream/live/aec/
+Astro QJ,https://cdn3.indevs.in/stream/live/qj/
+Astro欢喜台,https://cdn3.indevs.in/stream/live/hxt/
+爱奇艺,https://cdn3.indevs.in/stream/live/iqiyi/
+天映频道,https://cdn3.indevs.in/stream/live/typd/
+天映经典,https://cdn3.indevs.in/stream/live/ccm/
+TVB星河,https://cdn3.indevs.in/stream/live/tvbxh/
+千禧经典台,https://cdn3.indevs.in/stream/live/tvbc/
+翡翠台(WebVTT字幕),https://10.fast.hidns.vip/163189/fct/
+明珠台(WebVTT字幕),https://10.fast.hidns.vip/163189/mzt/
+TVB Plus(WebVTT字幕),https://10.fast.hidns.vip/163189/tvbp/
+黄金华剧台(WebVTT字幕),https://10.fast.hidns.vip/163189/hjhjt/
+重温经典,https://168.sryze.cc/163189/cwjd
+广州综合,https://168.sryze.cc/163189/gzzh
+广州新闻,https://168.sryze.cc/163189/gzxw
+广州南国都市,https://cdn15.163189.xyz/163189/ngds
+五星体育,https://cdn15.163189.xyz/163189/wxty
+民视影剧台,https://cdn12.178.indevs.in/163189/msyj
+公视戏剧,https://cdn12.178.indevs.in/163189/gsxj
+采昌影剧台,https://cdn12.178.indevs.in/163189/ccyj
+靖天映画,https://cdn12.178.indevs.in/163189/jtyh
+靖天戏剧台,https://cdn12.178.indevs.in/163189/jtxj
+靖天电影台,https://cdn12.178.indevs.in/163189/jtdy
+靖洋戏剧台,https://cdn12.178.indevs.in/163189/jyxj
+影迷数位电影台,https://cdn12.178.indevs.in/163189/ymswdyt
+amc电影台,https://cdn12.178.indevs.in/163189/amc
+CinemaWorld,https://cdn12.178.indevs.in/163189/cinemaworld
+My Cinema Europe,https://cdn12.178.indevs.in/163189/mce
+经典电影台,https://cdn12.178.indevs.in/163189/jddyt
+CMusic,https://cdn12.178.indevs.in/163189/cmusic
+DreamWorks梦工厂动画,https://cdn12.178.indevs.in/163189/dreamworks
+精选动漫台,https://cdn12.178.indevs.in/163189/jxdmt
+金光布袋戏,https://cdn12.178.indevs.in/163189/jgbdx
 少儿综艺频道,#genre#
 金鹰卡通,http://183.220.107.138:4022/rtp/239.11.0.127:5140
 金鹰卡通,http://223.86.170.98:4500/rtp/239.11.0.127:5140
