@@ -1,5 +1,4 @@
 央卫2k极速,#genre#
-CCTV1,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=b4829f0a5cdcff84fe2c540b11ee29
 CCTV1,http://go.bkpcp.top/mg/cctv1
 CCTV1,http://j.s.bkpcp.top/jj/cctv1
 CCTV1,http://mg.cttv.vip/688742
@@ -14,7 +13,6 @@ CCTV1,http://223.95.198.3:8000/hls/1/index.m3u8
 CCTV1,http://112.27.235.94:8000/hls/1/index.m3u8
 CCTV1,http://m.061899.xyz/mg/cctv1
 CCTV1,http://t.061899.xyz/tl/tl.php?id=cctv1
-CCTV2,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=97d40bfb13291fb2022d1efd573c2f
 CCTV2,http://go.bkpcp.top/mg/cctv2
 CCTV2,http://j.s.bkpcp.top/jj/cctv2
 CCTV2,http://mg.cttv.vip/63178532
@@ -28,7 +26,6 @@ CCTV2,http://223.95.198.3:8000/hls/2/index.m3u8
 CCTV2,http://112.27.235.94:8000/hls/2/index.m3u8
 CCTV2,http://m.061899.xyz/mg/cctv2
 CCTV2,http://t.061899.xyz/tl/tl.php?id=cctv2
-CCTV3,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=e179c8947371d8eee3f290a2049071
 CCTV3,http://go.bkpcp.top/mg/cctv3
 CCTV3,http://j.s.bkpcp.top/jj/cctv3
 CCTV3,http://mg.cttv.vip/624878271
@@ -42,7 +39,6 @@ CCTV3,http://223.95.198.3:8000/hls/3/index.m3u8
 CCTV3,http://112.27.235.94:8000/hls/3/index.m3u8
 CCTV3,http://m.061899.xyz/mg/cctv3
 CCTV3,http://t.061899.xyz/tl/tl.php?id=cctv3
-CCTV4,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=5418e7c9bfdcc8420045836051c9df
 CCTV4,http://go.bkpcp.top/mg/cctv4
 CCTV4,http://j.s.bkpcp.top/jj/cctv4
 CCTV4,http://mg.cttv.vip/63178421
@@ -56,7 +52,6 @@ CCTV4,http://223.95.198.3:8000/hls/4/index.m3u8
 CCTV4,http://112.27.235.94:8000/hls/4/index.m3u8
 CCTV4,http://m.061899.xyz/mg/cctv4
 CCTV4,http://t.061899.xyz/tl/tl.php?id=cctv4
-CCTV5,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=7da5916b954c950b97e13ccf2ac021
 CCTV5,http://go.bkpcp.top/mg/cctv5
 CCTV5,http://j.s.bkpcp.top/jj/cctv5
 CCTV5,http://mg.cttv.vip/641886683
@@ -70,7 +65,6 @@ CCTV5,http://223.95.198.3:8000/hls/5/index.m3u8
 CCTV5,http://112.27.235.94:8000/hls/5/index.m3u8
 CCTV5,http://m.061899.xyz/mg/cctv5
 CCTV5,http://t.061899.xyz/tl/tl.php?id=cctv5
-CCTV5+,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=af0265c0bcc4e8188699132b7b2437
 CCTV5+,http://go.bkpcp.top/mg/cctv5p
 CCTV5+,http://j.s.bkpcp.top/jj/cctv5p
 CCTV5+,http://mg.cttv.vip/641886773
@@ -83,7 +77,6 @@ CCTV5+,http://60.10.139.113:8801/hls/15/index.m3u8
 CCTV5+,http://112.27.235.94:8000/hls/6/index.m3u8
 CCTV5+,http://m.061899.xyz/mg/cctv5p
 CCTV5+,http://t.061899.xyz/tl/tl.php?id=cctv5p
-CCTV6,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=48ecdb857dce0c41d4b656e71a6ab5
 CCTV6,http://go.bkpcp.top/mg/cctv6
 CCTV6,http://j.s.bkpcp.top/jj/cctv6
 CCTV6,http://mg.cttv.vip/624878396
@@ -97,7 +90,6 @@ CCTV6,http://223.95.198.3:8000/hls/6/index.m3u8
 CCTV6,http://112.27.235.94:8000/hls/7/index.m3u8
 CCTV6,http://m.061899.xyz/mg/cctv6
 CCTV6,http://t.061899.xyz/tl/tl.php?id=cctv6
-CCTV7,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=01d1f2ce8b8c7eefc3cf997d4ba4cd
 CCTV7,http://go.bkpcp.top/mg/cctv7
 CCTV7,http://j.s.bkpcp.top/jj/cctv7
 CCTV7,http://mg.cttv.vip/673168121
@@ -111,7 +103,6 @@ CCTV7,http://223.95.198.3:8000/hls/7/index.m3u8
 CCTV7,http://112.27.235.94:8000/hls/8/index.m3u8
 CCTV7,http://m.061899.xyz/mg/cctv7
 CCTV7,http://t.061899.xyz/tl/tl.php?id=cctv7
-CCTV8,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=8b2672c94a971ead22fc71bb08f03d
 CCTV8,http://go.bkpcp.top/mg/cctv8
 CCTV8,http://j.s.bkpcp.top/jj/cctv8
 CCTV8,http://mg.cttv.vip/624878356
@@ -125,7 +116,6 @@ CCTV8,http://223.95.198.3:8000/hls/8/index.m3u8
 CCTV8,http://112.27.235.94:8000/hls/9/index.m3u8
 CCTV8,http://m.061899.xyz/mg/cctv8
 CCTV8,http://t.061899.xyz/tl/tl.php?id=cctv8
-CCTV9,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=6f7330baac88efc238870b19179d11
 CCTV9,http://go.bkpcp.top/mg/cctv9
 CCTV9,http://j.s.bkpcp.top/jj/cctv9
 CCTV9,http://mg.cttv.vip/67316814
@@ -139,7 +129,6 @@ CCTV9,http://223.95.198.3:8000/hls/9/index.m3u8
 CCTV9,http://112.27.235.94:8000/hls/10/index.m3u8
 CCTV9,http://m.061899.xyz/mg/cctv9
 CCTV9,http://t.061899.xyz/tl/tl.php?id=cctv9
-CCTV10,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=02b28dfc70fb7b4e0420e798a96e99
 CCTV10,http://go.bkpcp.top/mg/cctv10
 CCTV10,http://j.s.bkpcp.top/jj/cctv10
 CCTV10,http://mg.cttv.vip/624878405
@@ -153,7 +142,6 @@ CCTV10,http://223.95.198.3:8000/hls/10/index.m3u8
 CCTV10,http://112.27.235.94:8000/hls/11/index.m3u8
 CCTV10,http://m.061899.xyz/mg/cctv10
 CCTV10,http://t.061899.xyz/tl/tl.php?id=cctv10
-CCTV11,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=e68e12be8a4662b6bde3373c9e0886
 CCTV11,http://go.bkpcp.top/mg/cctv11
 CCTV11,http://j.s.bkpcp.top/jj/cctv11
 CCTV11,http://mg.cttv.vip/667987558
@@ -167,7 +155,6 @@ CCTV11,http://223.95.198.3:8000/hls/11/index.m3u8
 CCTV11,http://112.27.235.94:8000/hls/12/index.m3u8
 CCTV11,http://m.061899.xyz/mg/cctv11
 CCTV11,http://t.061899.xyz/tl/tl.php?id=cctv11
-CCTV12,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=48ca4ab8309523424ac90d0e1771ae
 CCTV12,http://go.bkpcp.top/mg/cctv12
 CCTV12,http://j.s.bkpcp.top/jj/cctv12
 CCTV12,http://mg.cttv.vip/673168185
@@ -181,7 +168,6 @@ CCTV12,http://223.95.198.3:8000/hls/12/index.m3u8
 CCTV12,http://112.27.235.94:8000/hls/13/index.m3u8
 CCTV12,http://m.061899.xyz/mg/cctv12
 CCTV12,http://t.061899.xyz/tl/tl.php?id=cctv12
-CCTV13,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=1448a7993bc0468fdce112f8d37a02
 CCTV13,http://go.bkpcp.top/mg/cctv13
 CCTV13,http://j.s.bkpcp.top/jj/cctv13
 CCTV13,http://mg.cttv.vip/6887423
@@ -195,7 +181,6 @@ CCTV13,http://223.95.198.3:8000/hls/13/index.m3u8
 CCTV13,http://112.27.235.94:8000/hls/14/index.m3u8
 CCTV13,http://m.061899.xyz/mg/cctv13
 CCTV13,http://t.061899.xyz/tl/tl.php?id=cctv13
-CCTV14,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=27bd7cbe0d00dd166e2226eb691418
 CCTV14,http://go.bkpcp.top/mg/cctv14
 CCTV14,http://j.s.bkpcp.top/jj/cctv14
 CCTV14,http://mg.cttv.vip/62487844
@@ -209,7 +194,6 @@ CCTV14,http://223.95.198.3:8000/hls/14/index.m3u8
 CCTV14,http://112.27.235.94:8000/hls/15/index.m3u8
 CCTV14,http://m.061899.xyz/mg/cctv14
 CCTV14,http://t.061899.xyz/tl/tl.php?id=cctv14
-CCTV15,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=008a714b154c1d5a81cc699ce660ea
 CCTV15,http://go.bkpcp.top/mg/cctv15
 CCTV15,http://j.s.bkpcp.top/jj/cctv15
 CCTV15,http://mg.cttv.vip/673168223
@@ -233,7 +217,6 @@ CCTV16,http://38.75.136.137:98/gslb/dsdqpub/cctv16hd.m3u8?auth=testpub
 CCTV16,http://223.95.198.3:8000/hls/16/index.m3u8
 CCTV16,http://m.061899.xyz/mg/cctv16
 CCTV16,http://t.061899.xyz/tl/tl.php?id=cctv16
-CCTV17,http://live.bypbwxx.top/live/zhibojm-yangshi.php?token=f31a00964c121ca5c25cd21255e242
 CCTV17,http://go.bkpcp.top/mg/cctv17
 CCTV17,http://j.s.bkpcp.top/jj/cctv17
 CCTV17,http://mg.cttv.vip/673168256
