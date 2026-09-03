@@ -26,6 +26,18 @@
                 "type": "oval"
             }
         }, 
+		{
+      "key": "FeimaoKtvUi",
+      "name": "🎤飞猫KTV[应用]",
+      "type": 3,
+	  "jar":"./aidaox-20260903-134007.jar",
+      "api": "csp_FeimaoKtvUi",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 0,
+      "changeable": 0,
+      "ext": "{\"host\":\"https://ktv.catvod.site\",\"key\":\"ktv_jIO7myCOGTEYCLByS9ABrBXGOmxK6D8_\"}"
+    },
         {
             "key": "csp_iqiyi",
             "name": "👌爱qi艺[官源]",
