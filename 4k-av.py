@@ -1,151 +1,412 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from urllib.parse import quote
+"""
+4K-AV TVBox Python Spider
+网站地址: https://4k-av.com/
+"""
 
-from pyquery import PyQuery as pq
-from base.spider import Spider
-import requests
 import re
+import ssl
+import urllib.request
+import urllib.parse
+import html as html_mod
+
+try:
+    from base.spider import Spider as BaseSpider
+except ImportError:
+    class BaseSpider:
+        def init(self, extend=""): pass
+        def getName(self): return ""
+        def homeContent(self, filter): return {}
+        def homeVideoContent(self): return {}
+        def categoryContent(self, tid, pg, filter, extend): return {}
+        def detailContent(self, ids): return {}
+        def searchContent(self, key, quick, pg="1"): return {}
+        def playerContent(self, flag, id, vipFlags): return {}
 
 
-class Spider(Spider):
+class Spider(BaseSpider):
+    BASE_URL = "https://4k-av.com"
+    WECHAT_INFO = '微信公众号"源力软件汇"'
+    UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+
+    CATEGORIES = [
+        {"type_id": 1, "type_name": "电影", "slug": "movie"},
+        {"type_id": 2, "type_name": "电视剧", "slug": "tv"},
+        {"type_id": 3, "type_name": "AV", "slug": "av"},
+    ]
+
+    def init(self, extend=""):
+        pass
+
     def getName(self):
         return "4K-AV"
 
-    def init(self, extend=""):
-        self.name = "4K-AV"
-        self.host = "https://www.4k-av.com"
-        self.headers = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.8 Mobile/15E148 Safari/604.1'
-        }
-        self.session = requests.Session()
-        self.session.headers.update(self.headers)
+    def getHtml(self, url):
         try:
-            import json
-            ex = json.loads(extend) if extend and extend.startswith('{') else {}
-            if isinstance(ex, dict):
-                p = ex.get('proxy') or (ex.get('extend', {}).get('proxy') if isinstance(ex.get('extend', {}), dict) else None)
-                if p:
-                    self.session.proxies = {'http': p, 'https': p}
-        except Exception:
-            pass
-
-    def _get(self, url):
-        try:
-            r = self.session.get(url, headers=self.headers, timeout=15, proxies=self.session.proxies or None)
-            r.encoding = r.apparent_encoding or 'utf-8'
-            return r.text
-        except Exception:
-            return ''
-
-    def _fix(self, url):
-        if not url:
-            return ''
-        if url.startswith('//'):
-            return 'https:' + url
-        if url.startswith('/'):
-            return self.host + url
-        return url
-
-    def getpq(self, path=''):
-        html = self._get(self.host + path)
-        return pq(html) if html else pq('')
-
-    def getlist(self, data, y='.resyear label[title="分辨率"]'):
-        videos = []
-        for i in data.items():
-            if not i('.title a').attr('href'):
-                continue
-            ns = i('.title h2').text().split(' ')
-            videos.append({
-                'vod_id': i('.title a').attr('href'),
-                'vod_name': ns[0] if ns else '',
-                'vod_pic': i('.poster img').attr('src') or '',
-                'vod_remarks': ns[-1] if len(ns) > 1 else '',
-                'vod_year': i(y).text()
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            req = urllib.request.Request(url, headers={
+                "User-Agent": self.UA,
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
             })
-        return videos
+            with urllib.request.urlopen(req, timeout=15, context=ctx) as resp:
+                data = resp.read()
+                for enc in ["utf-8", "gbk", "gb2312", "latin-1"]:
+                    try:
+                        return data.decode(enc)
+                    except Exception:
+                        continue
+                return data.decode("utf-8", errors="replace")
+        except Exception:
+            return ""
+
+    def clean(self, text):
+        if not text:
+            return ""
+        text = html_mod.unescape(str(text))
+        text = text.replace("&#183;", "·")
+        text = re.sub(r"<[^>]+>", "", text)
+        return re.sub(r"\s+", " ", text).strip()
+
+    def attr_val(self, tag_html, attr):
+        m = re.search(rf'{attr}\s*=\s*["\']([^"\']*)["\']', tag_html)
+        return m.group(1) if m else ""
 
     def homeContent(self, filter):
-        data = self.getpq('/')
-        result = {}
-        classes = []
-        for k in list(data('#category ul li').items())[:-1]:
-            a = k('a')
-            if a.attr('href'):
-                classes.append({
-                    'type_name': k.text(),
-                    'type_id': a.attr('href')
-                })
-        result['class'] = classes
-        result['list'] = self.getlist(data('#MainContent_newestlist .virow .NTMitem'))
-        result['filters'] = {}
-        return result
+        return {"class": self.CATEGORIES, "filters": {}}
 
     def homeVideoContent(self):
-        data = self.getpq('/')
-        items = self.getlist(data('#MainContent_scrollul ul li') + data('#MainContent_newestlist .virow .NTMitem'))
-        seen = set()
-        out = []
-        for v in items:
-            if v.get('vod_id') and v['vod_id'] not in seen:
-                seen.add(v['vod_id'])
-                out.append(v)
-        return {'list': out}
+        result = {"list": []}
+        html = self.getHtml(self.BASE_URL)
+        if not html:
+            return result
+
+        videos = []
+        patterns = [
+            r'<div class="[^"]*item[^"]*">(.*?)</div>\s*</div>\s*</div>',
+            r'<div class="[^"]*item[^"]*">(.*?)</div>\s*</div>',
+            r'<article[^>]*>(.*?)</article>',
+            r'<div[^>]*vod-item[^>]*>(.*?)</div>',
+        ]
+        for pattern in patterns:
+            for item in re.finditer(pattern, html, re.S):
+                block = item.group(1)
+                href_m = re.search(r'href="(/(movie|tv|av)/[^"]+)"', block)
+                if not href_m:
+                    continue
+                href = href_m.group(1)
+                cat = href_m.group(2)
+                
+                vid = ""
+                vid_match = re.search(rf'/{cat}/([^/]+)/', href)
+                if vid_match:
+                    vid = vid_match.group(1)
+
+                name_m = re.search(r'<h2>([^<]+)</h2>', block)
+                name = self.clean(name_m.group(1)) if name_m else ""
+
+                if not vid or not name:
+                    continue
+
+                pic_m = re.search(r'src="(https?://[^"]+poster_nail[^"]+)"', block)
+                pic = pic_m.group(1) if pic_m else ""
+
+                resolution = ""
+                res_m = re.search(r'<label[^>]*title.[^"]*分辨率[^"]*"[^>]*>([^<]+)</label>', block, re.I)
+                if not res_m:
+                    res_m = re.search(r'<label[^>]*>([^<]+)</label>', block)
+                if res_m:
+                    resolution = self.clean(res_m.group(1))
+
+                year_m = re.search(r'<label[^>]*title.[^"]*年份[^"]*"[^>]*>(\d+)</label>', block, re.I)
+                year = year_m.group(1) if year_m else ""
+
+                tags = []
+                for tag_m in re.finditer(r'<span[^>]*>([^<]+)</span>', block):
+                    tags.append(self.clean(tag_m.group(1)))
+
+                desc_m = re.search(r'<div[^>]*class.[^"]*videodesc[^"]*"[^>]>(.*?)</div>', block, re.S)
+                desc = self.clean(desc_m.group(1)) if desc_m else ""
+
+                videos.append({
+                    "vod_id": vid,
+                    "vod_name": name,
+                    "vod_pic": pic,
+                    "vod_year": year,
+                    "vod_remarks": resolution,
+                    "vod_class": " ".join(tags),
+                    "vod_content": desc,
+                    "vod_type": cat,
+                })
+
+        result["list"] = videos[:30]
+        return result
 
     def categoryContent(self, tid, pg, filter, extend):
-        tid = tid.rstrip('/') if tid else '/movie'
-        data = self.getpq(f"{tid}/page-{pg}.html")
-        result = {}
-        result['list'] = self.getlist(data('#MainContent_newestlist .virow .NTMitem'))
-        result['page'] = int(pg) if str(pg).isdigit() else 1
-        m = re.search(r'页次\s*\d+\s*/\s*(\d+)', data('#MainContent_header_nav').text())
-        result['pagecount'] = int(m.group(1)) if m else result['page']
-        result['limit'] = len(result['list']) or 24
-        result['total'] = 0
+        result = {"list": [], "page": str(pg), "pagecount": "1", "total": "0"}
+        cat = None
+        for c in self.CATEGORIES:
+            if c["type_id"] == int(tid):
+                cat = c
+                break
+        if not cat:
+            return result
+
+        slug = cat["slug"]
+        page = int(pg) if str(pg).isdigit() else 1
+        if page <= 1:
+            url = f"{self.BASE_URL}/{slug}/"
+        else:
+            url = f"{self.BASE_URL}/{slug}/page-{page}.html"
+
+        html = self.getHtml(url)
+        if not html:
+            return result
+
+        videos = []
+        patterns = [
+            r'<div class="[^"]*item[^"]*">(.*?)</div>\s*</div>\s*</div>',
+            r'<div class="[^"]*item[^"]*">(.*?)</div>\s*</div>',
+            r'<article[^>]*>(.*?)</article>',
+            r'<div[^>]*vod-item[^>]*>(.*?)</div>',
+        ]
+        for pattern in patterns:
+            for item in re.finditer(pattern, html, re.S):
+                block = item.group(1)
+                href_m = re.search(r'href="(/(movie|tv|av)/[^"]+)"', block)
+                if not href_m:
+                    continue
+                href = href_m.group(1)
+                cat_type = href_m.group(2)
+                
+                vid = ""
+                vid_match = re.search(rf'/{cat_type}/([^/]+)/', href)
+                if vid_match:
+                    vid = vid_match.group(1)
+
+                name_m = re.search(r'<h2>([^<]+)</h2>', block)
+                name = self.clean(name_m.group(1)) if name_m else ""
+
+                if not vid or not name:
+                    continue
+
+                pic_m = re.search(r'src="(https?://[^"]+poster_nail[^"]+)"', block)
+                pic = pic_m.group(1) if pic_m else ""
+
+                resolution = ""
+                res_m = re.search(r'<label[^>]*title.[^"]*分辨率[^"]*"[^>]*>([^<]+)</label>', block, re.I)
+                if not res_m:
+                    res_m = re.search(r'<label[^>]*>([^<]+)</label>', block)
+                if res_m:
+                    resolution = self.clean(res_m.group(1))
+
+                year_m = re.search(r'<label[^>]*title.[^"]*年份[^"]*"[^>]*>(\d+)</label>', block, re.I)
+                year = year_m.group(1) if year_m else ""
+
+                tags = []
+                for tag_m in re.finditer(r'<span[^>]*>([^<]+)</span>', block):
+                    tags.append(self.clean(tag_m.group(1)))
+
+                desc_m = re.search(r'<div[^>]*class.[^"]*videodesc[^"]*"[^>]>(.*?)</div>', block, re.S)
+                desc = self.clean(desc_m.group(1)) if desc_m else ""
+
+                videos.append({
+                    "vod_id": vid,
+                    "vod_name": name,
+                    "vod_pic": pic,
+                    "vod_year": year,
+                    "vod_remarks": resolution,
+                    "vod_class": " ".join(tags),
+                    "vod_content": desc,
+                    "vod_type": cat_type,
+                    "type_id": str(cat["type_id"]),
+                    "type_name": cat["type_name"],
+                })
+
+        pagecount = "1"
+        page_info_m = re.search(r'页次\s*(\d+)/(\d+)', html)
+        if page_info_m:
+            pagecount = page_info_m.group(2)
+
+        result["list"] = videos
+        result["pagecount"] = pagecount
+        result["total"] = str(int(pagecount) * len(videos)) if videos else "0"
         return result
 
     def detailContent(self, ids):
-        vid = ids[0]
-        data = self.getpq(vid)
-        v = data('#videoinfo')
-        vod = {
-            'vod_id': vid,
-            'vod_name': data('#tophead h1').text().split(' ')[0],
-            'type_name': v('#MainContent_tags.tags a').text(),
-            'vod_year': v('#MainContent_videodetail.videodetail a').text(),
-            'vod_remarks': v('#MainContent_titleh12 h2').text(),
-            'vod_content': v('p.cnline').text(),
-            'vod_play_from': '4K-AV',
-            'vod_play_url': ''
-        }
-        vlist = data('#rtlist li')
-        if vlist:
-            jn = f"{vod['vod_name']}_" if 'EP0' in vlist.eq(0)('span').text() else ''
-            c = [f"{jn}{i('span').text()}${i('a').attr('href')}" for i in list(vlist.items())[1:] if i('a').attr('href')]
-            c.insert(0, f"{jn}{vlist.eq(0)('span').text()}${vid}")
-            vod['vod_play_url'] = '#'.join(c)
+        result = {"list": []}
+        vid = ids[0] if isinstance(ids, list) and ids else ids
+        
+        urls_to_try = [
+            f"{self.BASE_URL}/movie/{vid}/",
+            f"{self.BASE_URL}/tv/{vid}/",
+            f"{self.BASE_URL}/av/{vid}/",
+        ]
+        
+        html = ""
+        final_url = ""
+        for url in urls_to_try:
+            html = self.getHtml(url)
+            if html and "<title>" in html:
+                final_url = url
+                break
+        
+        if not html:
+            return result
+
+        vod = {"vod_id": str(vid)}
+
+        title_m = re.search(r'<h1 title="([^"]+)">([^<]+)</h1>', html)
+        if title_m:
+            vod["vod_name"] = self.clean(title_m.group(1))
         else:
-            vod['vod_play_url'] = f"{vod['vod_name']}${vid}"
-        return {'list': [vod]}
+            title_m2 = re.search(r'<div title="([^"]+)">([^<]+)</div>', html)
+            vod["vod_name"] = self.clean(title_m2.group(1)) if title_m2 else ""
+
+        pic_m = re.search(r'src="(https?://[^"]+poster_nail[^"]+)"', html)
+        vod["vod_pic"] = pic_m.group(1) if pic_m else ""
+
+        vod["vod_class"] = ""
+        vod["vod_area"] = ""
+        vod["vod_year"] = ""
+        vod["vod_remarks"] = ""
+        vod["vod_actor"] = ""
+        vod["vod_director"] = ""
+        vod["vod_lang"] = ""
+
+        resolution = ""
+        res_m = re.search(r'<label>分辨率:\s*([^<]+)</label>', html)
+        if not res_m:
+            res_m = re.search(r'<label title="分辨率"\s*>([^<]+)</label>', html)
+        if res_m:
+            resolution = self.clean(res_m.group(1))
+        vod["vod_remarks"] = resolution
+
+        year_m = re.search(r'<label>年份:\s*<a[^>]*>(\d+)</a>', html)
+        if year_m:
+            vod["vod_year"] = year_m.group(1)
+
+        tags = []
+        for tag_m in re.finditer(r'<a href="/tag/[^"]+/">([^<]+)</a>', html):
+            tags.append(self.clean(tag_m.group(1)))
+        vod["vod_class"] = " ".join(tags)
+
+        desc_m = re.search(r'<div id="MainContent_videodesc">(.*?)</div>', html, re.S)
+        if desc_m:
+            desc_text = self.clean(desc_m.group(1))
+            vod["vod_content"] = self.WECHAT_INFO + "\n" + desc_text
+        else:
+            vod["vod_content"] = self.WECHAT_INFO
+
+        play_urls = []
+        source_m = re.search(r'<source\s+src="(https?://[^"]+)"', html)
+        if source_m:
+            play_urls.append(source_m.group(1))
+
+        if play_urls:
+            vod["vod_play_from"] = "4K-AV"
+            vod["vod_play_url"] = "#".join([f"播放${url}" for url in play_urls])
+        else:
+            vod["vod_play_from"] = ""
+            vod["vod_play_url"] = ""
+
+        result["list"] = [vod]
+        return result
 
     def searchContent(self, key, quick, pg="1"):
-        data = self.getpq(f"/s?x={quote(key)}")
-        return {'list': self.getlist(data('#MainContent_newestlist .virow .NTMitem.Main')), 'page': int(pg) if str(pg).isdigit() else 1}
+        try:
+            return self._do_search(key, quick, pg)
+        except Exception:
+            return {"list": [], "page": str(pg), "pagecount": "1", "total": "0"}
+
+    def _do_search(self, key, quick, pg="1"):
+        result = {"list": [], "page": str(pg), "pagecount": "1", "total": "0"}
+        page = int(pg) if str(pg).isdigit() else 1
+        
+        url = f"{self.BASE_URL}/s?m={urllib.parse.quote(key)}"
+        if page > 1:
+            url = f"{self.BASE_URL}/s/page-{page}.html?m={urllib.parse.quote(key)}"
+
+        html = self.getHtml(url)
+        if not html:
+            return result
+
+        videos = []
+        patterns = [
+            r'<div class="[^"]*item[^"]*">(.*?)</div>\s*</div>\s*</div>',
+            r'<div class="[^"]*item[^"]*">(.*?)</div>\s*</div>',
+            r'<article[^>]*>(.*?)</article>',
+            r'<div[^>]*vod-item[^>]*>(.*?)</div>',
+        ]
+        for pattern in patterns:
+            for item in re.finditer(pattern, html, re.S):
+                block = item.group(1)
+                href_m = re.search(r'href="(/(movie|tv|av)/[^"]+)"', block)
+                if not href_m:
+                    continue
+                href = href_m.group(1)
+                cat_type = href_m.group(2)
+                
+                vid = ""
+                vid_match = re.search(rf'/{cat_type}/([^/]+)/', href)
+                if vid_match:
+                    vid = vid_match.group(1)
+
+                name_m = re.search(r'<h2>([^<]+)</h2>', block)
+                name = self.clean(name_m.group(1)) if name_m else ""
+
+                if not vid or not name:
+                    continue
+
+                pic_m = re.search(r'src="(https?://[^"]+poster_nail[^"]+)"', block)
+                pic = pic_m.group(1) if pic_m else ""
+
+                resolution = ""
+                res_m = re.search(r'<label[^>]*title.[^"]*分辨率[^"]*"[^>]*>([^<]+)</label>', block, re.I)
+                if not res_m:
+                    res_m = re.search(r'<label[^>]*>([^<]+)</label>', block)
+                if res_m:
+                    resolution = self.clean(res_m.group(1))
+
+                year_m = re.search(r'<label[^>]*title.[^"]*年份[^"]*"[^>]*>(\d+)</label>', block, re.I)
+                year = year_m.group(1) if year_m else ""
+
+                tags = []
+                for tag_m in re.finditer(r'<span[^>]*>([^<]+)</span>', block):
+                    tags.append(self.clean(tag_m.group(1)))
+
+                videos.append({
+                    "vod_id": vid,
+                    "vod_name": name,
+                    "vod_pic": pic,
+                    "vod_year": year,
+                    "vod_remarks": resolution,
+                    "vod_class": " ".join(tags),
+                })
+
+        pagecount = "1"
+        page_info_m = re.search(r'页次\s*(\d+)/(\d+)', html)
+        if page_info_m:
+            pagecount = page_info_m.group(2)
+
+        result["list"] = videos
+        result["pagecount"] = pagecount
+        result["total"] = str(int(pagecount) * len(videos)) if videos else "0"
+        return result
 
     def playerContent(self, flag, id, vipFlags):
-        try:
-            data = self.getpq(id)
-            p, url = 0, data('#MainContent_videowindow source').attr('src')
-            if not url:
-                raise Exception('未找到播放地址')
-        except Exception:
-            p, url = 1, f"{self.host}{id}"
-        headers = {
-            'origin': 'https://www.4k-av.com',
-            'referer': 'https://www.4k-av.com/',
-            'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.8 Mobile/15E148 Safari/604.1'
-        }
-        return {'parse': p, 'url': url, 'header': headers}
+        play_url = str(id)
+        if play_url.startswith("$"):
+            play_url = play_url[1:]
+        if "$" in play_url:
+            parts = play_url.split("$")
+            if len(parts) >= 2:
+                play_url = parts[-1]
+        if not play_url.startswith("http"):
+            play_url = ""
+        return {"url": play_url, "parse": "0", "header": "", "playUrl": "", "subtitle": ""}
