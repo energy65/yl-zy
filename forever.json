@@ -832,6 +832,42 @@
             "type": 3
         },
 		{
+            "key": "美剧屋PY",
+            "name": "👌美剧屋丨PY",
+            "api": "./美剧屋.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		  {
+      "key": "美剧屋PY",
+      "name": "👌美剧屋丨[美剧]",
+      "api": "./美剧屋.py",
+      "filterable": 1,
+      "quickSearch": 1,
+      "searchable": 1,
+      "type": 3
+  },
+    {
+      "key": "爱美剧PY",
+      "name": "👌爱美剧丨[美剧]",
+      "api": "./爱美剧.py",
+      "filterable": 1,
+      "quickSearch": 1,
+      "searchable": 1,
+      "type": 3
+  },
+   {
+      "key": "滴滴美剧PY",
+      "name": "👌滴滴美剧丨[美剧]",
+      "api": "./滴滴美剧.py",
+      "filterable": 1,
+      "quickSearch": 1,
+      "searchable": 1,
+      "type": 3
+  }
+		{
             "key": "csp_Panta91",
             "name": "👀盘Ta┃YD",
             "type": 3,
