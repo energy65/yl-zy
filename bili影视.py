@@ -1,7 +1,7 @@
 # coding=utf-8
 # 哔哩哔哩影视 TVBox Python 爬虫 (基于 base.spider 标准)
 # 站点: https://www.bilibili.com/
-# 分类: 电影 / 电视剧 / 综艺 / 动漫(番剧+国创), 其余分类已过滤
+# 分类: 电影 / 电视剧 / 综艺 / 动漫(番剧+国创) / 纪录片 / 少儿, 其余分类已过滤
 # 数据: B站官方 PGC 剧集接口 + 官方搜索接口
 # 播放: 与 李子柒.py 一致, 返回B站页面地址(jx=1/parse=1)交由TVBox解析器
 #       解析播放, 并附带 183933.xyz 弹幕; 需在TVBox配置可用的解析或嗅探
@@ -45,8 +45,11 @@ CATES = [
     {'type_id': 'tv', 'type_name': '电视剧'},
     {'type_id': 'show', 'type_name': '综艺'},
     {'type_id': 'anime', 'type_name': '动漫'},
+    {'type_id': 'documentary', 'type_name': '纪录片'},
+    {'type_id': 'kids', 'type_name': '少儿'},
 ]
-TYPE_MAP = {'movie': [2], 'tv': [5], 'show': [7], 'anime': [1, 4]}
+TYPE_MAP = {'movie': [2], 'tv': [5], 'show': [7], 'anime': [1, 4],
+            'documentary': [3], 'kids': [1, 4]}
 
 ORDERS = [
     {'n': '最近更新', 'v': '0'},
@@ -88,6 +91,20 @@ FALLBACK_CONDITIONS = {
                               ('10060', '情色'), ('10061', '家庭'), ('10062', '武侠'), ('10063', '西部'),
                               ('10064', '惊悚'), ('10018', '奇幻'), ('10032', '冒险'), ('10033', '科幻')]),
         ('season_status', '付费', [('-1', '全部'), ('1', '免费'), ('2,6', '付费'), ('4,6', '大会员')])],
+    3: [('style_id', '风格', [('-1', '全部'), ('10033', '历史'), ('10045', '美食'), ('10065', '人文'),
+                              ('10066', '科技'), ('10068', '宇宙'), ('10072', '自然'), ('10070', '社会'),
+                              ('10071', '动物'), ('10073', '医疗'), ('10074', '军事'), ('10077', '旅行'),
+                              ('10038', '运动'), ('10064', '灾难')]),
+        ('producer_id', '出品', [('-1', '全部'), ('4', '央视'), ('1', 'BBC'), ('7', '探索频道'),
+                                 ('14', '国家地理'), ('2', 'NHK'), ('6', '历史频道'), ('9', '自制')]),
+        ('release_date', '年份', [('-1', '全部'), ('[2026-01-01 00:00:00,2027-01-01 00:00:00)', '2026'),
+                                  ('[2025-01-01 00:00:00,2026-01-01 00:00:00)', '2025'),
+                                  ('[2024-01-01 00:00:00,2025-01-01 00:00:00)', '2024'),
+                                  ('[2020-01-01 00:00:00,2024-01-01 00:00:00)', '2020-2023'),
+                                  ('[2010-01-01 00:00:00,2020-01-01 00:00:00)', '2010-2019'),
+                                  ('[2000-01-01 00:00:00,2010-01-01 00:00:00)', '2000-2009'),
+                                  ('[,2000-01-01 00:00:00)', '更早')]),
+        ('season_status', '付费', [('-1', '全部'), ('1', '免费'), ('4,6', '大会员')])],
     4: [('area', '地区', [('-1', '全部'), ('1', '中国大陆'), ('6,7', '中国港台'), ('2', '日本')]),
         ('is_finish', '状态', [('-1', '全部'), ('1', '完结'), ('0', '连载')]),
         ('year', '年份', [('-1', '全部'), ('[2026,2027)', '2026'), ('[2025,2026)', '2025'),
@@ -245,7 +262,7 @@ class Spider(_BaseSpider):
         if self._conditions is not None:
             return self._conditions
         out = {}
-        for st in (1, 2, 4, 5, 7):
+        for st in (1, 2, 3, 4, 5, 7):
             d = self._get_json('/pgc/season/index/condition', {'season_type': st, 'type': 1})
             data = d.get('data') if isinstance(d.get('data'), dict) else {}
             flt = []
@@ -278,6 +295,8 @@ class Spider(_BaseSpider):
                 if len(sts) > 1:
                     for st in sts:
                         for f in self._build_filters(conds.get(st, [])):
+                            if cid == 'kids' and f['key'] == 'style_id':
+                                continue
                             f['key'] = '%d_%s' % (st, f['key'])
                             flist.append(f)
                     flist.insert(0, {'key': 'ban', 'name': '板块',
@@ -294,7 +313,7 @@ class Spider(_BaseSpider):
     def homeVideoContent(self):
         videos, seen = [], set()
         try:
-            for st in (2, 5, 7, 1, 4):
+            for st in (2, 5, 7, 3, 1, 4):
                 d = self._get_json('/pgc/season/index/result',
                                    {'type': 1, 'season_type': st, 'page': 1,
                                     'pagesize': 6, 'order': 2, 'sort': 0})
@@ -327,19 +346,21 @@ class Spider(_BaseSpider):
                 ext = {}
         order = str(ext.get('order', '0'))
         ban = str(ext.get('ban', 'all'))
-        if cid == 'anime' and ban in ('1', '4'):
+        if cid in ('anime', 'kids') and ban in ('1', '4'):
             sts = [int(ban)]
         videos, total = [], 0
         try:
             for st in sts:
                 params = {'type': 1, 'season_type': st, 'page': pg,
                           'pagesize': 24, 'order': order, 'sort': 0}
-                prefix = '%d_' % st if cid == 'anime' else ''
+                prefix = '%d_' % st if cid in ('anime', 'kids') else ''
                 for k, v in (ext or {}).items():
                     key = k[len(prefix):] if prefix and k.startswith(prefix) else k
                     if key in ('order', 'sort', 'ban') or v in ('-1', '', None):
                         continue
                     params[key] = v
+                if cid == 'kids':
+                    params['style_id'] = '10027'
                 d = self._get_json('/pgc/season/index/result', params)
                 data = d.get('data') if isinstance(d.get('data'), dict) else {}
                 total += int(data.get('total') or 0)
@@ -565,7 +586,7 @@ class Spider(_BaseSpider):
                 for it in (data.get('result') or []):
                     sid = it.get('season_id')
                     stype = it.get('season_type')
-                    if not sid or sid in seen or stype not in (1, 2, 4, 5, 7):
+                    if not sid or sid in seen or stype not in (1, 2, 3, 4, 5, 7):
                         continue
                     seen.add(sid)
                     badges = it.get('badges') or []
