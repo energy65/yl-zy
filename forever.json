@@ -2472,7 +2472,7 @@
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
         }, {
-            "name": "易发",
+            "name": "易发1",
             "type": 0,
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/fafa002/yf2025/refs/heads/main/yiyifafa.txt",
             "playerType": 2,
@@ -2480,7 +2480,18 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, {
+        }, 
+		{
+            "name": "易发2",
+            "type": 0,
+            "url": "https://down.nigx.cn/raw.githubusercontent.com/fafa002/yf2025/refs/heads/main/yiyifafa.txt",
+            "playerType": 2,
+            "timeout": 10,
+            "ua": "okhttp/3",
+            "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
+            "logo": "https://epg.112114.eu.org/logo/{name}.png"
+        }, 
+		{
             "name": "极速频道",
             "type": 0,
             "url": "./极速频道.txt",
