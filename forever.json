@@ -75,7 +75,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+      		{
+          "key": "bili短剧_无解析PY",
+          "name": "👌bili短剧_无解析丨PY",
+          "api": "./bili短剧_无解析.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
+      },
+		{
             "key": "1905 PY",
             "name": "1905电影网丨[720p]",
             "api": "./1905.py",
@@ -2262,7 +2272,13 @@
             url: 'https://jx.xmflv.cc/?url=',
             priority: 7,
             timeout: 8000
-        }, {
+        }, 
+		 {
+            "name": "解析1",
+            "type": 1,
+            "url": "http://101.201.171.207:9898/home/api?type=ys&uid=45770&key=bdityCDFHKLPQRY359&url="
+        }, 
+		{
             "name": "解析2",
             "type": 1,
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
