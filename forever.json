@@ -187,7 +187,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "橘汁视频.pyPY",
+            "name": "👌橘汁视频丨[1080P&&4k]",
+            "api": "./橘汁视频.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "py_星辰4k",
             "name": "🦅星辰4k|[1080p]",
             "type": 3,
