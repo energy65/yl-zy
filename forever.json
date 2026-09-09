@@ -1827,7 +1827,7 @@
             }
         }, {
             "key": "少儿教育PY",
-            "name": "👌少儿教育丨PY",
+            "name": "👌少儿教育丨[教育学习]",
             "api": "./少儿教育.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1835,7 +1835,7 @@
             "type": 3
         }, {
             "key": "儿童编程PY",
-            "name": "👌儿童编程丨PY",
+            "name": "👌儿童编程丨[教育学习]",
             "api": "./儿童编程.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1843,7 +1843,7 @@
             "type": 3
         }, {
             "key": "儿童识字PY",
-            "name": "👌儿童识字丨PY",
+            "name": "👌儿童识字丨[教育学习]",
             "api": "./儿童识字.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1851,7 +1851,7 @@
             "type": 3
         }, {
             "key": "儿童拼音.PY",
-            "name": "👌儿童拼音.丨PY",
+            "name": "👌儿童拼音.丨[教育学习]",
             "api": "./儿童拼音.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1859,7 +1859,7 @@
             "type": 3
         }, {
             "key": "儿童硬笔.PY",
-            "name": "👌儿童硬笔.丨PY",
+            "name": "👌儿童硬笔.丨[教育学习]",
             "api": "./儿童硬笔.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1867,7 +1867,7 @@
             "type": 3
         }, {
             "key": "儿童口才.PY",
-            "name": "👌儿童口才.丨PY",
+            "name": "👌儿童口才.丨[教育学习]",
             "api": "./儿童口才.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1875,7 +1875,7 @@
             "type": 3
         }, {
             "key": "儿童武术.PY",
-            "name": "👌儿童武术.丨PY",
+            "name": "👌儿童武术.丨[教育学习]",
             "api": "./儿童武术.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1883,7 +1883,7 @@
             "type": 3
         }, {
             "key": "儿童绘画.PY",
-            "name": "👌儿童绘画.丨PY",
+            "name": "👌儿童绘画.丨[教育学习]",
             "api": "./儿童绘画.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1891,7 +1891,7 @@
             "type": 3
         }, {
             "key": "儿童百科.PY",
-            "name": "👌儿童百科.丨PY",
+            "name": "👌儿童百科.丨[教育学习]",
             "api": "./儿童百科.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1899,7 +1899,7 @@
             "type": 3
         }, {
             "key": "儿童思维.PY",
-            "name": "👌儿童思维.丨PY",
+            "name": "👌儿童思维.丨[教育学习]",
             "api": "./儿童思维.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1907,7 +1907,7 @@
             "type": 3
         }, {
             "key": "小学教育.PY",
-            "name": "👌小学教育.丨PY",
+            "name": "👌小学教育.丨[教育学习]",
             "api": "./小学课堂.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1915,7 +1915,7 @@
             "type": 3
         }, {
             "key": "初中教育.PY",
-            "name": "👌初中教育.丨PY",
+            "name": "👌初中教育.丨[教育学习]",
             "api": "./初中课堂.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1923,7 +1923,7 @@
             "type": 3
         }, {
             "key": "高中教育.PY",
-            "name": "👌高中教育.丨PY",
+            "name": "👌高中教育.丨[教育学习]",
             "api": "./高中课堂.py",
             "filterable": 1,
             "quickSearch": 1,
