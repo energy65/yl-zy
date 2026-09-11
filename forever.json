@@ -665,14 +665,6 @@
             "quickSearch": 1,
             "filterable": 1,
             "genre": "shortdrama"
-        }, {
-            "key": "红果PY",
-            "name": "👌红果丨[短剧]",
-            "api": "./hongguo.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
         }, 
 		{
             "key": "红果短剧本地PY",
