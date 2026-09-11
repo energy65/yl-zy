@@ -76,15 +76,6 @@
             "searchable": 1,
             "type": 3
         }, 
-      		{
-          "key": "bili短剧_无解析PY",
-          "name": "👌bili短剧_无解析丨PY",
-          "api": "./bili短剧_无解析.py",
-          "filterable": 1,
-          "quickSearch": 1,
-          "searchable": 1,
-          "type": 3
-      },
 		{
             "key": "1905 PY",
             "name": "1905电影网丨[720p]",
@@ -682,7 +673,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "红果短剧本地PY",
+            "name": "👌红果短剧本地丨[短剧]",
+            "api": "./红果短剧本地.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "lvdou",
             "name": "免米┃免米高码4K",
             "type": 3,
