@@ -77,6 +77,12 @@
             "type": 3
         }, 
 		{
+            "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
+            "name": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
+            "type": 1,
+            "api": "http://cmsyun2.qijiyun.vip/api.php/provide/vod/"
+        },
+		{
             "key": "1905 PY",
             "name": "1905电影网丨[720p]",
             "api": "./1905.py",
