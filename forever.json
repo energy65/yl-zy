@@ -83,6 +83,15 @@
             "api": "http://cmsyun2.qijiyun.vip/api.php/provide/vod/"
         },
 		{
+            "key": "咕噜",
+            "name": "咕噜┃[4k]",
+            "type": 3,
+            "api": "csp_GlglSpider",
+            "jar": "./咕噜.jar",
+            "searchable": 1,
+            "changeable": 1
+        },
+		{
             "key": "1905 PY",
             "name": "1905电影网丨[720p]",
             "api": "./1905.py",
