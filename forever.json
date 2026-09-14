@@ -2380,7 +2380,35 @@
             "logo": "https://gongdian.top/tv/taibiao/{name}.png",
             "playerType": 2,
             "timeout": 10
-        }, {
+        }, 
+		{
+            "name": "坤哥全球",
+            "type": 0,
+            "url": "./坤哥全球.txt",
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+            "logo": "https://gongdian.top/tv/taibiao/{name}.png",
+            "playerType": 2,
+            "timeout": 10
+        }, 
+		{
+            "name": "全球直博",
+            "type": 0,
+            "url": "./Global.m3u",
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+            "logo": "https://gongdian.top/tv/taibiao/{name}.png",
+            "playerType": 2,
+            "timeout": 10
+        },
+			{
+            "name": "radio",
+            "type": 0,
+            "url": "./Radio.m3u",
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+            "logo": "https://gongdian.top/tv/taibiao/{name}.png",
+            "playerType": 2,
+            "timeout": 10
+        },
+		{
             "name": "zb",
             "type": 0,
             "url": "./zb.txt",
