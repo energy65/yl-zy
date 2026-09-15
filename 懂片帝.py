@@ -2,7 +2,7 @@
 """
 目标站: 懂片帝AI (dongpian1.com)
 模板: 影视聚合搜索 / 爬虫播放
-站点类型: 综合影视 (电影/电视剧/动漫/综艺/短剧)
+站点类型: 综合影视 (电影/电视剧/动漫/综艺/纪录片/短剧)
 核心逻辑: 调用 HMAC-SHA256 签名 JSON API, 提取视频信息和真实播放链接
 线路机制:
   - /v1/playback/resolve/{token} 返回全部播放线路 (line_options)
@@ -47,10 +47,11 @@ class Spider(Spider):
         self.default_pic = "https://pic.rmb.bdstatic.com/bjh/user/default.png"
         # 一级分类映射: content_kind -> 中文名
         self.categories = {
-            "movie": "电影",
             "series": "电视剧",
+            "movie": "电影",
             "anime": "动漫",
             "variety": "综艺",
+            "documentary": "纪录片",
             "short_drama": "短剧",
         }
         # 二级分类筛选: 类型 (站点原生支持中文 genre 值)
@@ -59,7 +60,7 @@ class Spider(Spider):
             ("科幻", "科幻"), ("悬疑", "悬疑"), ("惊悚", "惊悚"), ("恐怖", "恐怖"),
             ("剧情", "剧情"), ("犯罪", "犯罪"), ("冒险", "冒险"), ("奇幻", "奇幻"),
             ("战争", "战争"), ("古装", "古装"), ("武侠", "武侠"), ("家庭", "家庭"),
-            ("动画", "动画"), ("纪录", "纪录"), ("真人秀", "真人秀"), ("脱口秀", "脱口秀"),
+            ("动画", "动画"), ("纪录片", "纪录片"), ("真人秀", "真人秀"), ("脱口秀", "脱口秀"),
             ("国产", "国产"), ("港剧", "港剧"), ("韩剧", "韩剧"), ("美剧", "美剧"),
             ("日剧", "日剧"), ("短剧", "短剧"), ("逆袭", "逆袭"), ("甜宠", "甜宠"),
         ]
@@ -115,7 +116,7 @@ class Spider(Spider):
         headers = self._sign_headers("POST", path)
         headers['Content-Type'] = 'application/json; charset=utf-8'
         try:
-            resp = self.fetch(url, headers=headers, data=json.dumps(payload, ensure_ascii=False))
+            resp = self.post(url, data=payload, headers=headers)
             if not resp:
                 return {}
             return json.loads(resp.text)
@@ -276,30 +277,35 @@ class Spider(Spider):
     # ========== 首页 ==========
 
     def homeContent(self, filter):
-        """获取首页内容: 一级分类(含二级筛选) + 推荐视频"""
-        categories = []
+        """获取首页内容: 一级分类(含二级筛选) + 推荐视频
+
+        class: 纯 type_id/type_name 列表
+        filters: 顶层按 class_id 映射的筛选器 (TVBox 标准格式)
+        """
+        classes = []
+        filters = {}
         for kind, name in self.categories.items():
-            categories.append({
+            classes.append({
                 "type_id": kind,
                 "type_name": name,
-                "filter": [
-                    {
-                        "key": "genre",
-                        "name": "类型",
-                        "value": [{"n": n, "v": v} for n, v in self.genre_options],
-                    },
-                    {
-                        "key": "area",
-                        "name": "地区",
-                        "value": [{"n": n, "v": v} for n, v in self.area_options],
-                    },
-                    {
-                        "key": "year",
-                        "name": "年份",
-                        "value": [{"n": n, "v": v} for n, v in self.year_options],
-                    },
-                ],
             })
+            filters[kind] = [
+                {
+                    "key": "genre",
+                    "name": "类型",
+                    "value": [{"n": n, "v": v} for n, v in self.genre_options],
+                },
+                {
+                    "key": "area",
+                    "name": "地区",
+                    "value": [{"n": n, "v": v} for n, v in self.area_options],
+                },
+                {
+                    "key": "year",
+                    "name": "年份",
+                    "value": [{"n": n, "v": v} for n, v in self.year_options],
+                },
+            ]
 
         data = self._api_get("/v1/feed/home?scope=public&mode=page&sections=6&cards=15")
         videos = []
@@ -316,7 +322,7 @@ class Spider(Spider):
             if len(videos) >= 30:
                 break
 
-        return {"class": categories, "list": videos, "filters": {}}
+        return {"class": classes, "filters": filters, "list": videos}
 
     def homeVideoContent(self):
         """获取首页推荐视频列表"""
@@ -341,10 +347,11 @@ class Spider(Spider):
     def _tid_to_kind(self, tid):
         """TVBox 可能传中文 type_name 作为 tid, 映射回站点 kind 参数"""
         mapping = {
-            "电影": "movie",
             "电视剧": "series",
+            "电影": "movie",
             "动漫": "anime",
             "综艺": "variety",
+            "纪录片": "documentary",
             "短剧": "short_drama",
         }
         return mapping.get(tid, tid)
@@ -492,6 +499,12 @@ class Spider(Spider):
         title = detail.get("title", "") or ""
         pic = detail.get("poster_url", "") or self.default_pic
         content = detail.get("description", "") or ""
+        # 简介处附加站点推广信息 (置于最前, 避免被简介截断影响展示)
+        content = (
+            "更多优质资源尽在源力\n"
+            "微信公众号：源力软件汇\n"
+            "QQ群：1054592152\n\n" + content
+        )
         actors = detail.get("actors", [])
         actor = " / ".join(actors[:20]) if actors else ""
         directors = detail.get("directors", [])
