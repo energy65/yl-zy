@@ -123,7 +123,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "懂片帝 PY",
+            "name": "懂片帝丨[1080P]",
+            "api": "./懂片帝.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "韩剧狗 PY",
             "name": "韩剧狗丨[1080P]",
             "api": "./韩剧狗.py",
