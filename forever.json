@@ -92,6 +92,22 @@
             "changeable": 1
         },
 		{
+          "key": "小霸王",
+          "name": "🎮小霸王[游戏]",
+          "type": 3,
+          "api": "csp_Yikm",
+          "searchable": 1,
+          "quickSearch": 1,
+          "filterable": 1,
+          "changeable": 0,
+          "style": {
+            "type": "rect",
+            "ratio": 0.75
+          },
+          "timeout": 60,
+          "jar": "./aidaox-gongju-20260914-161201.jar"
+		},
+		{
             "key": "1905 PY",
             "name": "1905电影网丨[720p]",
             "api": "./1905.py",
