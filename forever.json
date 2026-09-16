@@ -281,7 +281,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "蝉鸣影视 PY",
+            "name": "蝉鸣影视丨[1080P]",
+            "api": "./蝉鸣影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
             "key": "大米星球 PY",
             "name": "大米星球丨[1080P]",
             "api": "./大米星球.py",
