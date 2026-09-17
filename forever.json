@@ -1701,6 +1701,14 @@
            "jar": "./bdb.jar",
            "homePage": "./QQ音乐.html"
          },
+		 {
+          "key": "酷我音乐html",
+          "name": "🥬酷我音乐[html]",
+          "type": 3,
+          "api": "csp_kuwo",
+          "jar": "./bdb.jar",
+          "homePage": "./kuwo.html"
+        },
 		{
             "key": "kuwo PY",
             "name": "👌kuwo丨[音乐]",
