@@ -24,7 +24,7 @@
             "style": {
                 "type": "oval"
             }
-        },  {
+        }, {
             "key": "csp_iqiyi",
             "name": "👌爱qi艺[官源]",
             "type": 3,
@@ -64,14 +64,12 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "name": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "type": 1,
             "api": "http://cmsyun2.qijiyun.vip/api.php/provide/vod/"
-        },
-		{
+        }, {
             "key": "咕噜",
             "name": "咕噜┃[4k]",
             "type": 3,
@@ -79,8 +77,7 @@
             "jar": "./咕噜.jar",
             "searchable": 1,
             "changeable": 1
-        },
-		{
+        }, {
             "key": "1905 PY",
             "name": "1905电影网丨[720p]",
             "api": "./1905.py",
@@ -112,8 +109,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "懂片帝 PY",
             "name": "懂片帝丨[1080P]",
             "api": "./懂片帝.py",
@@ -121,8 +117,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "韩剧狗 PY",
             "name": "韩剧狗丨[1080P]",
             "api": "./韩剧狗.py",
@@ -202,8 +197,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "橘汁视频.pyPY",
             "name": "👌橘汁视频丨[1080P&&4k]",
             "api": "./橘汁视频.py",
@@ -211,8 +205,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "py_星辰4k",
             "name": "🦅星辰4k|[1080p]",
             "type": 3,
@@ -254,8 +247,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "蝉鸣影视 PY",
             "name": "蝉鸣影视丨[1080P]",
             "api": "./蝉鸣影视.py",
@@ -263,8 +255,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "大米星球 PY",
             "name": "大米星球丨[1080P]",
             "api": "./大米星球.py",
@@ -689,8 +680,7 @@
             "quickSearch": 1,
             "filterable": 1,
             "genre": "shortdrama"
-        }, 
-		{
+        }, {
             "key": "红果短剧本地PY",
             "name": "👌红果短剧本地丨[短剧]",
             "api": "./红果短剧本地.py",
@@ -698,8 +688,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "lvdou",
             "name": "免米┃免米高码4K",
             "type": 3,
@@ -1665,8 +1654,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "kuwo PY",
             "name": "👌kuwo丨[音乐]",
             "api": "./kuwo.py",
@@ -2290,13 +2278,11 @@
             url: 'https://jx.xmflv.cc/?url=',
             priority: 7,
             timeout: 8000
-        }, 
-		 {
+        }, {
             "name": "解析1",
             "type": 1,
             "url": "http://101.201.171.207:9898/home/api?type=ys&uid=45770&key=bdityCDFHKLPQRY359&url="
-        }, 
-		{
+        }, {
             "name": "解析2",
             "type": 1,
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
@@ -2376,8 +2362,7 @@
             "url": "http://1.94.221.189:88/algorithm.php?url="
         }
     ],
-    "lives": [
-			{
+    "lives": [{
             "name": "源力zb",
             "type": 0,
             "url": "./ylzb.txt",
@@ -2386,8 +2371,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },
-	{
+        }, {
             "name": "源力zb1",
             "type": 0,
             "url": "./ylzb-zy.txt",
@@ -2396,8 +2380,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, 
-		{
+        }, {
             "name": "zb260915",
             "type": 0,
             "url": "http://114.66.29.121:8888/down/EjMztmvzlVmy.txt",
@@ -2406,8 +2389,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },
-		{
+        }, {
             "name": "zb260915本地版",
             "type": 0,
             "url": "./全网通直播.txt",
@@ -2416,8 +2398,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },
-		{
+        }, {
             "name": "土拨鼠",
             "type": 0,
             "url": "./土拨鼠鼠.txt",
@@ -2426,8 +2407,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },
-		{
+        }, {
             "name": "🌈凤凰MoMo",
             "type": 0,
             "url": "https://gh-proxy.com/https://raw.githubusercontent.com/jn950/live/refs/heads/main/tv/pllive.txt",
@@ -2435,8 +2415,7 @@
             "logo": "https://gongdian.top/tv/taibiao/{name}.png",
             "playerType": 2,
             "timeout": 10
-        }, 
-		{
+        }, {
             "name": "坤哥全球",
             "type": 0,
             "url": "./坤哥全球.txt",
@@ -2444,8 +2423,7 @@
             "logo": "https://gongdian.top/tv/taibiao/{name}.png",
             "playerType": 2,
             "timeout": 10
-        }, 
-		{
+        }, {
             "name": "全球直博",
             "type": 0,
             "url": "./Global.m3u",
@@ -2453,8 +2431,7 @@
             "logo": "https://gongdian.top/tv/taibiao/{name}.png",
             "playerType": 2,
             "timeout": 10
-        },
-			{
+        }, {
             "name": "radio",
             "type": 0,
             "url": "./Radio.m3u",
@@ -2462,8 +2439,7 @@
             "logo": "https://gongdian.top/tv/taibiao/{name}.png",
             "playerType": 2,
             "timeout": 10
-        },
-		{
+        }, {
             "name": "zb",
             "type": 0,
             "url": "./zb.txt",
@@ -2481,8 +2457,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, 
-		{
+        }, {
             "name": "港澳台超清",
             "type": 0,
             "url": "http://iptv.852851.xyz/sub/bwQfdMcUYrjq/playlist.m3u",
@@ -2491,8 +2466,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, 
-		{
+        }, {
             "name": "港澳台超清本地版与上属于同一个资源",
             "type": 0,
             "url": "./passwd-151338.txt",
@@ -2501,8 +2475,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },
-		{
+        }, {
             "name": "易发1",
             "type": 0,
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/fafa002/yf2025/refs/heads/main/yiyifafa.txt",
