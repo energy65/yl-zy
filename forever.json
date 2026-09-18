@@ -65,18 +65,6 @@
             "searchable": 1,
             "type": 3
         }, 
-	    {
-        "key": "FeimaoKtvUi",
-        "name": "🎤飞猫KTV[应用]",
-        "type": 3,
-	    "jar":"./aidaox-20260904-122008.jar",
-        "api": "csp_FeimaoKtvUi",
-        "searchable": 0,
-        "quickSearch": 0,
-        "filterable": 0,
-        "changeable": 0,
-        "ext": "{\"host\":\"https://ktv.catvod.site\",\"key\":\"ktv_jIO7myCOGTEYCLByS9ABrBXGOmxK6D8_\"}"
-       },
 		{
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "name": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
