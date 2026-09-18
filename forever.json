@@ -2274,10 +2274,9 @@
             "type": 1,
             "url": "http://ui6.970088.xyz/api.php?laiyuan=jiying&key=aini&url="
         }, {
-            name: '虾米2',
-            url: 'https://jx.xmflv.cc/?url=',
-            priority: 7,
-            timeout: 8000
+            "name": "虾米2",
+            "url": "https://jx.xmflv.cc/?url=",
+            "type": 1,
         }, {
             "name": "解析1",
             "type": 1,
@@ -2287,10 +2286,9 @@
             "type": 1,
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
         }, {
-            name: 'playm3u8',
-            url: 'https://www.playm3u8.cn/jiexi.php?url=',
-            priority: 7,
-            timeout: 8000
+            "name": "playm3u8",
+            "url": "https://www.playm3u8.cn/jiexi.php?url=",
+            "type": 1,
         }, {
             "name": "芒果专用解析",
             "type": 1,
@@ -2301,7 +2299,7 @@
             "url": "hhttps://im1907.top/?jx="
         }, {
             "name": "云解析",
-            "type": 0,
+            "type": 1,
             "url": "https://jx.yparse.com/index.php?url=",
             "ext": {
                 "header": {
@@ -2310,7 +2308,7 @@
             }
         }, {
             "name": "pangu",
-            "type": 0,
+            "type": 1,
             "url": "https://jx.playerjy.com/?url="
         }, {
             "name": "huayong",
@@ -2326,27 +2324,27 @@
             "url": "https://vip.jiexi.dpdns.org/?url="
         }, {
             "name": "ikun",
-            "type": 0,
+            "type": 1,
             "url": "https://jx.hls.one/?url="
         }, {
             "name": "8090",
-            "type": 0,
+            "type": 1,
             "url": "https://www.8090g.cn/?url="
         }, {
             "name": "M3u8TV",
-            "type": 0,
+            "type": 1,
             "url": "https://jx.m3u8.tv/jiexi/?url="
         }, {
             "name": "CK",
-            "type": 0,
+            "type": 1,
             "url": "https://www.ckplayer.vip/jiexi/?url="
         }, {
             "name": "冰豆",
-            "type": 0,
+            "type": 1,
             "url": "https://bd.jx.cn/?url="
         }, {
             "name": "XY",
-            "type": 0,
+            "type": 1,
             "url": "https://jx.xymp4.cc/?url="
         }, {
             "name": "推荐",
