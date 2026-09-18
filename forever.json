@@ -2275,8 +2275,8 @@
             "url": "http://ui6.970088.xyz/api.php?laiyuan=jiying&key=aini&url="
         }, {
             "name": "虾米2",
-            "url": "https://jx.xmflv.cc/?url=",
-            "type": 1
+			"type": 1,
+            "url": "https://jx.xmflv.cc/?url="
         }, {
             "name": "解析1",
             "type": 1,
@@ -2287,8 +2287,8 @@
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
         }, {
             "name": "playm3u8",
-            "url": "https://www.playm3u8.cn/jiexi.php?url=",
-            "type": 1,
+			"type": 1,
+            "url": "https://www.playm3u8.cn/jiexi.php?url="
         }, {
             "name": "芒果专用解析",
             "type": 1,
