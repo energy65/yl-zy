@@ -182,14 +182,6 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "蓝光影视网 PY",
-            "name": "蓝光影视网丨[1080P]",
-            "api": "./蓝光影视网.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "山楂 PY",
             "name": "山楂丨[1080P&&4k]",
             "api": "./山楂影视.py",
