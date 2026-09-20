@@ -313,7 +313,17 @@
             "api": "csp_Guazi",
             "searchable": 1,
             "changeable": 1
-        }, {
+        }, 
+		{
+            "key": "瓜子app",
+            "name":"瓜子app | [1080P]",
+            "api": "./瓜子APP.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "csp_Jianpian",
             "name": "👌🏻荐片┃[1080P]",
             "type": 3,
