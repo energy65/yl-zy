@@ -25,59 +25,6 @@
                 "type": "oval"
             }
         }, {
-            "key": "csp_iqiyi",
-            "name": "👌爱qi艺[官源]",
-            "type": 3,
-            "api": "csp_iqiyi",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "jar": "./琪琪家.jar"
-        }, {
-            "key": "果果家②PY",
-            "name": "guoguo丨[1080P&&4k]",
-            "api": "./T3芒果TV.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "csp-youku",
-            "name": "👌youku[官源]",
-            "type": 3,
-            "api": "csp_youku",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "jar": "./库库家.jar"
-        }, {
-            "key": "爱腾讯",
-            "name": "👌腾xun[官源]",
-            "type": 3,
-            "api": "./drpy2.min.js",
-            "ext": "./qq.js"
-        }, {
-            "key": "bili影视PY",
-            "name": "👌bili影视丨PY",
-            "api": "./bili影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
-            "name": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
-            "type": 1,
-            "api": "http://cmsyun2.qijiyun.vip/api.php/provide/vod/"
-        }, {
-            "key": "咕噜",
-            "name": "咕噜┃[4k]",
-            "type": 3,
-            "api": "csp_GlglSpider",
-            "jar": "./咕噜.jar",
-            "searchable": 1,
-            "changeable": 1
-        }, {
             "key": "1905 PY",
             "name": "1905电影网丨[720p]",
             "api": "./1905.py",
@@ -85,15 +32,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "pplive影视PY",
-            "name": "👌pplive影视丨PY",
-            "api": "./pplive影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },  {
             "key": "ai看剧 PY",
             "name": "ai看剧丨[1080P]",
             "api": "./ai看剧.py",
@@ -181,23 +120,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "山楂 PY",
-            "name": "山楂丨[1080P&&4k]",
-            "api": "./山楂影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "橘汁视频.pyPY",
-            "name": "👌橘汁视频丨[1080P&&4k]",
-            "api": "./橘汁视频.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },  {
             "key": "py_星辰4k",
             "name": "🦅星辰4k|[1080p]",
             "type": 3,
@@ -743,21 +666,7 @@
             "quickSearch": 1,
             "filterable": 1,
             "playerType": 2
-        }, {
-            "key": "芒果",
-            "name": "芒果.py",
-            "type": 3,
-            "api": "./芒果.py",
-            "searchable": 1,
-            "quickSearch": 1
-        }, {
-            "key": "爱奇艺",
-            "name": "爱奇艺.py",
-            "type": 3,
-            "api": "./爱奇艺.py",
-            "searchable": 1,
-            "quickSearch": 1
-        }, {
+        },  {
             "key": "py_新剧吧_APP",
             "name": "新剧吧┃APP",
             "type": 3,
@@ -1646,91 +1555,6 @@
             "quickSearch": 0,
             "filterable": 0
         }, {
-            "key": "网易云音乐有MV",
-            "name": "🐬网易云有MV｜音乐[音乐]",
-            "type": 3,
-            "api": "./网易云-有MV.py"
-        }, {
-            "key": "爱玩音乐",
-            "name": "爱玩🎤音乐[音乐]",
-            "api": "./爱玩音乐.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "kuwo PY",
-            "name": "👌kuwo丨[音乐]",
-            "api": "./kuwo.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "布谷音乐 PY",
-            "name": "👌布谷音乐丨[音乐]",
-            "api": "./布谷音乐.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "汽水 PY",
-            "name": "👌汽水丨[音乐]",
-            "api": "./汽水音乐.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "🐶kugou PY",
-            "name": "🐶kugou丨[音乐]",
-            "api": "./kg.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "全民K歌 PY",
-            "name": "全民K歌丨[音乐]",
-            "api": "./全民K歌.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "hige-捐赠版 | [音乐]",
-            "name": "👌hige-捐赠版丨PY",
-            "api": "./hige-捐赠版.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "喜马拉雅 PY",
-            "name": "喜马拉雅丨[音乐]",
-            "api": "./喜马拉雅.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "悦听 PY",
-            "name": "👌悦听丨[音乐]",
-            "api": "./悦听.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "bili_mv PY",
-            "name": "bili_mv丨[音乐]",
-            "api": "./bili_mv.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "👧幼小衔接",
             "name": "🎶幼小衔接|py [教育学习]",
             "api": "./幼小衔接.py",
@@ -2286,17 +2110,9 @@
             "type": 1,
             "url": "http://101.201.171.207:9898/home/api?type=ys&uid=45770&key=bdityCDFHKLPQRY359&url="
         }, {
-            "name": "解析2",
-            "type": 1,
-            "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
-        }, {
             "name": "playm3u8",
 			"type": 0,
             "url": "https://www.playm3u8.cn/jiexi.php?url="
-        }, {
-            "name": "芒果专用解析",
-            "type": 0,
-            "url": "http://mg.itufm.top/mg.php?url="
         }, {
             "name": "im1907",
             "type": 0,
@@ -2322,10 +2138,6 @@
             "name": "TXNP",
             "type": 0,
             "url": "https://bfq.txnp.cn/player?url="
-        }, {
-            "name": "VIP解析(随机4k)",
-            "type": 0,
-            "url": "https://vip.jiexi.dpdns.org/?url="
         }, {
             "name": "ikun",
             "type": 0,
