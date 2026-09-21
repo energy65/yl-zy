@@ -682,15 +682,17 @@
             "quickSearch": 1,
             "filterable": 1,
             "genre": "shortdrama"
-        }, {
-            "key": "红果短剧本地PY",
-            "name": "👌红果短剧本地丨[短剧]",
-            "api": "./红果短剧本地.py",
+        },  
+		{
+            "key": "红果短剧最终版PY",
+            "name": "👌红果短剧最终版丨全",
+            "api": "./红果短剧最终版.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        },
+		{
             "key": "lvdou",
             "name": "免米┃免米高码4K",
             "type": 3,
