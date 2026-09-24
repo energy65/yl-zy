@@ -1696,7 +1696,7 @@
             "type": 3
         }, {
             "key": "hige-捐赠版 | [音乐]",
-            "name": "👌hige-捐赠版丨PY",
+            "name": "👌hige-捐赠版丨[音乐]",
             "api": "./hige-捐赠版.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1726,7 +1726,71 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "kuwo_mv PY",
+            "name": "kuwo_mv丨[mv]",
+            "api": "./kuwo_mv.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+        {
+            "key": "kugou_mv PY",
+            "name": "kugou_mv丨[mv]",
+            "api": "./kugou_mv.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+        {
+            "key": "qq_mv PY",
+            "name": "qq_mv丨[mv]",
+            "api": "./qq_mv.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+              {
+            "key": "migu_mv PY",
+            "name": "migu_mv丨[mv]",
+            "api": "./migu_mv.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+                      {
+            "key": "migu PY",
+            "name": "migu丨[音乐]",
+            "api": "./migu.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
+            "key": "无名音乐 PY",
+            "name": "无名音乐丨PY",
+            "api": "./无名音乐.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+        {
+            "key": "qq音乐 PY",
+            "name": "qq音乐丨PY",
+            "api": "./qq音乐.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "👧幼小衔接",
             "name": "🎶幼小衔接|py [教育学习]",
             "api": "./幼小衔接.py",
