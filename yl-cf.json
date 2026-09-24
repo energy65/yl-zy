@@ -1729,7 +1729,7 @@
         }, 
 		{
             "key": "kuwo_mv PY",
-            "name": "kuwo_mv丨[mv]",
+            "name": "kuwo_mv丨[音乐]",
             "api": "./kuwo_mv.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1738,7 +1738,7 @@
         },
         {
             "key": "kugou_mv PY",
-            "name": "kugou_mv丨[mv]",
+            "name": "kugou_mv丨[音乐]",
             "api": "./kugou_mv.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1747,7 +1747,7 @@
         },
         {
             "key": "qq_mv PY",
-            "name": "qq_mv丨[mv]",
+            "name": "qq_mv丨[音乐]",
             "api": "./qq_mv.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1756,14 +1756,14 @@
         },
               {
             "key": "migu_mv PY",
-            "name": "migu_mv丨[mv]",
+            "name": "migu_mv丨[音乐]",
             "api": "./migu_mv.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
         },
-                      {
+        {
             "key": "migu PY",
             "name": "migu丨[音乐]",
             "api": "./migu.py",
@@ -1774,7 +1774,7 @@
         },
 		{
             "key": "无名音乐 PY",
-            "name": "无名音乐丨PY",
+            "name": "无名音乐丨[音乐]",
             "api": "./无名音乐.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1783,7 +1783,7 @@
         },
         {
             "key": "qq音乐 PY",
-            "name": "qq音乐丨PY",
+            "name": "qq音乐丨[音乐]",
             "api": "./qq音乐.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -1792,7 +1792,7 @@
         },
 		{
             "key": "👧幼小衔接",
-            "name": "🎶幼小衔接|py [教育学习]",
+            "name": "🎶幼小衔接|[教育学习]",
             "api": "./幼小衔接.py",
             "filterable": 1,
             "quickSearch": 1,
