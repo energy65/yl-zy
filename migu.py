@@ -572,7 +572,7 @@ class Spider(Spider):
                     display_name = re.sub(r'[$#@]', '', display_name).strip()
                     vods.append({
                         'vod_name': display_name,
-                        'vod_id': f'song_{cid}',
+                        'vod_id': f'bang_detail_{bang_id}',
                         'vod_pic': pic,
                         'vod_remarks': '排行榜',
                     })

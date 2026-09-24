@@ -249,7 +249,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "凡客TV PY",
+            "name": "凡客TV丨[1080P]",
+            "api": "./凡客TV.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
             "key": "乌云影视 PY",
             "name": "乌云影视丨[1080P]",
             "api": "./乌云影视.py",
