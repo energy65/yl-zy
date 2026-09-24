@@ -101,7 +101,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "飞牛影视PY",
+            "name": "👌飞牛影视丨[1080P]",
+            "api": "./飞牛影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "秒看 PY",
             "name": "秒看丨[1080P]",
             "api": "./秒看.py",
