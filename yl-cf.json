@@ -91,6 +91,15 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
+        },	
+         	{
+            "key": "网飞猫影视 PY",
+            "name": "网飞猫影视py丨[优质分类]",
+            "api": "./网飞猫.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
         },		
 		{
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
