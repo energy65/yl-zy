@@ -85,7 +85,7 @@
         },
 	{
             "key": "好好看 PY",
-            "name": "好好看丨[优质分类]",
+            "name": "好好看有广告丨[优质分类]",
             "api": "./好好看.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -198,7 +198,7 @@
             "type": 3
         }, {
             "key": "琪琪影视 PY",
-            "name": "琪琪影视丨[1080P]",
+            "name": "琪琪影视有广告丨[1080P]",
             "api": "./琪琪影视.py",
             "filterable": 1,
             "quickSearch": 1,
