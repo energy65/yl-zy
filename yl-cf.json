@@ -100,7 +100,16 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },		
+        },	
+		     {
+            "key": "星辰影院 PY",
+            "name": "👌星辰影院丨[优质分类] ",
+            "api": "./星辰影院.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
 		{
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "name": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
