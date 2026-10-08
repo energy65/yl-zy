@@ -111,6 +111,24 @@
             "type": 3
         },
 		{
+            "key": "懂片帝-详细分类版PY",
+            "name": "👌懂片帝 丨[优质分类]",
+            "api": "./懂片帝.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
+            "key": "4kvm",
+            "name": "👌4kvm 丨[优质分类]",
+            "api": "./4KVM.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "name": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "type": 1,
