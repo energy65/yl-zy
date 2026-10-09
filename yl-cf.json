@@ -150,9 +150,9 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "pplive影视PY",
-            "name": "👌pplive影视丨PY",
-            "api": "./pplive影视.py",
+            "key": "苹果影视PY",
+            "name": "👌苹果影视丨PY",
+            "api": "./苹果影视.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
