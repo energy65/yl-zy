@@ -157,7 +157,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "山有木兮4k.py",
+            "name": "👌山有木兮4k.py丨PY",
+            "api": "./山有木兮4k.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
             "key": "ai看剧 PY",
             "name": "ai看剧丨[1080P]",
             "api": "./ai看剧.py",
