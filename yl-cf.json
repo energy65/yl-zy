@@ -12,7 +12,7 @@
             "changeable": 1,
             "timeout": 60,
             "indexs": 1,
-            "ext": "./douban.json"
+            "ext": "./douban.js"
         }, {
             "key": "配置中心",
             "name": "🔨网盘丨配置中心",
