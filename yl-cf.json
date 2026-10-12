@@ -2522,7 +2522,7 @@
 	{
             "name": "源力直播",
             "type": 0,
-            "url": "https://v4.gh-proxy.org/https://raw.githubusercontent.com/energy65/yl-zy/refs/heads/main/yl-zy.txt",
+            "url": "./yl-zy.txt",
             "playerType": 2,
             "timeout": 10,
             "ua": "okhttp/3",
