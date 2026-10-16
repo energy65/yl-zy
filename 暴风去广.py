@@ -3,7 +3,7 @@
 暴风影视（去广告）爬虫
 目标站: 暴风资源 (https://bfzyapi.com/api.php/provide/vod/)
 模板: 影视聚合 / 苹果CMS(JSON采集接口) + 内置去广告清洗
-站点类型: 综合影视 (电影/电视剧/动漫/综艺/短剧/体育/解说/预告)
+站点类型: 综合影视 (电影/电视剧/动漫/综艺/短剧/体育/解说)
 
 分类写法 (参考懂片帝.py):
   - 一级分类: 运行时调用 ac=list 动态获取站点全部分类树, 只保留一级栏目
@@ -55,15 +55,17 @@ class Spider(Spider):
     # 一级栏目 name -> 展示名 (覆盖常见栏目, 其余用站点原名)
     CATEGORY_NAMES = {
         "电影片": "电影", "连续剧": "电视剧", "动漫片": "动漫",
-        "综艺片": "综艺", "电影解说": "电影解说", "预告片": "预告片",
-        "体育赛事": "体育", "短剧大全": "短剧", "福利": "福利",
+        "综艺片": "综艺", "电影解说": "电影解说",
+        "体育赛事": "体育", "短剧大全": "短剧",
     }
+
+    # 需要移除的一级栏目 (站点原名)
+    EXCLUDED_CATEGORIES = {"预告片", "福利"}
 
     # 分类获取失败时的静态兜底 (type_id, 展示名)
     FALLBACK_CLASSES = [
         ("20", "电影"), ("30", "电视剧"), ("39", "动漫"), ("45", "综艺"),
         ("58", "短剧"), ("53", "体育"), ("51", "电影解说"),
-        ("52", "预告片"), ("73", "福利"),
     ]
 
     def init(self, extend=""):
@@ -143,6 +145,8 @@ class Spider(Spider):
             pid = str(c.get("type_pid", 0))
             name = c.get("type_name", "") or ""
             if pid == "0" or pid == "":
+                if name in self.EXCLUDED_CATEGORIES:
+                    continue
                 tops.append((cid, name))
             children.setdefault(pid, []).append((cid, name))
         self._children = children
