@@ -164,6 +164,15 @@
             "searchable": 1,
             "type": 3
         },
+		 {
+            "key": "光速去广 PY",
+            "name": "👌光速去广丨[优质分类]",
+            "api": "./光速去广.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
 		{
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "name": "👌新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
