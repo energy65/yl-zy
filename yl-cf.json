@@ -155,6 +155,15 @@
             "searchable": 1,
             "type": 3
         },
+		 {
+            "key": "魔都去广 PY",
+            "name": "👌魔都去广丨[优质分类]",
+            "api": "./魔都去广.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
 		{
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "name": "👌新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
