@@ -4,9 +4,8 @@
 网站: https://www.piyaroad.com
 站点类型: 综合影视 (电影 / 电视剧 / 综艺 / 动漫 / 短剧)
 分类体系 (参照 懂片帝.py 的写法):
-  - 一级分类: 站点全部片库分类 (/sgc/{slug}.html)
-  - 二级筛选: 类型 / 地区 / 年份 (懂片帝式 filters 结构)
-      * 类型: 站内同类片库切换 (电影片库 / 剧集片库 / 综艺片库 / 动漫片库)
+  - 一级分类: 电影 / 电视剧 / 综艺 / 动漫 / 短剧 / 纪录片 (/sgc/{slug}.html)
+  - 二级筛选: 地区 / 年份 (懂片帝式 filters 结构)
       * 地区: /sgc/{slug}/area/{area}.html
       * 年份: /sgc/{slug}/year/{year}.html (支持 2010-2019 等区间)
       * 组合: /sgc/{slug}/area/{area}/year/{year}.html
@@ -50,60 +49,19 @@ class Spider(BaseSpider):
     # 微信公众号推广 (添加在影片简介处)
     WX_TEXT = "更多影视资源，请关注微信公众号“源力软件汇”"
 
-    # ==================== 一级分类 (站点全部片库) ====================
+    # ==================== 一级分类 (电影/电视剧/综艺/动漫/短剧/纪录片) ====================
     # 每项: (type_id=站内片库 slug, type_name=中文名, 所属片库组)
     CATEGORIES = [
-        # 电影片库
         ("dianying", "电影", "movie"),
-        ("dongzuopian", "动作片", "movie"),
-        ("xijupian", "喜剧片", "movie"),
-        ("aiqingpian", "爱情片", "movie"),
-        ("kehuanpian", "科幻片", "movie"),
-        ("kongbupian", "恐怖片", "movie"),
-        ("juqingpian", "剧情片", "movie"),
-        ("zhanzhengpian", "战争片", "movie"),
-        ("jilupian", "记录片", "movie"),
-        ("yugaopian", "预告片", "movie"),
-        ("yingshijieshuo", "影视解说", "movie"),
-        # 电视剧片库
-        ("guochanju", "国产剧", "tv"),
-        ("gangju", "港剧", "tv"),
-        ("taiju", "台剧", "tv"),
-        ("hanju", "韩剧", "tv"),
-        ("riju", "日剧", "tv"),
-        ("oumeiju", "欧美剧", "tv"),
-        ("haiwaiju", "海外剧", "tv"),
-        ("duanju", "短剧", "tv"),
-        # 综艺片库
+        ("lianxuju", "电视剧", "tv"),
         ("zongyi", "综艺", "variety"),
-        ("daluzongyi", "大陆综艺", "variety"),
-        ("gangtaizongyi", "港台综艺", "variety"),
-        ("rihanzongyi", "日韩综艺", "variety"),
-        ("oumeizongyi", "欧美综艺", "variety"),
-        # 动漫片库
         ("dongman", "动漫", "anime"),
-        ("rihandongman", "日韩动漫", "anime"),
-        ("guochandongman", "国产动漫", "anime"),
-        ("oumeidongman", "欧美动漫", "anime"),
-        ("donghuapian", "动画片", "anime"),
+        ("duanju", "短剧", "short"),
+        ("jilupian", "纪录片", "doc"),
     ]
 
     # 中文名 -> slug (兼容 TVBox 传入 type_name 的情况)
     NAME_TO_SLUG = {name: slug for slug, name, _ in CATEGORIES}
-    # 各片库组对应的"类型"筛选 (切换到同组其它片库, 空值=当前分类)
-    _TYPES = {
-        "movie": [("", "全部"), ("dongzuopian", "动作片"), ("xijupian", "喜剧片"),
-                  ("aiqingpian", "爱情片"), ("kehuanpian", "科幻片"), ("kongbupian", "恐怖片"),
-                  ("juqingpian", "剧情片"), ("zhanzhengpian", "战争片"), ("jilupian", "记录片"),
-                  ("yugaopian", "预告片"), ("yingshijieshuo", "影视解说")],
-        "tv": [("", "全部"), ("guochanju", "国产剧"), ("gangju", "港剧"), ("taiju", "台剧"),
-               ("hanju", "韩剧"), ("riju", "日剧"), ("oumeiju", "欧美剧"),
-               ("haiwaiju", "海外剧"), ("duanju", "短剧")],
-        "variety": [("", "全部"), ("daluzongyi", "大陆综艺"), ("gangtaizongyi", "港台综艺"),
-                    ("rihanzongyi", "日韩综艺"), ("oumeizongyi", "欧美综艺")],
-        "anime": [("", "全部"), ("rihandongman", "日韩动漫"), ("guochandongman", "国产动漫"),
-                  ("oumeidongman", "欧美动漫"), ("donghuapian", "动画片")],
-    }
     # 各片库组对应的"地区"筛选
     _AREAS = {
         "movie": [("", "全部"), ("大陆", "大陆"), ("香港", "香港"), ("台湾", "台湾"),
@@ -117,6 +75,13 @@ class Spider(BaseSpider):
                     ("日韩", "日韩"), ("欧美", "欧美")],
         "anime": [("", "全部"), ("国产", "国产"), ("日本", "日本"),
                   ("欧美", "欧美"), ("其他", "其他")],
+        "short": [("", "全部"), ("内地", "内地"), ("韩国", "韩国"), ("香港", "香港"),
+                  ("台湾", "台湾"), ("日本", "日本"), ("美国", "美国"), ("泰国", "泰国"),
+                  ("英国", "英国"), ("新加坡", "新加坡"), ("其他", "其他")],
+        "doc": [("", "全部"), ("大陆", "大陆"), ("香港", "香港"), ("台湾", "台湾"),
+                ("美国", "美国"), ("法国", "法国"), ("英国", "英国"), ("日本", "日本"),
+                ("韩国", "韩国"), ("德国", "德国"), ("泰国", "泰国"), ("印度", "印度"),
+                ("意大利", "意大利")],
     }
 
     def init(self, extend=""):
@@ -318,14 +283,12 @@ class Spider(BaseSpider):
     # ==================== 首页 ====================
 
     def homeContent(self, filter):
-        """首页: 一级分类 + 懂片帝式二级筛选 (类型/地区/年份)"""
+        """首页: 一级分类 + 懂片帝式二级筛选 (地区/年份)"""
         classes = []
         filters = {}
         for slug, name, group in self.CATEGORIES:
             classes.append({"type_id": slug, "type_name": name})
             filters[slug] = [
-                {"key": "type", "name": "类型",
-                 "value": [{"n": n, "v": v} for v, n in self._TYPES.get(group, [])]},
                 {"key": "area", "name": "地区",
                  "value": [{"n": n, "v": v} for v, n in self._AREAS.get(group, [])]},
                 {"key": "year", "name": "年份",
@@ -353,10 +316,6 @@ class Spider(BaseSpider):
 
     def _build_path(self, slug, extend, pg):
         """按筛选条件拼接分类页地址 (懂片帝式筛选叠加)"""
-        if extend:
-            t = str(extend.get("type") or "").strip()
-            if t:
-                slug = self._slug_of(t)
         segs = []
         if extend:
             area = str(extend.get("area") or "").strip()
