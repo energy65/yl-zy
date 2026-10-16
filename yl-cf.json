@@ -128,6 +128,33 @@
             "searchable": 1,
             "type": 3
         },
+		         {
+            "key": "量子去广 PY",
+            "name": "👌量子去广 丨[优质分类]",
+            "api": "./量子去广.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+        {
+            "key": "暴风去广 PY",
+            "name": "👌暴风去广丨[优质分类]",
+            "api": "./暴风去广.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		 {
+            "key": "索尼去广 PY",
+            "name": "👌索尼去广丨[优质分类]",
+            "api": "./索尼去广.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
 		{
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "name": "👌新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
