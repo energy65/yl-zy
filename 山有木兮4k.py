@@ -3,9 +3,12 @@
 # -*- coding: utf-8 -*-
 # ============================================================
 # TVBox Python 爬虫 · 山有木兮影视 (film.symx.club)
-# 版本: 2.1.3 (熔断器移除+多策略generate版)
+# 版本: 2.4.0 (全分类 + 二级筛选 + 直链播放修复)
 # 兼容: TVBox / 影视仓 / FongMi / WebHomeTV(默影视) / PeekPro
 # 优化: 播放解析重构 / 滑块轨迹增强 / 探测逻辑加固 / 解码器修正 / 缓存分离
+#       v2.4: homeContent 输出 filters (类型/地区/年代/语言/排序, 对齐懂片帝.py)
+#             获取站点全部一级分类与筛选数据; 修复含 "jx." 域名的直链被误判为解析页
+#             影片简介前置 微信公众号"源力软件汇"
 # 协议: /api/* + X-Platform/X-Timestamp/HMAC签名头 + XOR解密system/config
 #       内容接口免登录; 1004 → /api/auth/verify 滑块自愈
 # 零第三方依赖: 滑块识别内置纯 Python JPEG 解码 (PIL 可用时优先)
@@ -1120,7 +1123,8 @@ class Spider(_BaseSpider):
     NO_THROTTLE = (
         "/film/category", "/system/config", "/film/search", "/film/search/hot",
         "/line/play", "/line/play/parse", "/film/detail", "/film/detail/play/app",
-        "/film/detail/play"
+        "/film/detail/play", "/category/top", "/film/category/filter",
+        "/film/category/list"
     )
 
     def api_get(self, path, params=None, retry_verify=True, timeout=15):
@@ -1177,19 +1181,46 @@ class Spider(_BaseSpider):
         return False
 
     def homeContent(self, filter1=1):
-        out = {"class": [], "list": []}
+        """首页: 一级分类 (站点全部顶级分类) + 二级筛选 (类型/地区/年代/语言/排序) + 推荐
+
+        写法对齐 懂片帝.py: class 为纯 type_id/type_name 列表,
+        filters 为按 class_id 映射的 TVBox 标准筛选结构, 保证壳端直接出筛选栏
+        """
+        out = {"class": [], "list": [], "filters": {}}
+        cats = []
+        films = []
+        # 一级分类: 优先站点权威顶级分类接口
         try:
-            d = self.api_get("/film/category")
-            data = (d or {}).get("data") or []
+            d = self.api_get("/category/top")
+            cats = (d or {}).get("data") or []
+        except Exception:
+            cats = []
+        # 首页片单 + 兼容旧分类接口
+        try:
+            dc = self.api_get("/film/category")
+            data = (dc or {}).get("data") or []
             self.cat_cache = data
-            cls = []
             for c in data:
-                cls.append({"type_id": str(c.get("categoryId", "")), "type_name": c.get("categoryName", "")})
                 for f in (c.get("filmList") or [])[:6]:
-                    out["list"].append(self._vod(f, c.get("categoryId")))
-            out["class"] = cls
+                    films.append(self._vod(f, c.get("categoryId")))
+            if not cats:
+                cats = [{"id": c.get("categoryId"), "name": c.get("categoryName")} for c in data]
         except Exception:
             pass
+        seen = set()
+        for c in cats:
+            cid = c.get("id")
+            if cid is None:
+                cid = c.get("categoryId")
+            cname = c.get("name") or c.get("categoryName") or ""
+            sid = str(cid)
+            if not sid or sid == "None" or sid in seen:
+                continue
+            seen.add(sid)
+            out["class"].append({"type_id": sid, "type_name": cname})
+            # 逐分类构建二级筛选 (带缓存, 一次性返回, 保证筛选项立即可用)
+            out["filters"][sid] = self._filters(sid)
+        out["list"] = films[:30]
         return out
 
     def _vod(self, f, cid=None):
@@ -1201,6 +1232,10 @@ class Spider(_BaseSpider):
         }
         if cid is not None:
             vod["type_id"] = str(cid)
+        if f.get("year"):
+            vod["vod_year"] = str(f.get("year"))
+        if f.get("area"):
+            vod["vod_area"] = str(f.get("area"))
         return vod
 
     def _remark(self, f):
@@ -1213,6 +1248,16 @@ class Spider(_BaseSpider):
             parts.append(str(us))
         return " ".join(parts) if parts else ""
 
+    _CAT_FALLBACK = {"1": "电视剧", "2": "电影", "3": "综艺", "4": "动漫", "5": "短剧"}
+
+    def _cat_name(self, cid):
+        """分类 id -> 分类名 (详情接口只回 categoryId, 需自行映射)"""
+        cid = str(cid or "")
+        for c in (self.cat_cache or []):
+            if str(c.get("categoryId")) == cid:
+                return c.get("categoryName", "") or ""
+        return self._CAT_FALLBACK.get(cid, "")
+
     def homeVideoContent(self):
         try:
             d = self.api_get("/film/rank/quality")
@@ -1222,39 +1267,67 @@ class Spider(_BaseSpider):
             return {}
 
     def _filters(self, cid):
+        """构建单个分类的二级筛选 (类型/地区/年代/语言/排序), 与站点 web 端一致
+
+        站点 /film/category/filter 返回:
+          categoryOptions  [{value,label}]  子分类(类型)
+          areaOptions/yearOptions/languageOptions  ["中国大陆", ...]  纯字符串
+          sortOptions      [{value,label}]  排序
+        结果按分类缓存, 避免重复请求
+        """
+        cid = str(cid)
         if cid in self._filter_cache:
             return self._filter_cache[cid]
-        d = self.api_get("/film/category/filter", params={"categoryId": cid})
-        data = (d or {}).get("data") or {}
-        ext = {"area": "地区", "year": "年代", "language": "语言", "sort": "排序"}
+        try:
+            d = self.api_get("/film/category/filter", params={"categoryId": cid})
+            data = (d or {}).get("data") or {}
+        except Exception:
+            data = {}
+        if not isinstance(data, dict):
+            data = {}
         f = []
-        for key in ("area", "year", "language", "sort"):
+        # 类型 (子分类): 站点当前可能为空, 有值才输出
+        copts = data.get("categoryOptions") or []
+        if copts:
+            vals = [{"n": "全部", "v": ""}]
+            for o in copts:
+                if isinstance(o, dict):
+                    ov = o.get("value")
+                    if ov is None:
+                        ov = o.get("id")
+                    lb = o.get("label") or o.get("name") or ov
+                    vals.append({"n": str(lb), "v": str(ov if ov is not None else lb)})
+                else:
+                    vals.append({"n": str(o), "v": str(o)})
+            f.append({"key": "childCategoryId", "name": "类型", "value": vals})
+        # 地区 / 年代 / 语言 (纯字符串数组)
+        for key, label in (("area", "地区"), ("year", "年代"), ("language", "语言")):
             opts = data.get(key + "Options") or []
             if not opts:
                 continue
             vals = [{"n": "全部", "v": ""}]
             for o in opts:
                 if isinstance(o, dict):
-                    ovl = o.get("value")
-                    if isinstance(ovl, dict):
-                        ovl = ovl.get("value") or ovl.get("id")
-                    lbl = o.get("label") or str(ovl)
-                    if isinstance(lbl, dict):
-                        lbl = lbl.get("label") or str(ovl)
-                    ov = str(ovl if ovl is not None else o.get("id") or lbl)
-                    vals.append({"n": str(lbl), "v": ov})
+                    ov = o.get("value")
+                    if ov is None:
+                        ov = o.get("label", "")
+                    lb = o.get("label") or ov or ""
+                    vals.append({"n": str(lb), "v": str(ov)})
                 else:
                     vals.append({"n": str(o), "v": str(o)})
-            f.append({"key": key, "name": ext[key], "value": vals})
-        copts = data.get("categoryOptions") or []
-        if copts:
-            vals = [{"n": "全部", "v": ""}]
-            for o in copts:
+            f.append({"key": key, "name": label, "value": vals})
+        # 排序: 无"全部", 默认选中首项
+        sopts = data.get("sortOptions") or []
+        if sopts:
+            vals = []
+            for o in sopts:
                 if isinstance(o, dict):
-                    vals.append({"n": str(o.get("value", "")), "v": str(o.get("value", ""))})
+                    vals.append({"n": str(o.get("label") or o.get("value") or ""),
+                                 "v": str(o.get("value") or "")})
                 else:
                     vals.append({"n": str(o), "v": str(o)})
-            f.append({"key": "childCategoryId", "name": "分类", "value": vals})
+            if vals:
+                f.append({"key": "sort", "name": "排序", "value": vals, "init": vals[0]["v"]})
         self._filter_cache[cid] = f
         return f
 
@@ -1360,17 +1433,27 @@ class Spider(_BaseSpider):
             if not froms:
                 return self._dfail({"list": [{"vod_id": fid, "vod_name": "加载失败 D5 无可用线路",
                     "vod_play_from": "提示", "vod_play_url": "D5-该片线路为空#err"}]})
+            # 影片简介: 前置源力推广信息 (微信公众号)
+            blurb = (f.get("blurb") or "").strip()
+            if blurb in ("内详", "剧情介绍", "暂无简介"):
+                blurb = ""
+            content = (blurb or (f.get("other") or "").strip())
+            content = (
+                "更多优质资源尽在源力\n"
+                "微信公众号：源力软件汇\n"
+                "QQ群：1054592152\n\n" + content
+            )
             vod = {
                 "vod_id": fid,
                 "vod_name": f.get("name", ""),
                 "vod_pic": self._img(f.get("cover", "")),
-                "type_name": f.get("categoryName", ""),
+                "type_name": self._cat_name(f.get("categoryId")),
                 "vod_year": f.get("year", ""),
-                "vod_area": f.get("area", ""),
+                "vod_area": f.get("area") or f.get("other") or "",
                 "vod_director": f.get("director", ""),
                 "vod_actor": f.get("actor", ""),
                 "vod_remarks": self._remark(f),
-                "vod_content": (f.get("blurb") or f.get("other") or "").strip(),
+                "vod_content": content,
                 "vod_play_from": "$$$".join(froms) if froms else "山有木兮",
                 "vod_play_url": "$$$".join(urls),
             }
@@ -1447,6 +1530,12 @@ class Spider(_BaseSpider):
         if not url:
             return False
         u = url.lower().strip()
+        # v2.4: 先判定直链媒体 (路径以媒体后缀结尾, 允许带 auth_key 等查询参数)
+        # 避免因域名恰好包含 "jx." 之类的解析特征而把真实 m3u8/mp4 误判为解析页
+        path = u.split("?", 1)[0].split("#", 1)[0]
+        media_exts = (".m3u8", ".mp4", ".mkv", ".flv", ".ts", ".mp3", ".aac", ".m4a")
+        if any(path.endswith(ext) for ext in media_exts):
+            return False
         strong_sigs = ("jx.", "/jx/", "/player/", "parse?", "url=", "vid=", "vurl=",
                        "/play?", "/video?", "/jump/", "/goto/")
         if any(sig in u for sig in strong_sigs):
