@@ -3,7 +3,7 @@
 量子影视（去广告）爬虫
 目标站: 量子资源 (http://cj.lziapi.com/api.php/provide/vod/from/lzm3u8/at/json/)
 模板: 影视聚合 / 苹果CMS(JSON采集接口) + 内置去广告清洗
-站点类型: 综合影视 (电影/电视剧/动漫/综艺/短剧/体育/解说/预告/AI漫剧)
+站点类型: 综合影视 (电影/电视剧/动漫/综艺/短剧/体育/解说/AI漫剧; 已排除伦理/预告片栏目)
 
 分类写法 (参考暴风去广.py):
   - 一级分类: 运行时调用 ac=list 动态获取站点全部分类树, 只保留一级栏目
@@ -61,6 +61,9 @@ class Spider(Spider):
         "短剧": "短剧", "演员": "演员", "新闻资讯": "新闻资讯",
         "AI漫剧": "AI漫剧",
     }
+
+    # 需要移除的一级栏目关键字 (按站点原名包含匹配, 兼容 "伦理片"/"预告片"/"预告" 等命名)
+    EXCLUDED_CATEGORY_KEYWORDS = ("伦理", "预告")
 
     # 分类获取失败时的静态兜底 (type_id, 展示名)
     FALLBACK_CLASSES = [
@@ -148,6 +151,9 @@ class Spider(Spider):
                 continue
             pid = str(c.get("type_pid", 0))
             name = c.get("type_name", "") or ""
+            # 跳过排除栏目 (伦理/预告片), 一级栏目及其子分类均不展示
+            if any(kw in name for kw in self.EXCLUDED_CATEGORY_KEYWORDS):
+                continue
             if pid == "0" or pid == "":
                 tops.append((cid, name))
             children.setdefault(pid, []).append((cid, name))

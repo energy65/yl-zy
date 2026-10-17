@@ -1,41 +1,48 @@
 # coding=utf-8
 """
-光速影视（去广告）爬虫
-目标站: 光速资源 (https://api.guangsuapi.com/api.php/provide/vod/from/gsm3u8/at/xml/)
-模板: 影视聚合 / 苹果CMS(XML采集接口) + 内置去广告清洗
-站点类型: 综合影视 (电影/电视剧/综艺/动漫/体育/短剧)
+光速资源（去广告）爬虫
+站点: 光速资源 (https://api.guangsuapi.com/api.php/provide/vod/)
+模板: 苹果CMS JSON采集接口 + 内置去广告清洗
+类型: 综合影视 (电影/电视剧/综艺/动漫/体育/短剧)
 
-分类写法 (参考暴风去广.py):
-  - 一级分类: 运行时调用 ac=list 动态获取站点分类, 只保留一级栏目(电影/电视剧/综艺/动漫/体育/短剧)
-  - 二级筛选: 每个一级栏目附带筛选器 (类型/地区 + 年份), 结构为 filters[kind] 列表
-      * 类型/地区: 使用该栏目下的子分类 type_id (电影/短剧/体育->类型, 电视剧/综艺/动漫->地区)
-      * 年份:      附带年份筛选 (站点接口若忽略则不影响播放)
-      * 站点 XML 分类为扁平结构(无 type_pid), 故内置栏目归属表, 并动态与站点分类求交集
-  - 分类获取失败时回落静态内置分类, 保证壳端分类栏不空白
-  - 站点未归入任何栏目的分类, 自动作为独立一级栏目, 保证"所有分类"不丢失
+分类写法 (与光速资源.py 一致):
+  - 36 个内置分类 (电影/电视剧/体育/综艺/动漫/短剧), SKIP_IDS 可隐藏
+  - USE_LOCAL_CLASSES=False 时优先用采集接口实时分类
 
-线路机制:
-  - vod_play_from = gsm3u8 (统一改名 "光速高清"), vod_play_url 为 "集名$m3u8直链#集名$直链"
-  - 播放时由本地代理清洗 m3u8 广告后交给播放器, parse=0
+去广告说明 (重要):
+  - 实测光速 m3u8 播放列表层面干净: 无 #EXT-X-DISCONTINUITY 广告块、
+    无外部广告域名、TS 顺序编号、PCR/PTS 时间轴连续
+  - 其广告是转码时物理拼接进视频流的 (如片头约 62 秒"京东健康"贴片、
+    画面烧录的分销水印), 播放列表层面无任何特征, 程序无法自动识别
+  - 因此提供三条线路:
+      光速直连  : 原始 m3u8, 行为与光速资源.py 完全一致
+      光速纯净  : 本地代理清洗播放列表 (防站点未来改为列表注入广告),
+                  并统一改写绝对地址/加密KEY地址
+      光速跳片头: 在纯净基础上按固定时长跳过片头贴片 (默认 62 秒,
+                  可改 SKIP_OPENING_SEC; 无贴片的视频请勿用本线路, 会跳过正片)
 
-去广告优化 (保证 TVBox 正常播放):
-  - 光速 CDN(gs.gszyi.com) 以绝对地址/相对地址两种形式分发切片, 广告以
-    #EXT-X-DISCONTINUITY 包裹的独立块注入; 按 DISCONTINUITY 切块整体识别并删除
-  - 多重信号: (1) adjump/ppvod-ad-injected 注释 (2) 绝对路径 TS 混入 (3) TS 计数器不连续(兜底)
-  - KEY 相对地址(如 URI="enc.key")/MAP/切片统一改写为绝对地址, 播放器可直接回源解密拉流
-    (此站默认 #EXT-X-KEY:METHOD=AES-128,URI="enc.key" 为相对路径, 不绝对化 TVBox 无法解密)
-  - 重算 #EXT-X-TARGETDURATION, 补全 #EXTM3U / #EXT-X-VERSION / #EXT-X-PLAYLIST-TYPE / #EXT-X-ENDLIST
-  - 多码率 master playlist 自动选最高带宽; 任一环节失败自动回退原播放列表
-  - 单条覆盖式缓存, 换集/换源自动刷新; 无弹幕
+清洗引擎 (移植自索尼去广.py, 保证 TVBox 正常播放):
+  - 强信号: 块内 TS 全部命中广告关键字 / 广告注释标记同块或标记下一块
+  - 弱信号: 根绝对路径 TS 混排 / 跨注册域名块 (删除占比超 30% 放弃)
+  - 兜底: TS 计数器最长递增链
+  - 全部片段/加密 KEY/MAP 相对地址改写绝对地址 (AES KEY 改写为绝对地址,
+    否则经本地代理后播放器会解错相对路径导致解密失败)
+  - 重算 #EXT-X-TARGETDURATION, 补全 #EXTM3U/#EXT-X-VERSION/#EXT-X-ENDLIST
+  - 多码率 master 自动选最高带宽; 任一环节失败回退原始播放列表
 
-支持: 首页, 一/二级分类(含筛选), 搜索, 详情, 播放 (六接口齐全)
+支持: 首页, 分类, 搜索, 详情, 播放 (五接口齐全)
 """
 
 import sys
 import re
-import time
+import json
 import requests
-from urllib.parse import urljoin, urlparse, quote, unquote, parse_qs, urlencode, urlunparse
+from urllib.parse import urljoin, urlparse, quote, unquote
+
+try:
+    requests.packages.urllib3.disable_warnings()
+except Exception:
+    pass
 
 sys.path.append('..')
 from base.spider import Spider
@@ -44,404 +51,387 @@ from base.spider import Spider
 class Spider(Spider):
     # ---------- 站点常量 ----------
     SITE_URL = "https://api.guangsuapi.com"
-    API = "https://api.guangsuapi.com/api.php/provide/vod/from/gsm3u8/at/xml/"
+    API = "https://api.guangsuapi.com/api.php/provide/vod/"
 
-    # 广告检测关键字 (通用 adjump / ppvod 注入标记)
-    AD_KEYWORDS = ["/adjump/", "ppvod-ad-injected"]
+    # ---------- 播放线路 ----------
+    FLAG_RAW = "光速直连"
+    FLAG_CLEAN = "光速纯净"
+    FLAG_SKIP = "光速跳片头"
+    # 跳片头线路: 跳过的片头贴片秒数 (实测"京东健康"贴片约 62-64 秒)
+    SKIP_OPENING_SEC = 62
 
-    # 简介推广信息
-    PROMO = (
-        "更多优质资源尽在源力\n"
-        "微信公众号：源力软件汇\n\n"
-    )
+    # 微信公众号加密数据（XOR, 影片简介处显示, 运行时解密）
+    _w_full_data = [130, 203, 207, 138, 216, 210, 144, 218, 219, 129, 223, 255, 132, 251, 232, 221, 140, 168, 208, 221, 229, 132, 228, 252, 155, 200, 240, 147, 222, 213, 142, 208, 243, 85, 212, 171, 134, 211, 195, 239, 133, 210, 255, 155, 193, 247, 159, 208, 231, 142, 219, 228, 186, 130, 141, 215, 170, 207, 147, 219, 254, 130, 249, 238, 185, 250, 245, 139, 221, 193, 147, 214, 186, 58, 56]
+    _w_key = b"guangsu_wechat_2026"
 
-    # 一级栏目定义: (栏目type_id, 栏目名, 子分类属性名, [(子分类type_id, 名称), ...])
-    # 站点 XML 分类为扁平结构, 此处按语义归组; 运行时与站点分类求交集, 不存在的自动忽略
-    CATEGORY_TREE = [
-        ("1", "电影", "类型", [
-            ("6", "动作片"), ("7", "喜剧片"), ("8", "爱情片"), ("9", "科幻片"),
-            ("10", "剧情片"), ("11", "恐怖片"), ("12", "战争片"),
-            ("20", "动漫电影"), ("24", "纪录片"), ("25", "伦理片"),
-        ]),
-        ("2", "电视剧", "地区", [
-            ("13", "大陆剧"), ("14", "欧美剧"), ("15", "港澳剧"), ("16", "韩剧"),
-            ("21", "日剧"), ("22", "台湾剧"), ("23", "泰剧"),
-        ]),
-        ("3", "综艺", "地区", [
-            ("37", "大陆综艺"), ("38", "日韩综艺"), ("39", "港台综艺"), ("40", "欧美综艺"),
-        ]),
-        ("4", "动漫", "地区", [
-            ("41", "中国动漫"), ("42", "日本动漫"), ("43", "欧美动漫"),
-        ]),
-        ("30", "体育", "类型", [
-            ("33", "足球"), ("34", "篮球"), ("35", "台球"), ("36", "其他赛事"),
-        ]),
-        ("31", "短剧", "类型", [
-            ("44", "古装仙侠"), ("45", "现代都市"), ("46", "穿越年代"), ("47", "言情总裁"),
-            ("48", "重生民国"), ("49", "反转爽剧"), ("50", "脑洞悬疑"),
-            ("51", "擦边短剧"), ("52", "AI漫剧"),
-        ]),
+    # 广告关键字 (出现在广告注释或广告 TS 地址中)
+    AD_KEYWORDS = [
+        "/adjump/", "ppvod", "ad-injected", "ad_injected",
+        "guanggao", "/advert", "advertisement", "/gg.ts",
     ]
 
-    # 需要移除的分类名 (站点原名)
-    EXCLUDED_NAMES = {"预告片"}
-
     # 去广告最大删除比例 (超过则视为误判, 放弃清洗)
-    MAX_REMOVE_RATIO = 0.25
+    MAX_REMOVE_RATIO = 0.30
+
+    # ==================== 分类 ====================
+    # 【手动配置】SKIP_IDS: 要隐藏的分类 type_id, 留空不隐藏
+    SKIP_IDS = ["25"]
+    USE_LOCAL_CLASSES = True
+    AUTO_MERGE_CLASSES = True
+
+    @classmethod
+    def _skip_set(cls):
+        return set(str(x) for x in (getattr(cls, "SKIP_IDS", None) or []))
+
+    @classmethod
+    def _filter_classes(cls, classes):
+        skip = cls._skip_set()
+        return [c for c in (classes or []) if str(c.get("type_id")) not in skip]
+
+    @classmethod
+    def _visible_classes(cls):
+        return cls._filter_classes(cls.CLASSES or [])
+
+    @classmethod
+    def _merge_classes(cls, api_classes):
+        api_list = cls._filter_classes(api_classes or [])
+        local_list = cls._visible_classes()
+        if getattr(cls, "USE_LOCAL_CLASSES", True):
+            if local_list:
+                return local_list
+            return api_list if getattr(cls, "AUTO_MERGE_CLASSES", True) else []
+        if api_list:
+            return api_list
+        return local_list if getattr(cls, "AUTO_MERGE_CLASSES", True) else []
+
+    CLASSES = [
+        {"type_id": "6", "type_name": "动作片"},
+        {"type_id": "7", "type_name": "喜剧片"},
+        {"type_id": "8", "type_name": "爱情片"},
+        {"type_id": "9", "type_name": "科幻片"},
+        {"type_id": "10", "type_name": "剧情片"},
+        {"type_id": "11", "type_name": "恐怖片"},
+        {"type_id": "12", "type_name": "战争片"},
+        {"type_id": "13", "type_name": "大陆剧"},
+        {"type_id": "14", "type_name": "欧美剧"},
+        {"type_id": "15", "type_name": "港澳剧"},
+        {"type_id": "16", "type_name": "韩剧"},
+        {"type_id": "20", "type_name": "动漫电影"},
+        {"type_id": "21", "type_name": "日剧"},
+        {"type_id": "22", "type_name": "台湾剧"},
+        {"type_id": "23", "type_name": "泰剧"},
+        {"type_id": "24", "type_name": "记录片"},
+        {"type_id": "33", "type_name": "足球"},
+        {"type_id": "34", "type_name": "篮球"},
+        {"type_id": "35", "type_name": "台球"},
+        {"type_id": "36", "type_name": "其他赛事"},
+        {"type_id": "37", "type_name": "大陆综艺"},
+        {"type_id": "38", "type_name": "日韩综艺"},
+        {"type_id": "39", "type_name": "港台综艺"},
+        {"type_id": "40", "type_name": "欧美综艺"},
+        {"type_id": "41", "type_name": "中国动漫"},
+        {"type_id": "42", "type_name": "日本动漫"},
+        {"type_id": "43", "type_name": "欧美动漫"},
+        {"type_id": "44", "type_name": "古装仙侠"},
+        {"type_id": "45", "type_name": "现代都市"},
+        {"type_id": "46", "type_name": "穿越年代"},
+        {"type_id": "47", "type_name": "言情总裁"},
+        {"type_id": "48", "type_name": "重生民国"},
+        {"type_id": "49", "type_name": "反转爽剧"},
+        {"type_id": "50", "type_name": "脑洞悬疑"},
+        {"type_id": "51", "type_name": "擦边短剧"},
+        {"type_id": "52", "type_name": "AI漫剧"},
+    ]
+
+    # ==================== 框架接口 ====================
 
     def init(self, extend=""):
         self.session = requests.Session()
         self.headers = {
             'User-Agent': (
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                'Mozilla/5.0 (Linux; Android 13; Pixel 7) '
                 'AppleWebKit/537.36 (KHTML, like Gecko) '
-                'Chrome/120.0.0.0 Safari/537.36'
+                'Chrome/148.0.0.0 Mobile Safari/537.36'
             ),
             'Accept': 'application/json, text/plain, */*',
             'Accept-Language': 'zh-CN,zh;q=0.9',
         }
-        self.stream_headers = {
+        # 播放头: CDN 不强制 Referer, 但带上更稳
+        self.play_headers = {
             'User-Agent': self.headers['User-Agent'],
             'Referer': 'https://v.gsuus.com/',
-            'Accept': '*/*',
         }
-
-        # 年份筛选: 全部 + 近十几年
-        cur_year = time.localtime().tm_year
-        self.year_options = [("全部", "")] + [
-            (str(y), str(y)) for y in range(cur_year + 1, 2014, -1)
-        ]
-
-        # 分类树缓存
-        self._class_list = None           # 首页 class (一级栏目)
-        self._filters_map = None          # 一级栏目 -> 筛选器定义
-        self._children = {}               # 一级栏目 type_id -> 子分类列表
-
-        # ---------- 去广告清洗缓存 (单条目, 覆盖式) ----------
-        self.cached_url = None
-        self.cached_content = None
+        # 清洗缓存: (src|skip) -> 清洗后播放列表 (小型覆盖式)
+        self._cache = {}
+        self._cache_order = []
 
     def getName(self):
         return "光速去广"
 
+    def isVideoFormat(self, url):
+        return True
+
+    def manualVideoCheck(self):
+        return False
+
+    def destroy(self):
+        return
+
+    # ==================== 加密信息 ====================
+
+    def _xor_decrypt(self, data):
+        try:
+            key = self._w_key
+            plain = bytearray(len(data))
+            for i in range(len(data)):
+                plain[i] = data[i] ^ key[i % len(key)]
+            return plain.decode('utf-8')
+        except Exception:
+            try:
+                key = self._w_key
+                return ''.join(chr(data[i] ^ key[i % len(key)]) for i in range(len(data)))
+            except Exception:
+                return ''
+
+    def _get_promo(self):
+        text = self._xor_decrypt(self._w_full_data)
+        return text if text else "微信公众号：源力软件汇\n更多优质资源尽在源力捐赠版\n\n"
+
     # ==================== 基础请求 ====================
 
-    def _api_text(self, params):
-        """调用 XML 采集接口, 返回原始 XML 文本 (失败返回 '')"""
+    def _api_get(self, params):
+        """调用 JSON 采集接口, 返回 dict (失败返回 {})"""
         try:
             resp = self.session.get(
                 self.API, params=params, headers=self.headers, timeout=15, verify=False
             )
-            if resp.status_code == 200 and resp.text:
-                return resp.text
+            if resp.status_code == 200:
+                data = resp.json()
+                if isinstance(data, dict):
+                    return data
         except Exception:
             pass
-        return ""
+        try:
+            r = self.fetch(self.API + "?" + "&".join(
+                "%s=%s" % (k, quote(str(v), safe="")) for k, v in params.items()),
+                headers=self.headers)
+            t = getattr(r, "text", "") or ""
+            if t:
+                return json.loads(t)
+        except Exception:
+            pass
+        return {}
 
     def _fetch_text(self, url, timeout=15):
-        """抓取文本 (m3u8 等), 带默认请求头"""
+        """抓取文本 (播放页/m3u8): requests 优先, 失败回退 base Spider.fetch"""
         try:
-            resp = self.session.get(
-                url, headers=self.stream_headers, timeout=timeout, verify=False
-            )
+            resp = self.session.get(url, headers=self.headers, timeout=timeout, verify=False)
             if resp.status_code == 200 and resp.text:
                 return resp.text
         except Exception:
             pass
-        return None
+        try:
+            r = self.fetch(url, headers=self.headers)
+            t = getattr(r, "text", None)
+            if t:
+                return t
+            c = getattr(r, "content", b"")
+            return c.decode("utf-8", "ignore") if c else ""
+        except Exception:
+            return ""
 
-    # ==================== XML 解析 ====================
+    # ==================== 通用工具 ====================
 
-    @staticmethod
-    def _tag_text(block, tag):
-        """提取 <tag> 文本, 兼容 CDATA 包裹"""
-        m = re.search(r'<%s><!\[CDATA\[(.*?)\]\]></%s>' % (tag, tag), block, re.S)
-        if m:
-            return m.group(1)
-        m = re.search(r'<%s>(.*?)</%s>' % (tag, tag), block, re.S)
-        if m:
-            return m.group(1).strip()
-        return ""
+    def _abs(self, url, base=None):
+        if not url:
+            return ""
+        url = str(url).replace("\\/", "/").strip()
+        if url.startswith("//"):
+            url = "https:" + url
+        if not url.startswith("http"):
+            url = urljoin(base or self.SITE_URL + "/", url)
+        return url
 
-    def _page_meta(self, text):
-        """解析 <list page=.. pagecount=.. recordcount=..> 属性"""
-        meta = {"page": 1, "pagecount": 0, "limit": 20, "total": 0}
-        m = re.search(r'<list\s+([^>]*)>', text or "")
-        if m:
-            attrs = dict(re.findall(r'(\w+)="([^"]*)"', m.group(1)))
-            try:
-                meta["page"] = int(attrs.get("page", 1))
-                meta["pagecount"] = int(attrs.get("pagecount", 0))
-                meta["limit"] = int(attrs.get("pagesize", 20))
-                meta["total"] = int(attrs.get("recordcount", 0))
-            except Exception:
-                pass
-        return meta
+    def _strip_tags(self, html_text):
+        t = re.sub(r"<[^>]+>", " ", html_text or "")
+        t = re.sub(r"\s+", " ", t).strip()
+        return t
 
-    def _parse_items(self, text):
-        """从 XML 文本解析视频列表"""
-        items = []
-        if not text:
-            return items
-        for block in re.findall(r'<video>(.*?)</video>', text, re.S):
-            items.append({
-                "vod_id": self._tag_text(block, "id"),
-                "vod_name": self._tag_text(block, "name"),
-                "vod_pic": self._tag_text(block, "pic"),
-                "vod_remarks": self._tag_text(block, "note"),
-                "vod_year": self._tag_text(block, "year"),
-                "vod_area": self._tag_text(block, "area"),
-                "vod_type": self._tag_text(block, "type"),
-                "_raw": block,
+    def _media_urls(self, html_text):
+        """从播放页抠真实媒体地址: 优先 player_aaaa 等结构化变量, 再裸直链"""
+        html_text = (html_text or "").replace("\\/", "/")
+        urls = []
+
+        def _norm(u):
+            if not u:
+                return ""
+            u = str(u).replace("\\/", "/").replace("\\u0026", "&").strip()
+            if "%" in u:
+                try:
+                    d = unquote(u)
+                    if d.startswith("http"):
+                        u = d
+                except Exception:
+                    pass
+            u = u.strip().rstrip(chr(34) + chr(39) + ",;)")
+            return u
+
+        def _is_media(u):
+            if not u:
+                return False
+            return bool(re.search(r"[.](?:m3u8|mp4|mpd|flv|m4a)(?:[?]|$)", u, re.I))
+
+        for varname in ["player_aaaa", "player_data", "MacPlayer", "wdplayer", "PLAYER"]:
+            for m in re.finditer(r"(?:%s)\s*=\s*(\{[\s\S]*?\})\s*;?\s*(?:</script>|$)" % varname, html_text, re.I | re.M):
+                raw = m.group(1).replace("\\/", "/").replace("\\u0026", "&")
+                try:
+                    j = json.loads(raw)
+                    for k in ["url", "url_next", "play_url", "m3u8", "playurl"]:
+                        v = _norm(j.get(k, ""))
+                        if _is_media(v) and v not in urls:
+                            urls.append(v)
+                except Exception:
+                    for mm in re.finditer(r"https?://[^\s]+[.](?:m3u8|mp4|mpd)[^\s]*", raw, re.I):
+                        v = _norm(mm.group(0))
+                        if _is_media(v) and v not in urls:
+                            urls.append(v)
+        for u in re.findall(r"https?://[^\s<>]+[.](?:m3u8|mpd|mp4|flv|m4a)(?:[?][^\s<>]*)?", html_text, re.I):
+            v = _norm(u)
+            if _is_media(v) and v not in urls:
+                urls.append(v)
+
+        seen, out = set(), []
+        for u in urls:
+            if u and u.startswith("http") and u not in seen:
+                seen.add(u)
+                out.append(u)
+        return out
+
+    def _items(self, data):
+        out = []
+        for it in (data.get("list") or []):
+            if not isinstance(it, dict):
+                continue
+            out.append({
+                "vod_id": it.get("vod_id"),
+                "vod_name": (it.get("vod_name") or "").split("$")[0],
+                "vod_pic": it.get("vod_pic") or "",
+                "vod_remarks": it.get("vod_remarks") or "",
             })
-        return items
+        return out
 
-    def _parse_playlist(self, block):
-        """解析 <dl><dd flag="gsm3u8">集名$url#集名$url</dd></dl>
-
-        返回 (play_from 列表, play_url 字符串)
-        """
-        dl = re.search(r'<dl>(.*?)</dl>', block, re.S)
-        if not dl:
-            return [], ""
-        froms, urls = [], []
-        for flag, body in re.findall(
-            r'<dd flag="([^"]+)">(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</dd>', dl.group(1), re.S
-        ):
-            body = (body or "").strip()
-            if not body:
-                continue
-            froms.append(flag)
-            urls.append(body)
-        return froms, "$$$".join(urls)
-
-    # ==================== 分类树 (动态获取全部分类) ====================
-
-    def _parse_classes(self, text):
-        """解析 <class><ty id="1">电影</ty>...</class>"""
-        classes = []
-        m = re.search(r'<class>(.*?)</class>', text or "", re.S)
-        if m:
-            for cid, name in re.findall(r'<ty id="(\d+)">(.*?)</ty>', m.group(1), re.S):
-                name = name.strip()
-                if name:
-                    classes.append((cid, name))
-        return classes
-
-    def _load_classes(self):
-        """加载站点分类, 构建一级栏目与筛选器; 与内置归属表求交集"""
-        if self._class_list is not None:
-            return
-        data = self._api_text({"ac": "list"})
-        site_classes = self._parse_classes(data)
-        site_map = dict(site_classes)
-
-        class_list = []
-        filters_map = {}
-        children = {}
-        used = set()
-
-        for pid, pname, sub_name, subs in self.CATEGORY_TREE:
-            # 与站点分类求交集 (站点未获取到时, 直接采用内置)
-            present = [(cid, cname) for cid, cname in subs
-                       if (not site_map) or (cid in site_map)]
-            # 用站点真实名称覆盖 (若有)
-            present = [(cid, site_map.get(cid, cname)) for cid, cname in present]
-            if not present:
-                continue
-            # 站点明确没有该一级栏目, 且站点分类可用时, 跳过
-            if site_map and pid not in site_map:
-                continue
-            used.add(pid)
-            used.update(cid for cid, _ in present)
-            children[str(pid)] = present
-            class_list.append({"type_id": str(pid), "type_name": pname})
-            filters_map[str(pid)] = self._build_filters(sub_name, present)
-
-        # 站点中未被归类的分类, 作为独立一级栏目, 保证不丢失
-        for cid, cname in site_classes:
-            if cid in used or cname in self.EXCLUDED_NAMES:
-                continue
-            class_list.append({"type_id": cid, "type_name": cname})
-            filters_map[cid] = [self._year_filter()]
-            children[cid] = []
-
-        # 兜底: 一个栏目都没构建出来
-        if not class_list:
-            for pid, pname, sub_name, subs in self.CATEGORY_TREE:
-                children[str(pid)] = list(subs)
-                class_list.append({"type_id": str(pid), "type_name": pname})
-                filters_map[str(pid)] = self._build_filters(sub_name, list(subs))
-
-        self._children = children
-        self._class_list = class_list
-        self._filters_map = filters_map
-
-    def _build_filters(self, sub_name, child_list):
-        """按一级栏目构造筛选器: 类型/地区(子分类) + 年份"""
-        filters = []
-        if child_list:
-            filters.append({
-                "key": "t",
-                "name": sub_name,
-                "value": [{"n": n, "v": str(t)} for t, n in child_list],
-            })
-        filters.append(self._year_filter())
-        return filters
-
-    def _year_filter(self):
-        return {
-            "key": "year",
-            "name": "年份",
-            "value": [{"n": n, "v": v} for n, v in self.year_options],
-        }
-
-    def _default_type(self, tid):
-        """未选择子分类时, 落到该栏目的第一个子分类 (站点不支持父级聚合)"""
-        tid = str(tid)
-        children = self._children.get(tid) or []
-        if children:
-            return str(children[0][0])
-        return tid
-
-    # ==================== 卡片解析 ====================
-
-    @staticmethod
-    def _parse_item(item):
-        return {
-            "vod_id": item.get("vod_id", ""),
-            "vod_name": item.get("vod_name", "") or "",
-            "vod_pic": item.get("vod_pic", "") or "",
-            "vod_remarks": item.get("vod_remarks", "") or "",
-            "vod_year": str(item.get("vod_year", "") or ""),
-            "vod_area": item.get("vod_area", "") or "",
-            "vod_type": item.get("vod_type", "") or "",
-        }
-
-    # ==================== 首页 ====================
+    # ==================== 内容接口 ====================
 
     def homeContent(self, filter):
-        """一级分类 (动态获取) + 二级筛选器"""
-        self._load_classes()
-        return {
-            "class": [dict(c) for c in self._class_list],
-            "filters": {k: [dict(f) for f in v] for k, v in self._filters_map.items()},
-            "list": [],
-        }
+        data = self._api_get({"ac": "list"})
+        classes = []
+        for it in (data.get("class") or []):
+            if not isinstance(it, dict):
+                continue
+            tid = it.get("type_id", it.get("id"))
+            tname = it.get("type_name", it.get("name"))
+            if tid is not None:
+                classes.append({"type_id": str(tid), "type_name": str(tname or "")})
+        vlist = self._items(self._api_get({"ac": "detail", "pg": 1}))
+        if not vlist:
+            for c0 in self._merge_classes(classes):
+                try:
+                    vlist = self._items(self._api_get({"ac": "detail", "t": c0.get("type_id"), "pg": 1}))
+                except Exception:
+                    vlist = []
+                if vlist:
+                    break
+        return {"class": self._merge_classes(classes), "list": vlist[:24]}
 
     def homeVideoContent(self):
-        """首页推荐: 最新入库"""
-        text = self._api_text({"ac": "detail", "pg": "1"})
-        items = self._parse_items(text)
-        return {"list": [self._parse_item(it) for it in items]}
-
-    # ==================== 分类(含筛选) ====================
+        return {"list": self._items(self._api_get({"ac": "detail", "pg": 1}))}
 
     def categoryContent(self, tid, pg, filter, extend):
-        self._load_classes()
-        page = int(pg) if pg else 1
-        extend = extend or {}
-
-        # 子分类 (类型/地区): 未选择时落到第一个子分类
-        t = str(extend.get("t") or "").strip()
-        if not t:
-            t = self._default_type(tid)
-
-        params = {"ac": "detail", "t": t, "pg": str(page)}
-
-        # 年份: 站点若支持则原生生效, 不支持也不影响
-        year = str(extend.get("year") or "").strip()
-        if year and year != "全部":
-            params["year"] = year
-
-        text = self._api_text(params)
-        items = self._parse_items(text)
-        videos = [self._parse_item(it) for it in items]
-        meta = self._page_meta(text)
-
+        params = {"ac": "detail", "t": tid, "pg": pg or 1}
+        for k in ("class", "area", "year", "by", "lang", "letter"):
+            if extend and extend.get(k):
+                params[k] = extend.get(k)
+        data = self._api_get(params)
+        lst = self._items(data)
         return {
-            "list": videos,
-            "page": meta["page"] if meta["page"] else page,
-            "pagecount": meta["pagecount"],
-            "limit": meta["limit"],
-            "total": meta["total"],
+            "list": lst,
+            "page": int(pg or 1),
+            "pagecount": int(data.get("pagecount") or 9999),
+            "limit": len(lst),
+            "total": int(data.get("total") or 0),
         }
-
-    # ==================== 搜索 ====================
 
     def searchContent(self, key, quick, pg="1"):
-        keyword = (key or "").strip()
-        if not keyword:
-            return {"list": [], "page": 1, "pagecount": 0, "limit": 20, "total": 0}
-        params = {"ac": "detail", "wd": keyword, "pg": str(pg or "1")}
-        text = self._api_text(params)
-        items = self._parse_items(text)
-        videos = [self._parse_item(it) for it in items]
-        meta = self._page_meta(text)
-        return {
-            "list": videos,
-            "page": meta["page"] if meta["page"] else int(pg or 1),
-            "pagecount": meta["pagecount"],
-            "limit": meta["limit"],
-            "total": meta["total"],
-        }
-
-    # ==================== 详情 ====================
+        data = self._api_get({"ac": "detail", "wd": key, "pg": pg or 1})
+        return {"list": self._items(data), "page": int(pg or 1)}
 
     def detailContent(self, ids):
-        if not ids:
+        data = self._api_get({"ac": "detail", "ids": ids[0]})
+        lst = data.get("list") or []
+        if not lst:
             return {"list": []}
-        vid = ids[0]
-        text = self._api_text({"ac": "detail", "ids": vid})
-        items = self._parse_items(text)
-        if not items:
-            return {"list": []}
-        it = items[0]
-        block = it.get("_raw", "")
+        vod = dict(lst[0])
+        # 简介前置解密文案 (去除原简介中的 HTML 标签)
+        body = self._strip_tags(vod.get("vod_content") or "")
+        vod["vod_content"] = self._get_promo() + body
 
-        content = self._tag_text(block, "des") or ""
-        content = self.PROMO + content
+        eps = self._pick_episodes(vod)
+        if eps:
+            ep_line = "#".join("%s$%s" % (name, url) for name, url in eps)
+            vod["vod_play_from"] = "$$$".join([self.FLAG_RAW, self.FLAG_CLEAN, self.FLAG_SKIP])
+            vod["vod_play_url"] = "$$$".join([ep_line, ep_line, ep_line])
+        return {"list": [vod]}
 
-        # 播放源改名 (gsm3u8 -> 光速高清)
-        raw_from, raw_url = self._parse_playlist(block)
-        play_from = [self._pretty_source(x) for x in raw_from if x]
-        if not play_from:
-            play_from = ["光速高清"]
-
-        result = {
-            "vod_id": vid,
-            "vod_name": it.get("vod_name", "") or "",
-            "vod_pic": it.get("vod_pic", "") or "",
-            "vod_content": content,
-            "vod_actor": self._tag_text(block, "actor"),
-            "vod_director": self._tag_text(block, "director"),
-            "vod_year": str(it.get("vod_year", "") or ""),
-            "vod_area": it.get("vod_area", "") or "",
-            "vod_type": it.get("vod_type", "") or "",
-            "vod_remarks": it.get("vod_remarks", "") or "",
-            "vod_play_from": "$$$".join(play_from),
-            "vod_play_url": raw_url,
-        }
-        return {"list": [result]}
-
-    @staticmethod
-    def _pretty_source(name):
-        if name.strip().lower() in ("gsm3u8", "gs", "光速"):
-            return "光速高清"
-        return name
+    def _pick_episodes(self, vod):
+        """从原始 vod_play_url 选一条可用线路, 返回 [(集名, 地址)]"""
+        raw = vod.get("vod_play_url") or ""
+        if not raw:
+            for k, v in vod.items():
+                if isinstance(v, str) and "$" in v and "http" in v:
+                    raw = v
+                    break
+        lines = [l for l in raw.split("$$$") if l.strip()]
+        best = None
+        for line in lines:
+            eps = []
+            for item in line.split("#"):
+                if "$" in item:
+                    name, url = item.split("$", 1)
+                else:
+                    name, url = "播放", item
+                name = (name or "").strip()
+                url = (url or "").strip()
+                if url:
+                    eps.append((name or "播放", url))
+            if not eps:
+                continue
+            m3u8_cnt = sum(1 for _, u in eps if ".m3u8" in u.lower())
+            if best is None or m3u8_cnt > best[0]:
+                best = (m3u8_cnt, eps)
+        return best[1] if best else []
 
     # ==================== 播放与代理 (内置去广告) ====================
 
     def playerContent(self, flag, id, vipFlags=None):
         url = (id or "").strip()
-        if not url:
-            return {"parse": 1, "url": url, "header": self.headers}
-
-        # m3u8 走本地代理清洗广告; mp4 等直链直接返回
-        if "m3u8" in url.lower() and url.lower().startswith(("http://", "https://")):
-            proxy_url = self._proxy_base() + "&action=clean&src=" + quote(url, safe="")
-            return {"parse": 0, "url": proxy_url, "header": {}}
-        return {"parse": 0, "url": url, "header": {}}
+        if "$" in url:
+            url = url.split("$")[-1]
+        url = self._abs(url)
+        # 播放页地址: 先抓页面解出真实媒体直链
+        if not re.search(r"\.(m3u8|mp4|flv|mpd|ts)([?#].*)?$", url, re.I):
+            medias = self._media_urls(self._fetch_text(url))
+            if medias:
+                url = medias[0]
+        header = dict(self.play_headers)
+        if re.search(r"\.m3u8([?#].*)?$", url, re.I):
+            if flag == self.FLAG_SKIP:
+                proxy_url = self._proxy_base() + "&action=clean&skip=%d&src=%s" % (
+                    int(self.SKIP_OPENING_SEC or 0), quote(url, safe=""))
+                return {"parse": 0, "url": proxy_url, "header": header}
+            if flag == self.FLAG_CLEAN:
+                proxy_url = self._proxy_base() + "&action=clean&src=" + quote(url, safe="")
+                return {"parse": 0, "url": proxy_url, "header": header}
+        return {"parse": 0, "url": url, "header": header}
 
     def _proxy_base(self):
         try:
@@ -451,19 +441,6 @@ class Spider(Spider):
         except Exception:
             return self.getProxyUrl()
 
-    # ---------- URL 规范化 (提高缓存命中) ----------
-
-    @staticmethod
-    def _normalize_url(url):
-        try:
-            parsed = urlparse(url)
-            q = parse_qs(parsed.query)
-            for p in ('_', 't', 'timestamp', 'rand', 'v', 'cb', 'callback'):
-                q.pop(p, None)
-            return urlunparse(parsed._replace(query=urlencode(q, doseq=True)))
-        except Exception:
-            return url
-
     @staticmethod
     def _proxy_headers():
         return {
@@ -471,7 +448,7 @@ class Spider(Spider):
             'Cache-Control': 'no-cache, no-store',
         }
 
-    # ---------- 去广告清洗引擎 ----------
+    # ---------- 去广告清洗引擎 (移植自索尼去广.py) ----------
 
     def _rewrite_uri(self, line, base_url):
         """将任意 URI="..." (KEY / MAP 等) 的相对地址改写为绝对地址"""
@@ -494,39 +471,66 @@ class Spider(Spider):
             return 0.0
 
     @staticmethod
-    def _looks_abs_ts(uri):
-        """站点正片 TS 为绝对地址; 相对路径 TS 多为广告残留, 复用为辅助信号"""
-        u = uri.strip()
-        return u.startswith("/") and not u.startswith(("//", "http://", "https://"))
+    def _reg_domain(host):
+        try:
+            parts = (host or "").split(".")
+            return ".".join(parts[-2:]).lower() if len(parts) >= 2 else (host or "").lower()
+        except Exception:
+            return ""
 
-    def _has_ad_marker(self, blk):
-        for e in blk.get("extras", []):
-            for kw in self.AD_KEYWORDS:
-                if kw in e:
+    def _uri_host(self, uri):
+        try:
+            return urlparse(uri).netloc.lower()
+        except Exception:
+            return ""
+
+    def _has_ad_keyword(self, text):
+        t = (text or "").lower()
+        return any(kw in t for kw in self.AD_KEYWORDS)
+
+    def _has_abs_path_ts(self, blk, other_blocks):
+        has_abs = any(
+            u.startswith("/") and not u.startswith(("http://", "https://"))
+            for _, u in blk["segs"]
+        )
+        if not has_abs:
+            return False
+        for other in other_blocks:
+            if other is blk:
+                continue
+            for _, u in other["segs"]:
+                if not u.startswith(("http://", "https://", "/")):
                     return True
         return False
 
-    def _has_abs_path_ts(self, blk):
-        for _, uri in blk["segs"]:
-            if self._looks_abs_ts(uri):
-                return True
-        return False
+    def _cross_domain_blocks(self, parsed, base_url):
+        base_reg = self._reg_domain(urlparse(base_url).netloc)
+        if not base_reg:
+            return set()
+        foreign = set()
+        for idx, blk in enumerate(parsed):
+            if not blk["segs"]:
+                continue
+            hosts = [self._uri_host(u) for _, u in blk["segs"] if u.startswith(("http://", "https://"))]
+            if hosts and all(self._reg_domain(h) != base_reg for h in hosts):
+                foreign.add(idx)
+        if len(foreign) * 3 > len(parsed):
+            return set()
+        return foreign
 
     @staticmethod
     def _extract_counter(ts_name):
-        """提取 TS 文件名末尾连续数字作为内容计数器"""
-        name = ts_name.rstrip()
+        name = (ts_name or "").strip()
         if name.lower().endswith(".ts"):
             name = name[:-3]
         name = name.split("?", 1)[0]
         m = re.search(r"(\d+)$", name)
         return int(m.group(1)) if m else None
 
-    def _detect_ad_blocks_counter(self, parsed):
-        """基于 TS 计数器连续性检测广告块 (兜底)"""
+    def _detect_ad_blocks_counter(self, parsed_blocks):
         info = []
-        for blk in parsed:
-            cnts = [self._extract_counter(u.split("?", 1)[0]) for _, u in blk["segs"]]
+        for blk in parsed_blocks:
+            cnts = [self._extract_counter(uri) for _, uri in blk["segs"]]
             cnts = [c for c in cnts if c is not None]
             info.append({
                 'first': cnts[0] if cnts else None,
@@ -534,11 +538,10 @@ class Spider(Spider):
                 'n': len(blk["segs"]),
                 'has': len(cnts) > 0,
             })
-
-        if len(parsed) < 2 or not all(x['has'] for x in info):
+        if len(parsed_blocks) < 2 or not all(x['has'] for x in info):
             return set()
 
-        m = len(parsed)
+        m = len(parsed_blocks)
         dp = [1] * m
         prev = [-1] * m
         for a in range(m):
@@ -563,17 +566,13 @@ class Spider(Spider):
         return set()
 
     def _clean_m3u8(self, content, base_url):
-        """删除以 #EXT-X-DISCONTINUITY 包裹的广告块, 并把相对地址绝对化
-
-        返回清洗后的播放列表; 无法处理时返回 None (由调用方回退原始内容)。
-        """
+        """删除以 #EXT-X-DISCONTINUITY 包裹的广告块, 无法处理返回 None"""
         if not content:
             return None
         lines = [l.strip() for l in content.splitlines() if l.strip()]
         if not lines:
             return None
 
-        # 1) 拆出 header (媒体片段之前) 与 footer (#EXT-X-ENDLIST)
         header = []
         i = 0
         while i < len(lines):
@@ -595,7 +594,6 @@ class Spider(Spider):
 
         body = lines[i:j + 1]
 
-        # 2) 按 DISCONTINUITY 切块
         blocks, cur = [], []
         for s in body:
             if s == "#EXT-X-DISCONTINUITY":
@@ -605,7 +603,6 @@ class Spider(Spider):
                 cur.append(s)
         blocks.append(cur)
 
-        # 3) 解析每块为 (片段列表, 其它标签)
         parsed = []
         for b in blocks:
             segs, extras, k = [], [], 0
@@ -623,62 +620,71 @@ class Spider(Spider):
                 k += 1
             parsed.append({"segs": segs, "extras": extras})
 
-        # 4) 广告检测: 注释关键字 / 相对路径 TS (改版特征)
-        ad_set = set()
+        # 强信号检测
+        strong = set()
+        nblk = len(parsed)
         for idx, blk in enumerate(parsed):
-            if self._has_abs_path_ts(blk) or self._has_ad_marker(blk):
-                ad_set.add(idx)
-        # 注释标记 "下一个块是广告"
-        for idx, blk in enumerate(parsed):
-            if self._has_ad_marker(blk) and idx + 1 < len(parsed):
-                ad_set.add(idx + 1)
-        # 主信号未命中时, 启用计数器连续性兜底
-        if not ad_set and len(parsed) >= 3:
-            ad_set = self._detect_ad_blocks_counter(parsed)
-        # 保护: 删除比例过高视为误判
-        total_dur = sum(self._seg_duration(e) for blk in parsed for e, _ in blk["segs"])
-        removed_dur = sum(self._seg_duration(e) for idx in ad_set for e, _ in parsed[idx]["segs"])
-        if total_dur > 0 and removed_dur / total_dur > self.MAX_REMOVE_RATIO:
-            ad_set = set()
+            seg_kw = [self._has_ad_keyword(u) for _, u in blk["segs"]]
+            extra_kw = any(self._has_ad_keyword(e) for e in blk["extras"])
+            if blk["segs"] and all(seg_kw):
+                strong.add(idx)
+            if extra_kw:
+                if any(seg_kw):
+                    strong.add(idx)
+                elif idx + 1 < nblk:
+                    strong.add(idx + 1)
 
-        # 5) 重建: 删除广告块, 清理多余 DISCONTINUITY, 统一改写绝对地址
+        # 弱信号检测
+        weak = set()
+        for idx, blk in enumerate(parsed):
+            if self._has_abs_path_ts(blk, parsed):
+                weak.add(idx)
+        weak |= self._cross_domain_blocks(parsed, base_url)
+
+        if not strong and not weak and len(parsed) >= 3:
+            weak = self._detect_ad_blocks_counter(parsed)
+
+        total_dur = sum(self._seg_duration(e) for blk in parsed for e, _ in blk["segs"])
+        weak_dur = sum(self._seg_duration(e) for x in weak for e, _ in parsed[x]["segs"])
+        if total_dur > 0 and weak_dur / total_dur > self.MAX_REMOVE_RATIO:
+            weak = set()
+
+        ad_set = strong | weak
+
+        # 重建
         out_body = []
         maxdur = 0.0
         segment_count = 0
-        first_kept = False
-        removed_ad = False
-
+        kept = set()
         for idx, blk in enumerate(parsed):
             if idx in ad_set:
-                removed_ad = True
                 continue
-            if not blk["segs"] and not blk["extras"]:
-                continue
-
-            if first_kept and idx > 0 and not removed_ad:
-                out_body.append("#EXT-X-DISCONTINUITY")
-            removed_ad = False
-
-            for e in blk["extras"]:
-                if any(kw in e for kw in self.AD_KEYWORDS):
-                    continue
-                out_body.append(self._rewrite_uri(e, base_url))
+            seg_lines = []
             for extinf, uri in blk["segs"]:
+                if self._has_ad_keyword(uri):
+                    continue
                 d = self._seg_duration(extinf)
                 if d > maxdur:
                     maxdur = d
-                segment_count += 1
                 if not uri.lower().startswith(("http://", "https://")):
                     uri = urljoin(base_url, uri)
-                out_body.append(extinf)
-                out_body.append(uri)
-            first_kept = True
+                seg_lines.append(extinf)
+                seg_lines.append(uri)
+            if not seg_lines:
+                continue
+            if kept and (idx - 1) in kept:
+                out_body.append("#EXT-X-DISCONTINUITY")
+            for e in blk["extras"]:
+                if self._has_ad_keyword(e):
+                    continue
+                out_body.append(self._rewrite_uri(e, base_url))
+            out_body.extend(seg_lines)
+            segment_count += len(seg_lines) // 2
+            kept.add(idx)
 
-        # 6) 无有效片段则不处理, 回退原始
         if segment_count == 0:
             return None
 
-        # 7) 组装 header / TARGETDURATION / body / footer
         out = []
         for h in header:
             if h.startswith("#EXT-X-TARGETDURATION"):
@@ -696,6 +702,38 @@ class Spider(Spider):
         out.extend(out_body)
         out.extend(footer if footer else ["#EXT-X-ENDLIST"])
         return "\n".join(out) + "\n"
+
+    def _cut_opening(self, content, skip_sec):
+        """跳过片头贴片: 丢弃开头累计时长不足 skip_sec 的片段
+        光速片源 PCR/PTS 连续, 截断头部后剩余片段内部时间轴连续, 播放器可正常起播"""
+        if not content or skip_sec <= 0:
+            return None
+        lines = [l.strip() for l in content.splitlines() if l.strip()]
+        body_start = None
+        for i, l in enumerate(lines):
+            if l.startswith("#EXTINF") or not l.startswith("#"):
+                body_start = i
+                break
+        if body_start is None:
+            return None
+        head, body = lines[:body_start], lines[body_start:]
+
+        out_body, cum, dropped = [], 0.0, 0
+        k = 0
+        while k < len(body):
+            s = body[k]
+            if s.startswith("#EXTINF") and k + 1 < len(body) and not body[k + 1].startswith("#"):
+                d = self._seg_duration(s)
+                if cum + d <= skip_sec:
+                    cum += d
+                    dropped += 1
+                    k += 2
+                    continue
+            out_body.append(s)
+            k += 1
+        if dropped == 0 or not out_body:
+            return None
+        return "\n".join(head + out_body) + "\n"
 
     @staticmethod
     def _pick_variant(content, base_url):
@@ -724,22 +762,25 @@ class Spider(Spider):
         if not src.lower().startswith(("http://", "https://")):
             src = unquote(src)
         if not src.lower().startswith(("http://", "https://")):
-            return [400, "text/plain", "缺少有效的 src 参数"]
+            return [400, "text/plain", "missing src"]
 
-        norm_url = self._normalize_url(src)
+        try:
+            skip = int(param.get("skip", "0") or 0)
+        except Exception:
+            skip = 0
 
-        # 命中缓存
-        if self.cached_url == norm_url and self.cached_content is not None:
-            return [200, "application/vnd.apple.mpegurl", self.cached_content, self._proxy_headers()]
+        cache_key = "%s|%d" % (src, skip)
+        if cache_key in self._cache:
+            return [200, "application/vnd.apple.mpegurl", self._cache[cache_key], self._proxy_headers()]
 
         try:
             content = self._fetch_text(src)
             if not content:
-                return [500, "text/plain", "获取 m3u8 失败"]
+                return [500, "text/plain", "fetch m3u8 failed"]
 
             base_url = src.rsplit("/", 1)[0] + "/"
 
-            # 多码率变体: 自动选择最高带宽 (可嵌套)
+            # 多码率变体: 自动选最高带宽
             hops = 0
             while "#EXT-X-STREAM-INF" in content and hops < 3:
                 variant = self._pick_variant(content, base_url)
@@ -756,22 +797,20 @@ class Spider(Spider):
             if not cleaned:
                 # 清洗失败/无有效片段 -> 回退原始播放列表, 保证可播
                 cleaned = content
+            if skip > 0:
+                cut = self._cut_opening(cleaned, skip)
+                if cut:
+                    cleaned = cut
 
-            # 覆盖缓存
-            self.cached_url = norm_url
-            self.cached_content = cleaned
+            # 覆盖式缓存 (最多 8 条: 兼顾纯净/跳片头两条线路)
+            if cache_key in self._cache_order:
+                self._cache_order.remove(cache_key)
+            self._cache_order.append(cache_key)
+            self._cache[cache_key] = cleaned
+            while len(self._cache_order) > 8:
+                old = self._cache_order.pop(0)
+                self._cache.pop(old, None)
 
             return [200, "application/vnd.apple.mpegurl", cleaned, self._proxy_headers()]
         except Exception as e:
-            return [500, "text/plain", "清洗失败: %s" % e]
-
-    # ==================== 框架接口 ====================
-
-    def isVideoFormat(self, url):
-        return False
-
-    def manualVideoCheck(self):
-        return False
-
-    def destroy(self):
-        pass
+            return [500, "text/plain", "clean failed: %s" % e]
