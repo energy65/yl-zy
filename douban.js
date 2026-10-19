@@ -10,7 +10,6 @@ const Headers = { 'User-Agent': MOBILE_UA, 'Referer': HOST };
 
 // 分类定义: type_id -> { name, api_type (movie/tv/book), collection (for rank lists) }
 const CATEGORIES = [
-    { type_name: '猜你喜欢', type_id: 'hot_gaia', api_type: 'movie', mode: 'recommend' },
     { type_name: '热门电视剧', type_id: 'tv_hot', api_type: 'tv', mode: 'recommend' },
     { type_name: '热门图书', type_id: 'book_hot', api_type: 'book', mode: 'recommend' },
     { type_name: '电影榜单', type_id: 'rank_list_movie', mode: 'collection' },
@@ -58,38 +57,6 @@ async function home(filter) {
     try {
         let classes = CATEGORIES.map(c => ({ type_id: c.type_id, type_name: c.type_name }));
         let filters = {};
-
-        // 猜你喜欢: 排序 + 年代
-        filters['hot_gaia'] = [
-            {
-                key: 'sort', name: '排序', value: [
-                    { n: '近期热度', v: 'U' },
-                    { n: '首映时间', v: 'R' },
-                    { n: '高分优先', v: 'S' },
-                    { n: '综合排序', v: 'T' },
-                ]
-            },
-            {
-                key: 'year', name: '年代', value: [
-                    { n: '全部', v: '' },
-                    { n: '2026', v: '2026' },
-                    { n: '2025', v: '2025' },
-                    { n: '2024', v: '2024' },
-                    { n: '2023', v: '2023' },
-                    { n: '2022', v: '2022' },
-                    { n: '2021', v: '2021' },
-                    { n: '2020', v: '2020' },
-                    { n: '2019', v: '2019' },
-                    { n: '2010年代', v: '2010年代' },
-                    { n: '2000年代', v: '2000年代' },
-                    { n: '90年代', v: '90年代' },
-                    { n: '80年代', v: '80年代' },
-                    { n: '70年代', v: '70年代' },
-                    { n: '60年代', v: '60年代' },
-                    { n: '更早', v: '更早' },
-                ]
-            },
-        ];
 
         // 电视剧: 排序 + 年代 + 平台
         filters['tv_hot'] = [
