@@ -129,6 +129,15 @@
             "type": 3
         },
 		{
+            "key": "水月影视 PY",
+            "name": "👌水月影视丨[优质分类]",
+            "api": "./水月影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "4kvm",
             "name": "👌4kvm 丨[优质分类]",
             "api": "./4KVM.py",
@@ -253,15 +262,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "水月影视 PY",
-            "name": "👌水月影视丨[1080P]",
-            "api": "./水月影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },  {
             "key": "葵花影院 PY",
             "name": "👌葵花影院丨[1080P]",
             "api": "./葵花影院.py",
