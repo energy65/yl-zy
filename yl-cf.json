@@ -120,6 +120,15 @@
             "type": 3
         },
 		{
+            "key": "aeete影视 PY",
+            "name": "👌aeete影视|[优质分类]",
+            "api": "./aeete影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "4kvm",
             "name": "👌4kvm 丨[优质分类]",
             "api": "./4KVM.py",
@@ -187,7 +196,7 @@
         }, 
 		{
             "key": "山有木兮4k.py",
-            "name": "👌山有木兮优质丨[1080P]",
+            "name": "👌山有木兮优质丨[优质分类]",
             "api": "./山有木兮4k.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -334,15 +343,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "aeete影视 PY",
-            "name": "👌aeete影视|[1080P]",
-            "api": "./aeete影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },  {
             "key": "weishi PY",
             "name": "👌weishi丨[1080P]",
             "api": "./weishi.py",
