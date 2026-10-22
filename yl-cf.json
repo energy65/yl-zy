@@ -2450,7 +2450,13 @@
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"
                 }
             }
-        }, {
+        }, 
+		{
+            "name": "解析666",
+            "type": 1,
+            "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
+        },
+		{
             "name": "解析0",
             "type": 1,
             "url": "http://ui6.970088.xyz/api.php?laiyuan=jiying&key=aini&url="
@@ -2462,11 +2468,7 @@
             "name": "解析1",
             "type": 1,
             "url": "http://101.201.171.207:9898/home/api?type=ys&uid=45770&key=bdityCDFHKLPQRY359&url="
-        }, {
-            "name": "解析2",
-            "type": 1,
-            "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
-        }, {
+        },  {
             "name": "playm3u8",
 			"type": 0,
             "url": "https://www.playm3u8.cn/jiexi.php?url="
