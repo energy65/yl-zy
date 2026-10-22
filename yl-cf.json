@@ -138,6 +138,15 @@
             "type": 3
         },
 		{
+            "key": "秒看 PY",
+            "name": "👌秒看丨[优质分类]",
+            "api": "./秒看.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "4kvm",
             "name": "👌4kvm 丨[优质分类]",
             "api": "./4KVM.py",
@@ -204,15 +213,6 @@
             "type": 3
         }, 
 		{
-            "key": "山有木兮4k.py",
-            "name": "👌山有木兮优质丨[优质分类]",
-            "api": "./山有木兮4k.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, 
-		{
             "key": "ai看剧 PY",
             "name": "ai看剧有广告丨[1080P]",
             "api": "./ai看剧.py",
@@ -223,7 +223,7 @@
         }, 
 		{
             "key": "飞牛影视PY",
-            "name": "👌飞牛影视丨[1080P]",
+            "name": "👌飞牛影视-有广告丨[1080P]",
             "api": "./飞牛影视.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -231,22 +231,6 @@
             "type": 3
         },
 		{
-            "key": "秒看 PY",
-            "name": "👌秒看丨[1080P]",
-            "api": "./秒看.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "懂片帝 PY",
-            "name": "👌懂片帝丨[1080P]",
-            "api": "./懂片帝.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "韩剧狗 PY",
             "name": "👌韩剧狗丨[1080P]",
             "api": "./韩剧狗.py",
