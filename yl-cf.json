@@ -82,16 +82,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-	   {
-               "key": "好好看 PY",
-               "name": "👌好好看有广告丨[优质分类]",
-               "api": "./好好看.py",
-               "filterable": 1,
-               "quickSearch": 1,
-               "searchable": 1,
-               "type": 3
-           },	
+        },	
          	{
             "key": "网飞猫影视 PY",
             "name": "👌网飞猫影视py丨[优质分类]",
@@ -137,15 +128,24 @@
             "searchable": 1,
             "type": 3
         },
-		{
-            "key": "秒看 PY",
-            "name": "👌秒看丨[优质分类]",
-            "api": "./秒看.py",
+		 {
+            "key": "葵花影视网 PY",
+            "name": "👌葵花影视网丨[优质分类]",
+            "api": "./葵花影视网.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
+        }, 
+				 {
+            "key": "两个BT影视 PY",
+            "name": "👌两个BT影视丨[优质分类]",
+            "api": "./两个BT影视.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
 		{
             "key": "4kvm",
             "name": "👌4kvm 丨[优质分类]",
@@ -213,24 +213,6 @@
             "type": 3
         }, 
 		{
-            "key": "ai看剧 PY",
-            "name": "ai看剧有广告丨[1080P]",
-            "api": "./ai看剧.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, 
-		{
-            "key": "飞牛影视PY",
-            "name": "👌飞牛影视-有广告丨[1080P]",
-            "api": "./飞牛影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        },
-		{
             "key": "韩剧狗 PY",
             "name": "👌韩剧狗丨[1080P]",
             "api": "./韩剧狗.py",
@@ -239,14 +221,6 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "葵花影视网 PY",
-            "name": "👌葵花影视网丨[1080P]",
-            "api": "./葵花影视网.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        },  {
             "key": "葵花影院 PY",
             "name": "👌葵花影院丨[1080P]",
             "api": "./葵花影院.py",
@@ -254,15 +228,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "琪琪影视 PY",
-            "name": "👌琪琪影视有广告丨[1080P]",
-            "api": "./琪琪影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },{
             "key": "绮梦短剧 PY",
             "name": "👌绮梦短剧丨[短剧]",
             "api": "./绮梦短剧.py",
@@ -270,23 +236,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "影视天堂 PY",
-            "name": "👌影视天堂丨[1080P]",
-            "api": "./影视天堂.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "臻彩4k PY",
-            "name": "👌臻彩4k丨[1080P]",
-            "api": "./臻彩4K.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },  {
             "key": "蓝光影视网 PY",
             "name": "👌蓝光影视网丨[1080P]",
             "api": "./蓝光影视网.py",
@@ -294,15 +244,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "山楂 PY",
-            "name": "👌山楂丨[1080P&&4k]",
-            "api": "./山楂影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },  {
             "key": "橘汁视频.pyPY",
             "name": "👌橘汁视频丨[1080P&&4k]",
             "api": "./橘汁视频.py",
@@ -2554,6 +2496,16 @@
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
         }, 
+		{
+            "name": "261023zb",
+            "type": 0,
+            "url": "https://gh-proxy.org/raw.githubusercontent.com/suxuang/myIPTV/main/ipv4.m3u",
+            "playerType": 2,
+            "timeout": 10,
+            "ua": "okhttp/3",
+            "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
+            "logo": "https://epg.112114.eu.org/logo/{name}.png"
+        },	 
 	{
             "name": "常用zb",
             "type": 0,
