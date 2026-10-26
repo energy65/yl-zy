@@ -66,6 +66,15 @@
             "type": 3
         }, 
 		{
+            "key": "影探 PY",
+            "name": "👌影探4k| [优质分类] py",
+            "api": "./影探4k.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "星辰影院 PY",
             "name": "👌星辰影院丨[优质分类]",
             "api": "./1905.py",
