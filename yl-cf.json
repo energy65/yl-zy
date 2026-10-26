@@ -2494,17 +2494,16 @@
             "url": "http://1.94.221.189:88/algorithm.php?url="
         }
     ],
-    "lives": [
-	{
-            "name": "源力直播",
+    "lives": [ 
+	    {
+            "name": "🌈凤凰MoMo",
             "type": 0,
-            "url": "./ylzb-zy.txt",
+            "url": "https://gh-proxy.com/https://raw.githubusercontent.com/jn950/live/refs/heads/main/tv/pllive.txt",
+            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
+            "logo": "https://gongdian.top/tv/taibiao/{name}.png",
             "playerType": 2,
-            "timeout": 10,
-            "ua": "okhttp/3",
-            "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
-            "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, 
+            "timeout": 10
+        },
 		{
             "name": "261023zb",
             "type": 0,
@@ -2562,15 +2561,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, {
-            "name": "🌈凤凰MoMo",
-            "type": 0,
-            "url": "https://gh-proxy.com/https://raw.githubusercontent.com/jn950/live/refs/heads/main/tv/pllive.txt",
-            "epg": "http://epg.52sw.top:668/?ch={name}&date={date}",
-            "logo": "https://gongdian.top/tv/taibiao/{name}.png",
-            "playerType": 2,
-            "timeout": 10
-        }, {
+        },  {
             "name": "坤哥全球",
             "type": 0,
             "url": "./坤哥全球.txt",
