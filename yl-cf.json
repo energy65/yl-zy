@@ -2485,6 +2485,147 @@
         }
     ],
     "lives": [ 
+	         {
+        "name": "直播",
+        "type": "0",
+        "pass": true,
+        "url": "https://gh.cswklt.top/https://raw.githubusercontent.com/zwc456baby/iptv_alive/master/live.txt",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+    }, {
+        "name": "直播ipv6",
+        "type": "0",
+        "pass": true,
+        "url": "https://fanmingming.com/txt?url=https://live.fanmingming.com/tv/m3u/ipv6.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+    }, {
+        "name": "一木",
+        "type": "0",
+        "pass": true,
+        "url": "https://gh.cswklt.top/https://raw.githubusercontent.com/xianyuyimu/TVBOX-/main/TVBox/%E4%B8%80%E6%9C%A8%E7%9B%B4%E6%92%AD%E6%BA%90.txt",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+    }, {
+        "name": "第三方源|不保存可用",
+        "type": "0",
+        "pass": true,
+        "url": "http://home.jundie.top:81/Cat/tv/live.txt",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+    },
+    {
+        "name": "央视频道IPV4",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv4/categories/央视频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "地方频道IPV4",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv4/categories/地方频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "卫视频道IPV4",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv4/categories/卫视频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "电影频道IPV4",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv4/categories/电影频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "儿童频道IPV4",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv4/categories/儿童频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "其他频道IPV4",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv4/categories/其他频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "体育频道IPV4",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv4/categories/体育频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "央视频道ipv6",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv6/categories/央视频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "地方频道ipv6",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv6/categories/地方频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "卫视频道ipv6",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv6/categories/卫视频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "电影频道ipv6",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv6/categories/电影频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "儿童频道ipv6",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv6/categories/儿童频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "其他频道ipv6",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv6/categories/其他频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
+{
+        "name": "体育频道ipv6",
+        "type": "0",
+        "pass": true,
+        "url": "https://live.hacks.tools/tv/ipv6/categories/体育频道.m3u",
+        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+        "logo": "https://epg.112114.xyz/logo/{name}.png"
+},
 	    {
             "name": "🌈凤凰MoMo",
             "type": 0,
