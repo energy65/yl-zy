@@ -349,13 +349,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "瓜子影视",
-            "name": "👌瓜子影视|[1080P]",
+        },  
+		 {
+            "key": "csp_Guazi",
+            "name": "👌🏻瓜子┃[1080P]",
             "type": 3,
-            "api": "csp_Gz360",
-            "jar": "./yl6.jar"
-        }, {
+            "api": "csp_Guazi",
+            "searchable": 1,
+            "changeable": 1,
+			"jar": "./vox.jar"	
+        }, 
+		{
             "key": "泥视频PY",
             "name": "👌泥视频-优质丨[1080P]",
             "api": "./泥视频.py",
@@ -364,13 +368,6 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "csp_Guazi",
-            "name": "👌🏻瓜子┃[1080P]",
-            "type": 3,
-            "api": "csp_Guazi",
-            "searchable": 1,
-            "changeable": 1
-        },  {
             "key": "永乐JS",
             "name": "👌永乐丨[1080P]",
             "type": 3,
