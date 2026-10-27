@@ -75,15 +75,6 @@
             "type": 3
         },
 		{
-            "key": "星辰影院 PY",
-            "name": "👌星辰影院丨[优质分类]",
-            "api": "./1905.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, 
-		{
             "key": "影视工厂 PY",
             "name": "👌影视工厂丨[优质分类]",
             "api": "./影视工厂.py",
