@@ -370,20 +370,7 @@
             "api": "csp_Guazi",
             "searchable": 1,
             "changeable": 1
-        }, {
-            "key": "csp_Jianpian",
-            "name": "👌🏻荐片┃[1080P]",
-            "type": 3,
-            "api": "csp_Jianpian",
-            "jar": "./ylnew.jar",
-            "searchable": 1,
-            "changeable": 1,
-            "ext": {
-                "filters": "./jianpian.json",
-                "imgUrl": "https://img.zgbkz.com",
-                "sites": "https://api.ztcgi.com"
-            }
-        }, {
+        },  {
             "key": "永乐JS",
             "name": "👌永乐丨[1080P]",
             "type": 3,
@@ -790,7 +777,7 @@
             "ext": "http://36.138.188.242:6003//api.php/app/"
         }, {
             "key": "荐片",
-            "name": "👌荐片.py",
+            "name": "👌荐片线路①┃[优质分类]",
             "type": 3,
             "api": "./荐片.py",
             "searchable": 1,
@@ -798,7 +785,22 @@
             "quickSearch": 1,
             "filterable": 1,
             "playerType": 2
-        }, {
+        }, 
+		{
+            "key": "csp_Jianpian",
+            "name": "👌🏻荐片线路②┃[优质分类]",
+            "type": 3,
+            "api": "csp_Jianpian",
+            "jar": "./vox.jar",
+            "searchable": 1,
+            "changeable": 1,
+            "ext": {
+                "filters": "./jianpian.json",
+                "imgUrl": "https://img.zgbkz.com",
+                "sites": "https://api.ztcgi.com"
+            }
+        },
+		{
             "key": "芒果",
             "name": "👌芒果.py",
             "type": 3,
