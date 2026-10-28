@@ -33,9 +33,20 @@ class Spider(BaseSpider):
     _w_line_data = [141, 207, 249, 141, 255, 250, 186, 202, 212, 138, 241, 195, 182, 232, 215, 142, 156, 210, 212, 212, 140, 237, 217, 133, 227, 224, 128, 236, 223, 135, 206, 207, 215, 186, 169, 222, 214, 218, 141, 211, 195, 135, 238, 240]
     _w_key = b"kuihua_wechat_2026"
 
-    # 分类配置：涵盖电影/电视剧/综艺/动漫及各子类，纪录片(21)包含天文地理类视频
+    # 分类配置：涵盖电影/电视剧/综艺/动漫及各子类，细化电影与电视剧类型
     CATEGORIES = [
         {"type_id": "1", "type_name": "电视剧"},
+        {"type_id": "32", "type_name": "古装剧"},
+        {"type_id": "33", "type_name": "都市剧"},
+        {"type_id": "34", "type_name": "言情剧"},
+        {"type_id": "35", "type_name": "家庭剧"},
+        {"type_id": "36", "type_name": "悬疑剧"},
+        {"type_id": "37", "type_name": "军旅剧"},
+        {"type_id": "38", "type_name": "谍战剧"},
+        {"type_id": "39", "type_name": "历史剧"},
+        {"type_id": "40", "type_name": "武侠剧"},
+        {"type_id": "41", "type_name": "偶像剧"},
+        {"type_id": "42", "type_name": "犯罪剧"},
         {"type_id": "6", "type_name": "香港剧"},
         {"type_id": "7", "type_name": "台湾剧"},
         {"type_id": "8", "type_name": "欧美剧"},
@@ -48,8 +59,17 @@ class Spider(BaseSpider):
         {"type_id": "15", "type_name": "喜剧片"},
         {"type_id": "16", "type_name": "爱情片"},
         {"type_id": "17", "type_name": "科幻片"},
+        {"type_id": "43", "type_name": "奇幻片"},
+        {"type_id": "44", "type_name": "犯罪片"},
+        {"type_id": "45", "type_name": "武侠片"},
+        {"type_id": "46", "type_name": "历史片"},
+        {"type_id": "47", "type_name": "悬疑片"},
+        {"type_id": "48", "type_name": "惊悚片"},
         {"type_id": "18", "type_name": "恐怖片"},
         {"type_id": "19", "type_name": "剧情片"},
+        {"type_id": "49", "type_name": "文艺片"},
+        {"type_id": "50", "type_name": "冒险片"},
+        {"type_id": "51", "type_name": "灾难片"},
         {"type_id": "20", "type_name": "战争片"},
         {"type_id": "21", "type_name": "纪录片"},
         {"type_id": "3", "type_name": "综艺"},
