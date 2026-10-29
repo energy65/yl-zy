@@ -220,7 +220,18 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        },
+         {
+            "key": "ifnyingshi PY",
+            "name": "👌ifn影视丨[1080P]",
+            "api": "./ifn.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+
+		{
             "key": "葵花影院 PY",
             "name": "👌葵花影院丨[1080P]",
             "api": "./葵花影院.py",
