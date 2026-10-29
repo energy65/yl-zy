@@ -330,6 +330,15 @@
             "type": 3
         }, 
 		{
+            "key": "极速追剧 PY",
+            "name": "👌极速追剧丨[1080P]",
+            "api": "./极速追剧.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
             "key": "凡客TV PY",
             "name": "👌凡客TV丨[1080P]",
             "api": "./凡客TV.py",
@@ -1783,7 +1792,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        },
+         {
+            "key": "🎧蜻蜓 FM.py PY",
+            "name": "🎧蜻蜓 FM丨[FM]",
+            "api": "./🎧蜻蜓 FM.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "悦听 PY",
             "name": "👌悦听丨[音乐]",
             "api": "./悦听.py",
