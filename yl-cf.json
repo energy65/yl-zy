@@ -224,13 +224,21 @@
          {
             "key": "ifnyingshi PY",
             "name": "👌ifn影视丨[1080P]",
-            "api": "./ifn.py",
+            "api": "./ifn影视.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
         },
-
+        {
+            "key": "蓝光影视网 PY",
+            "name": "👌蓝光影视网丨[1080P]",
+            "api": "./蓝光影视网.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
 		{
             "key": "葵花影院 PY",
             "name": "👌葵花影院丨[1080P]",
@@ -239,7 +247,17 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },{
+        },
+		{
+            "key": "真狼 PY",
+            "name": "👌真狼丨[1080P]",
+            "api": "./真狼.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "绮梦短剧 PY",
             "name": "👌绮梦短剧丨[短剧]",
             "api": "./绮梦短剧.py",
@@ -247,15 +265,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },  {
-            "key": "蓝光影视网 PY",
-            "name": "👌蓝光影视网丨[1080P]",
-            "api": "./蓝光影视网.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        },   {
+        },     {
             "key": "py_星辰4k",
             "name": "👌星辰4k|[1080p]",
             "type": 3,
@@ -265,15 +275,7 @@
             "quickSearch": 1,
             "filterable": 1,
             "playerType": 2
-        }, {
-            "key": "真狼 PY",
-            "name": "👌真狼丨[1080P]",
-            "api": "./真狼.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        },  {
+        },   {
             "key": "weishi PY",
             "name": "👌weishi丨[1080P]",
             "api": "./weishi.py",
