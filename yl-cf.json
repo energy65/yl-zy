@@ -258,6 +258,51 @@
             "type": 3
         },
 		{
+            "key": "[4K]咕噜.py PY",
+            "name": "👌4K咕噜.py丨[1080P]",
+            "api": "./[4K]咕噜.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
+            "key": "[4K]河豚.py PY",
+            "name": "👌4K河豚.py丨[1080P]",
+            "api": "./[4K]河豚.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
+            "key": "[4K]片帝.py PY",
+            "name": "👌4K片帝.py丨[1080P]",
+            "api": "./[4K]片帝.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
+            "key": "[4K]云播.py PY",
+            "name": "👌4K云播.py丨[1080P]",
+            "api": "./[4K]云播.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
+            "key": "[4K]瓜子APP.py PY",
+            "name": "👌4K瓜子APP.py丨[1080P]",
+            "api": "./[4K]瓜子APP.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "绮梦短剧 PY",
             "name": "👌绮梦短剧丨[短剧]",
             "api": "./绮梦短剧.py",
