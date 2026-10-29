@@ -111,13 +111,13 @@
             "type": 3
         },
 		{
-            "key": "aeete影视 PY",
-            "name": "👌aeete影视|[优质分类]",
-            "api": "./aeete影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
+          "key": "pomo666 PY",
+          "name": "👌pomo666丨[4k影视]",
+          "api": "./pomo666.py",
+          "filterable": 1,
+          "quickSearch": 1,
+          "searchable": 1,
+          "type": 3
         },
 		{
             "key": "水月影视 PY",
