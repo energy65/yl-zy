@@ -2434,11 +2434,7 @@
             "name": "playm3u8",
 			"type": 0,
             "url": "https://www.playm3u8.cn/jiexi.php?url="
-        }, {
-            "name": "芒果专用解析",
-            "type": 1,
-            "url": "http://mg.itufm.top/mg.php?url="
-        }, {
+        },  {
             "name": "im1907",
             "type": 0,
             "url": "hhttps://im1907.top/?jx="
