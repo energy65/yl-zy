@@ -715,7 +715,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },  # 红果短剧new.py{
+        }, {
             "key": "红果短剧PY",
             "name": "👌红果短剧丨[短剧]",
             "api": "./红果短剧new.py",
