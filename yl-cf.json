@@ -64,8 +64,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "影探 PY",
             "name": "👌影探4k| [优质分类] py",
             "api": "./影探4k.py",
@@ -73,8 +72,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "影视工厂 PY",
             "name": "👌影视工厂丨[优质分类]",
             "api": "./影视工厂.py",
@@ -82,8 +80,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },	
-         	{
+        }, {
             "key": "网飞猫影视 PY",
             "name": "👌网飞猫影视py丨[优质分类]",
             "api": "./网飞猫.py",
@@ -91,8 +88,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },	
-		     {
+        }, {
             "key": "星辰影院 PY",
             "name": "👌星辰影院丨[优质分类] ",
             "api": "./星辰影院.py",
@@ -100,8 +96,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "懂片帝-详细分类版PY",
             "name": "👌懂片帝 丨[优质分类]",
             "api": "./懂片帝.py",
@@ -109,17 +104,15 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
-          "key": "pomo666 PY",
-          "name": "👌pomo666丨[4k影视]",
-          "api": "./pomo666.py",
-          "filterable": 1,
-          "quickSearch": 1,
-          "searchable": 1,
-          "type": 3
-        },
-		{
+        }, {
+            "key": "pomo666 PY",
+            "name": "👌pomo666丨[4k影视]",
+            "api": "./pomo666.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
             "key": "水月影视 PY",
             "name": "👌水月影视丨[优质分类]",
             "api": "./水月影视.py",
@@ -127,8 +120,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-				 {
+        }, {
             "key": "两个BT影视 PY",
             "name": "👌两个BT影视丨[优质分类]",
             "api": "./两个BT影视.py",
@@ -136,8 +128,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "橘汁视频.pyPY",
             "name": "👌橘汁视频丨[1080P&&4k]",
             "api": "./橘汁视频.py",
@@ -145,8 +136,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "4kvm",
             "name": "👌4kvm 丨[优质分类]",
             "api": "./4KVM.py",
@@ -154,8 +144,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		         {
+        }, {
             "key": "量子去广 PY",
             "name": "👌量子去广 丨[优质分类]",
             "api": "./量子去广.py",
@@ -163,8 +152,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-        {
+        }, {
             "key": "暴风去广 PY",
             "name": "👌暴风去广丨[优质分类]",
             "api": "./暴风去广.py",
@@ -172,8 +160,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		 {
+        }, {
             "key": "索尼去广 PY",
             "name": "👌索尼去广丨[优质分类]",
             "api": "./索尼去广.py",
@@ -181,8 +168,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "name": "👌新₄ᴋ⁽ᵖʰᵖ⁾┃[4k]",
             "type": 1,
@@ -211,8 +197,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "韩剧狗 PY",
             "name": "👌韩剧狗丨[1080P]",
             "api": "./韩剧狗.py",
@@ -220,8 +205,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-         {
+        }, {
             "key": "ifnyingshi PY",
             "name": "👌ifn影视丨[1080P]",
             "api": "./ifn影视.py",
@@ -229,8 +213,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-        {
+        }, {
             "key": "蓝光影视网 PY",
             "name": "👌蓝光影视网丨[1080P]",
             "api": "./蓝光影视网.py",
@@ -238,8 +221,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "葵花影院 PY",
             "name": "👌葵花影院丨[1080P]",
             "api": "./葵花影院.py",
@@ -247,8 +229,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "真狼 PY",
             "name": "👌真狼丨[1080P]",
             "api": "./真狼.py",
@@ -256,8 +237,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "[4K]咕噜.py PY",
             "name": "👌4K咕噜.py丨[1080P]",
             "api": "./[4K]咕噜.py",
@@ -265,8 +245,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "[4K]河豚.py PY",
             "name": "👌4K河豚.py丨[1080P]",
             "api": "./[4K]河豚.py",
@@ -274,8 +253,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "[4K]片帝.py PY",
             "name": "👌4K片帝.py丨[1080P]",
             "api": "./[4K]片帝.py",
@@ -283,8 +261,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "[4K]云播.py PY",
             "name": "👌4K云播.py丨[1080P]",
             "api": "./[4K]云播.py",
@@ -292,8 +269,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "[4K]瓜子APP.py PY",
             "name": "👌4K瓜子APP.py丨[1080P]",
             "api": "./[4K]瓜子APP.py",
@@ -301,8 +277,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "绮梦短剧 PY",
             "name": "👌绮梦短剧丨[短剧]",
             "api": "./绮梦短剧.py",
@@ -310,7 +285,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },     {
+        }, {
             "key": "py_星辰4k",
             "name": "👌星辰4k|[1080p]",
             "type": 3,
@@ -320,7 +295,7 @@
             "quickSearch": 1,
             "filterable": 1,
             "playerType": 2
-        },   {
+        }, {
             "key": "weishi PY",
             "name": "👌weishi丨[1080P]",
             "api": "./weishi.py",
@@ -328,8 +303,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "极速追剧 PY",
             "name": "👌极速追剧丨[1080P]",
             "api": "./极速追剧.py",
@@ -337,8 +311,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "凡客TV PY",
             "name": "👌凡客TV丨[1080P]",
             "api": "./凡客TV.py",
@@ -346,8 +319,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "乌云影视 PY",
             "name": "👌乌云影视丨[1080P]",
             "api": "./乌云影视.py",
@@ -408,17 +380,15 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },  
-		 {
+        }, {
             "key": "csp_Guazi",
             "name": "👌🏻瓜子┃[1080P]",
             "type": 3,
             "api": "csp_Guazi",
             "searchable": 1,
             "changeable": 1,
-			"jar": "./vox.jar"	
-        }, 
-		{
+            "jar": "./vox.jar"
+        }, {
             "key": "泥视频PY",
             "name": "👌泥视频-已失效丨[1080P]",
             "api": "./泥视频.py",
@@ -648,7 +618,7 @@
             "playerType": 2,
             "jar": "./柠檬.jar",
             "ext": "7lj763gg402i7942503g839jg74h8h88highi40799jh6i6k454419l0l5184k0g549h0kg2i01i838i2h42g891lgg1"
-        },  {
+        }, {
             "key": "星辰影院js",
             "name": "👌星辰影院js",
             "type": 3,
@@ -658,7 +628,7 @@
             "name": "👌金牌影院js",
             "type": 3,
             "api": "./金牌影院.js"
-        },  {
+        }, {
             "key": "csp_SaoHuo",
             "name": "👌骚火|影视[1080P]",
             "type": 3,
@@ -745,8 +715,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, #红果短剧new.py
-		{
+        },  # 红果短剧new.py{
             "key": "红果短剧PY",
             "name": "👌红果短剧丨[短剧]",
             "api": "./红果短剧new.py",
@@ -754,8 +723,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "lvdou",
             "name": "👌免米┃免米高码4K",
             "type": 3,
@@ -806,8 +774,7 @@
             "quickSearch": 1,
             "filterable": 1,
             "playerType": 2
-        }, 
-		{
+        }, {
             "key": "csp_Jianpian",
             "name": "👌🏻荐片线路②┃[优质分类]",
             "type": 3,
@@ -820,8 +787,7 @@
                 "imgUrl": "https://img.zgbkz.com",
                 "sites": "https://api.ztcgi.com"
             }
-        },
-		{
+        }, {
             "key": "芒果",
             "name": "👌芒果.py",
             "type": 3,
@@ -1792,8 +1758,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-         {
+        }, {
             "key": "🎧蜻蜓 FM.py PY",
             "name": "🎧蜻蜓 FM丨[FM]",
             "api": "./🎧蜻蜓 FM.py",
@@ -1801,8 +1766,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "悦听 PY",
             "name": "👌悦听丨[音乐]",
             "api": "./悦听.py",
@@ -1818,8 +1782,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, 
-		{
+        }, {
             "key": "kuwo_mv PY",
             "name": "kuwo_mv丨[音乐]",
             "api": "./kuwo_mv.py",
@@ -1827,8 +1790,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-        {
+        }, {
             "key": "kugou_mv PY",
             "name": "kugou_mv丨[音乐]",
             "api": "./kugou_mv.py",
@@ -1836,8 +1798,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-        {
+        }, {
             "key": "qq_mv PY",
             "name": "qq_mv丨[音乐]",
             "api": "./qq_mv.py",
@@ -1845,8 +1806,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-              {
+        }, {
             "key": "migu_mv PY",
             "name": "migu_mv丨[音乐]",
             "api": "./migu_mv.py",
@@ -1854,8 +1814,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-        {
+        }, {
             "key": "migu PY",
             "name": "migu丨[音乐]",
             "api": "./migu.py",
@@ -1863,8 +1822,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "无名音乐 PY",
             "name": "无名音乐丨[音乐]",
             "api": "./无名音乐.py",
@@ -1872,8 +1830,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-        {
+        }, {
             "key": "qq音乐 PY",
             "name": "qq音乐丨[音乐]",
             "api": "./qq音乐.py",
@@ -1881,8 +1838,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },
-		{
+        }, {
             "key": "👧幼小衔接",
             "name": "🎶幼小衔接|[教育学习]",
             "api": "./幼小衔接.py",
@@ -2383,13 +2339,11 @@
             "name": "Json轮询",
             "type": 2,
             "url": "Sequence"
-        }, 
-			{
+        }, {
             "name": "解析666",
             "type": 1,
             "url": "https://nm.4688888.xyz/niuma.php?key=dfl&url="
-        },
-		{
+        }, {
             "name": "4K1",
             "type": 1,
             "url": "http://jx.uipik.cn/api/parse.php?iface_code=gj&key=I27WH2ytKa3R3EM4FrWP4ueWj84Db3ts&url="
@@ -2431,24 +2385,23 @@
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"
                 }
             }
-        }, 
-		{
+        }, {
             "name": "解析0",
             "type": 1,
             "url": "http://ui6.970088.xyz/api.php?laiyuan=jiying&key=aini&url="
         }, {
             "name": "虾米2",
-			"type": 0,
+            "type": 0,
             "url": "https://jx.xmflv.cc/?url="
         }, {
             "name": "解析1",
             "type": 1,
             "url": "http://101.201.171.207:9898/home/api?type=ys&uid=45770&key=bdityCDFHKLPQRY359&url="
-        },  {
+        }, {
             "name": "playm3u8",
-			"type": 0,
+            "type": 0,
             "url": "https://www.playm3u8.cn/jiexi.php?url="
-        },  {
+        }, {
             "name": "im1907",
             "type": 0,
             "url": "hhttps://im1907.top/?jx="
@@ -2515,149 +2468,133 @@
             "url": "http://1.94.221.189:88/algorithm.php?url="
         }
     ],
-    "lives": [ 
-	         {
-        "name": "直播",
-        "type": "0",
-        "pass": true,
-        "url": "https://gh.cswklt.top/https://raw.githubusercontent.com/zwc456baby/iptv_alive/master/live.txt",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-    }, {
-        "name": "直播ipv6",
-        "type": "0",
-        "pass": true,
-        "url": "https://fanmingming.com/txt?url=https://live.fanmingming.com/tv/m3u/ipv6.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-    }, {
-        "name": "一木",
-        "type": "0",
-        "pass": true,
-        "url": "https://gh.cswklt.top/https://raw.githubusercontent.com/xianyuyimu/TVBOX-/main/TVBox/%E4%B8%80%E6%9C%A8%E7%9B%B4%E6%92%AD%E6%BA%90.txt",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-    }, {
-        "name": "第三方源|不保存可用",
-        "type": "0",
-        "pass": true,
-        "url": "http://home.jundie.top:81/Cat/tv/live.txt",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-    },
-    {
-        "name": "央视频道IPV4",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv4/categories/央视频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "地方频道IPV4",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv4/categories/地方频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "卫视频道IPV4",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv4/categories/卫视频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "电影频道IPV4",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv4/categories/电影频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "儿童频道IPV4",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv4/categories/儿童频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "其他频道IPV4",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv4/categories/其他频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "体育频道IPV4",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv4/categories/体育频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "央视频道ipv6",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv6/categories/央视频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "地方频道ipv6",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv6/categories/地方频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "卫视频道ipv6",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv6/categories/卫视频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "电影频道ipv6",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv6/categories/电影频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "儿童频道ipv6",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv6/categories/儿童频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "其他频道ipv6",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv6/categories/其他频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-{
-        "name": "体育频道ipv6",
-        "type": "0",
-        "pass": true,
-        "url": "https://live.hacks.tools/tv/ipv6/categories/体育频道.m3u",
-        "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-        "logo": "https://epg.112114.xyz/logo/{name}.png"
-},
-	    {
+    "lives": [{
+            "name": "直播",
+            "type": "0",
+            "pass": true,
+            "url": "https://gh.cswklt.top/https://raw.githubusercontent.com/zwc456baby/iptv_alive/master/live.txt",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "直播ipv6",
+            "type": "0",
+            "pass": true,
+            "url": "https://fanmingming.com/txt?url=https://live.fanmingming.com/tv/m3u/ipv6.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "一木",
+            "type": "0",
+            "pass": true,
+            "url": "https://gh.cswklt.top/https://raw.githubusercontent.com/xianyuyimu/TVBOX-/main/TVBox/%E4%B8%80%E6%9C%A8%E7%9B%B4%E6%92%AD%E6%BA%90.txt",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "第三方源|不保存可用",
+            "type": "0",
+            "pass": true,
+            "url": "http://home.jundie.top:81/Cat/tv/live.txt",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "央视频道IPV4",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv4/categories/央视频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "地方频道IPV4",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv4/categories/地方频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "卫视频道IPV4",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv4/categories/卫视频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "电影频道IPV4",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv4/categories/电影频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "儿童频道IPV4",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv4/categories/儿童频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "其他频道IPV4",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv4/categories/其他频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "体育频道IPV4",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv4/categories/体育频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "央视频道ipv6",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv6/categories/央视频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "地方频道ipv6",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv6/categories/地方频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "卫视频道ipv6",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv6/categories/卫视频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "电影频道ipv6",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv6/categories/电影频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "儿童频道ipv6",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv6/categories/儿童频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "其他频道ipv6",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv6/categories/其他频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
+            "name": "体育频道ipv6",
+            "type": "0",
+            "pass": true,
+            "url": "https://live.hacks.tools/tv/ipv6/categories/体育频道.m3u",
+            "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }, {
             "name": "🌈凤凰MoMo",
             "type": 0,
             "url": "https://gh-proxy.com/https://raw.githubusercontent.com/jn950/live/refs/heads/main/tv/pllive.txt",
@@ -2665,8 +2602,7 @@
             "logo": "https://gongdian.top/tv/taibiao/{name}.png",
             "playerType": 2,
             "timeout": 10
-        },
-		{
+        }, {
             "name": "261023zb",
             "type": 0,
             "url": "https://gh-proxy.org/raw.githubusercontent.com/suxuang/myIPTV/main/ipv4.m3u",
@@ -2675,8 +2611,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },	 
-	{
+        }, {
             "name": "常用zb",
             "type": 0,
             "url": "https://php.946985.filegear-sg.me/jackTV.m3u",
@@ -2685,7 +2620,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },  {
+        }, {
             "name": "zb260915",
             "type": 0,
             "url": "http://114.66.29.121:8888/down/EjMztmvzlVmy.txt",
@@ -2694,8 +2629,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, 
-			{
+        }, {
             "name": "港澳台261022",
             "type": 0,
             "url": "./免费港澳台_已稳定一年多.m3u",
@@ -2704,8 +2638,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },
-		{
+        }, {
             "name": "zb260915本地版",
             "type": 0,
             "url": "./全网通直播.txt",
@@ -2723,7 +2656,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        },  {
+        }, {
             "name": "坤哥全球",
             "type": 0,
             "url": "./坤哥全球.txt",
