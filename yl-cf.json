@@ -237,7 +237,35 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
+        }, 
+		{
+            "key": "weishi PY",
+            "name": "👌weishi丨[1080P]",
+            "api": "./weishi.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, 
+		{
+            "key": "libvioPY",
+            "name": "👌libvio丨[1080P]",
+            "api": "./libvio.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
+            "key": "极速追剧 PY",
+            "name": "👌极速追剧丨[1080P]",
+            "api": "./极速追剧.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "[4K]咕噜.py PY",
             "name": "👌4K咕噜.py丨[1080P]",
             "api": "./[4K]咕噜.py",
@@ -295,33 +323,7 @@
             "quickSearch": 1,
             "filterable": 1,
             "playerType": 2
-        }, {
-            "key": "weishi PY",
-            "name": "👌weishi丨[1080P]",
-            "api": "./weishi.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, 
-		{
-            "key": "libvioPY",
-            "name": "👌libvio丨[1080P]",
-            "api": "./libvio.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        },
-		{
-            "key": "极速追剧 PY",
-            "name": "👌极速追剧丨[1080P]",
-            "api": "./极速追剧.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },  {
             "key": "大米星球 PY",
             "name": "👌大米星球丨[1080P]",
             "api": "./大米星球.py",
