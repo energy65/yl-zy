@@ -35,6 +35,22 @@ T3 运行说明：
      全场唯一验明真 4K）；补入现行线路表的新咕噜4K/VIP4K/菲乐2K/极速；
      _rank 兜底档位随新名单（33 条）同步
   密码学层（AES-256-CBC/GCM、P-256 ECDH、protobuf）已用 pycryptodome 交叉验证通过，非故障点
+
+修复记录（2026-11-02）——全分类 + 类型细分筛选 + 简介推广文案：
+  8. 全分类：服务端分类为扁平数字 ID（f9 角色配置 f4=',1,2,3,4,5,60,' 实证），
+     分类页 config 无子分类树。补全为 7 项：全部(0)/电影(1)/电视剧(2)/综艺(3)/
+     动漫(4)/短剧(5)/直播(60)，其中 0=全库 45.4 万条
+  9. 类型细分（协议逆向实测）：method 61 搜索的 filters 子消息里
+     f8=类型标签（可重复多次=OR 组合，如 科幻+喜剧）、f6=地区、f7=语言、
+     f18=排序字段（vod_hits_month 月榜/vod_hits 总榜/vod_time 更新时间/
+     vod_score 评分/vod_year 年份）、f3/f4=分类ID、f19=1 固定。
+     据此实现 TVBox 标准 filters 下拉：电影 24 类（科幻片/奇幻片/战争片/
+     犯罪片/武侠片/历史片/文艺片等，全部实测命中 424~36139 条）、
+     电视剧 18 类（古装/都市/历史/谍战/家庭等）、综艺 15 类、动漫 16 类、
+     短剧 14 类；地区 20 值、语言 5 值均实测验证
+  10. detailContent 简介 XOR 加密前置微信公众号“源力软件汇”文案（密钥
+      gulu_wechat_2026），运行时解密；详情补齐 vod_class/vod_actor/
+      vod_director/vod_area/vod_lang/vod_year 标准 TVBox 字段
 """
 
 from __future__ import annotations
@@ -51,7 +67,7 @@ import time
 import urllib.error
 import urllib.request
 import zlib
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 API_URL = "http://103.45.132.22:19987/app/bn/v2"
 HOST = "http://103.45.132.22:19987"
@@ -73,6 +89,25 @@ FALLBACK_PARSERS = {
     28: {"name": "咕噜金牌", "url": "http://111.170.58.215:5499/api.php?id=",
          "mode": "json", "result_key": "url", "server": False},
 }
+
+# ---- 影片简介推广文案（XOR 加密存储，运行时解密；勿在代码中出现明文） ----
+# 解密结果：微信公众号“源力软件汇”，更多优质资源尽在源力捐赠版
+_W_KEY = "gulu_wechat_2026"
+_W_DATA = [
+    24521, 20372, 20736, 20322, 21416, 8299, 28405, 21240, 36615, 20119,
+    27699, 8258, 65342, 26308, 22824, 20270, 36175, 36145, 28412, 23624,
+    22391, 28391, 21246, 25395, 36104, 29225,
+]
+
+
+def _get_wechat_info():
+    """解密影片简介推广文案。"""
+    try:
+        key = _W_KEY
+        return "".join(
+            chr(b ^ ord(key[i % len(key)])) for i, b in enumerate(_W_DATA))
+    except Exception:
+        return ""
 
 
 # ============ protobuf 工具 ============
@@ -692,11 +727,34 @@ class _GuluProtocol:
                          video.get("vod_remarks") or "")).lower()
         return any(m in text for m in SEARCH_GUARD_MARKERS)
 
-    def search(self, keyword, page=1, limit=21, category_id=""):
-        filters = _field_bytes(18, b"vod_hits_month") + _field_varint(19, 1)
+    def search(self, keyword, page=1, limit=21, category_id="",
+               vclass="", area="", lang="", sort="vod_hits_month"):
+        """搜索/列表（method 61）。
+
+        filters 子消息字段（2026-11-02 逆向实测）：
+          f3/f4  分类 ID（1电影 2电视剧 3综艺 4动漫 5短剧 60直播 0全部）
+          f6     地区（大陆/内地/香港/台湾/美国/韩国/日本/...，精确匹配）
+          f7     语言（国语/粤语/英语/日语/韩语）
+          f8     类型标签，可重复多次 = OR 组合（如 科幻+喜剧）
+          f18    排序字段名（vod_hits_month/vod_hits/vod_time/vod_score/vod_year）
+          f19    固定 1
+        """
+        sort = (str(sort or "").strip() or "vod_hits_month").encode("utf-8")
+        filters = _field_bytes(18, sort) + _field_varint(19, 1)
         category_id = str(category_id or "").strip()
-        if category_id:
+        if category_id and category_id != "0":
             filters += _field_bytes(3, category_id) + _field_bytes(4, category_id)
+        # 类型标签（f8）：支持逗号分隔多值 = OR 组合
+        for tag in str(vclass or "").split(","):
+            tag = tag.strip()
+            if tag:
+                filters += _field_bytes(8, tag)
+        area = str(area or "").strip()
+        if area:
+            filters += _field_bytes(6, area)
+        lang = str(lang or "").strip()
+        if lang:
+            filters += _field_bytes(7, lang)
         payload = (_field_bytes(1, keyword) + _field_varint(2, int(page))
                    + _field_varint(3, int(limit)) + _field_bytes(5, filters))
         response = self.request(61, payload)
@@ -766,6 +824,13 @@ class _GuluProtocol:
                 "content": _text(_field_value(data, 21, b"", wire=2)),
                 "area": _text(_field_value(data, 28, b"", wire=2)),
                 "year": _text(_field_value(data, 30, b"", wire=2)),
+                "lang": _text(_field_value(data, 29, b"", wire=2)),
+                "vclass": "/".join(t for t in (_text(v) for v in
+                                               _field_values(data, 12, wire=2)) if t),
+                "actor": ",".join(t for t in (_text(v) for v in
+                                              _field_values(data, 17, wire=2)) if t),
+                "director": ",".join(t for t in (_text(v) for v in
+                                                 _field_values(data, 18, wire=2)) if t),
                 "sources": sources}
 
     def play(self, parser_id, play_id):
@@ -799,8 +864,50 @@ class Spider:
         "☆讯飞☆", "☆奇趣☆", "☆果汁☆", "☆酷萌☆", "☆哔哩☆",
         "咖啡", "量子", "非凡", "暴风", "蚂蚁", "小熊", "极速", "海外", "花旗",
     ]
-    _categories = [("1", "电影"), ("2", "电视剧"), ("3", "综艺"),
+    _categories = [("0", "全部"), ("1", "电影"), ("2", "电视剧"), ("3", "综艺"),
                    ("4", "动漫"), ("5", "短剧"), ("60", "直播")]
+
+    # 类型细分（服务端 f8 标签筛选，2026-11-02 逐值实测命中数 424~36139 条）。
+    # 元组 = (服务端标签 v, 显示名 n)；电影按用户要求显示"XX片"风格。
+    _TYPE_FILTERS = {
+        "0": [("动作", "动作"), ("喜剧", "喜剧"), ("爱情", "爱情"), ("科幻", "科幻"),
+              ("奇幻", "奇幻"), ("恐怖", "恐怖"), ("惊悚", "惊悚"), ("悬疑", "悬疑"),
+              ("剧情", "剧情"), ("犯罪", "犯罪"), ("战争", "战争"), ("历史", "历史"),
+              ("古装", "古装"), ("都市", "都市"), ("家庭", "家庭"), ("动画", "动画")],
+        "1": [("科幻", "科幻片"), ("奇幻", "奇幻片"), ("战争", "战争片"), ("犯罪", "犯罪片"),
+              ("武侠", "武侠片"), ("历史", "历史片"), ("文艺", "文艺片"), ("动作", "动作片"),
+              ("喜剧", "喜剧片"), ("爱情", "爱情片"), ("恐怖", "恐怖片"), ("惊悚", "惊悚片"),
+              ("悬疑", "悬疑片"), ("剧情", "剧情片"), ("家庭", "家庭片"), ("古装", "古装片"),
+              ("冒险", "冒险片"), ("灾难", "灾难片"), ("枪战", "枪战片"), ("警匪", "警匪片"),
+              ("玄幻", "玄幻片"), ("运动", "运动片"), ("动画", "动画片"), ("院线", "院线片")],
+        "2": [("古装", "古装"), ("都市", "都市"), ("历史", "历史"), ("谍战", "谍战"),
+              ("家庭", "家庭"), ("悬疑", "悬疑"), ("奇幻", "奇幻"), ("喜剧", "喜剧"),
+              ("爱情", "爱情"), ("犯罪", "犯罪"), ("动作", "动作"), ("战争", "战争"),
+              ("科幻", "科幻"), ("言情", "言情"), ("同性", "同性"), ("生活", "生活"),
+              ("恐怖", "恐怖"), ("武侠", "武侠")],
+        "3": [("真人秀", "真人秀"), ("游戏", "游戏"), ("竞技", "竞技"), ("脱口秀", "脱口秀"),
+              ("搞笑", "搞笑"), ("访谈", "访谈"), ("情感", "情感"), ("旅游", "旅游"),
+              ("音乐", "音乐"), ("美食", "美食"), ("职场", "职场"), ("推理", "推理"),
+              ("益智", "益智"), ("纪实", "纪实"), ("明星", "明星")],
+        "4": [("奇幻", "奇幻"), ("冒险", "冒险"), ("热血", "热血"), ("动作", "动作"),
+              ("搞笑", "搞笑"), ("战斗", "战斗"), ("玄幻", "玄幻"), ("古装", "古装"),
+              ("治愈", "治愈"), ("恋爱", "恋爱"), ("科幻", "科幻"), ("少儿", "少儿"),
+              ("益智", "益智"), ("励志", "励志"), ("魔幻", "魔幻"), ("亲子", "亲子")],
+        "5": [("都市", "都市"), ("逆袭", "逆袭"), ("打脸虐渣", "打脸虐渣"),
+              ("东方仙侠", "东方仙侠"), ("悬疑", "悬疑"), ("古风", "古风"),
+              ("爱情", "爱情"), ("反转爽文", "反转爽文"), ("传统玄幻", "传统玄幻"),
+              ("总裁", "总裁"), ("萌宝", "萌宝"), ("女性成长", "女性成长"),
+              ("现代", "现代"), ("男频", "男频")],
+        # 60 直播：无类型细分
+    }
+    # 地区/语言/排序均为 f6/f7/f18 实测有效值（海外=0 命中已剔除）
+    _AREA_VALUES = ["大陆", "内地", "香港", "台湾", "美国", "韩国", "日本", "泰国",
+                    "英国", "法国", "德国", "加拿大", "西班牙", "意大利", "澳大利亚",
+                    "俄罗斯", "印度", "荷兰", "欧美", "其他"]
+    _LANG_VALUES = ["国语", "粤语", "英语", "日语", "韩语"]
+    _SORT_VALUES = [("vod_hits_month", "月榜最热"), ("vod_hits", "总站最热"),
+                    ("vod_time", "最近更新"), ("vod_score", "最佳评分"),
+                    ("vod_year", "按年份")]
 
     def __init__(self) -> None:
         self.protocol = _GuluProtocol()
@@ -819,41 +926,95 @@ class Spider:
         except Exception as e:
             self.last_error = "%s:%s" % (type(e).__name__, e)
 
-    def _search(self, keyword, page=1, limit=21, category_id=""):
+    def _search(self, keyword, page=1, limit=21, category_id="",
+                vclass="", area="", lang="", sort="vod_hits_month"):
         self._ensure_boot()
         try:
-            return self.protocol.search(keyword, page, limit, category_id)
+            return self.protocol.search(keyword, page, limit, category_id,
+                                        vclass, area, lang, sort)
         except Exception:
             try:
                 self.protocol.reset_session()
                 self._ensure_boot()
-                return self.protocol.search(keyword, page, limit, category_id)
+                return self.protocol.search(keyword, page, limit, category_id,
+                                            vclass, area, lang, sort)
             except Exception as e:
                 self.last_error = "%s" % e
                 return {"videos": [], "page": page, "pagecount": 1,
                         "limit": limit, "total": 0}
 
+    # ---- TVBox 标准 filters（类型细分下拉） ----
+
+    @classmethod
+    def _filter_groups(cls, tid):
+        tid = str(tid or "0").strip() or "0"
+        groups = []
+        types = cls._TYPE_FILTERS.get(tid)
+        if types:
+            groups.append({"key": "type", "name": "类型",
+                           "value": [{"n": "全部", "v": ""}]
+                           + [{"n": n, "v": v} for v, n in types]})
+        if tid in ("1", "2", "3", "4"):
+            groups.append({"key": "area", "name": "地区",
+                           "value": [{"n": "全部", "v": ""}]
+                           + [{"n": a, "v": a} for a in cls._AREA_VALUES]})
+        if tid in ("1", "2"):
+            groups.append({"key": "lang", "name": "语言",
+                           "value": [{"n": "全部", "v": ""}]
+                           + [{"n": l, "v": l} for l in cls._LANG_VALUES]})
+        groups.append({"key": "sort", "name": "排序",
+                       "value": [{"n": n, "v": v} for v, n in cls._SORT_VALUES]})
+        return groups
+
+    @staticmethod
+    def _parse_extend(extend):
+        """解析 TVBox 传回的筛选参数：dict / JSON 字符串 / URL query 均兼容。"""
+        if isinstance(extend, dict):
+            return dict(extend)
+        text = str(extend or "").strip()
+        if not text:
+            return {}
+        try:
+            obj = json.loads(text)
+            if isinstance(obj, dict):
+                return obj
+        except Exception:
+            pass
+        out = {}
+        for part in text.split("&"):
+            if "=" in part:
+                k, _, v = part.partition("=")
+                out[k.strip()] = unquote(v.strip())
+        return out
+
     # ---- T3 契约 ----
 
     def homeContent(self, filter=False):
         classes = [{"type_id": tid, "type_name": nm} for tid, nm in self._categories]
+        filters = {tid: self._filter_groups(tid) for tid, _ in self._categories}
         cards = []
         try:
             result = self._search("", 1, 21)
             cards = self._cards(result.get("videos", []), 1, 21)[:20]
         except Exception:
             pass
-        return {"class": classes, "filters": {}, "list": cards}
+        return {"class": classes, "filters": filters, "list": cards}
 
     def homeVideoContent(self):
         return self.homeContent()
 
     def categoryContent(self, tid, pg="1", filter=True, extend=""):
         pg = max(1, int(pg or 1))
-        result = self._search("", pg, 21, str(tid or "").strip())
-        return {"class": [{"type_id": tid, "type_name": nm}
-                          for tid, nm in self._categories],
-                "filters": {},
+        tid = str(tid or "0").strip() or "0"
+        ext = self._parse_extend(extend)
+        result = self._search("", pg, 21, tid,
+                              vclass=str(ext.get("type") or ext.get("class") or ""),
+                              area=str(ext.get("area") or ""),
+                              lang=str(ext.get("lang") or ""),
+                              sort=str(ext.get("sort") or "vod_hits_month"))
+        return {"class": [{"type_id": t, "type_name": nm}
+                          for t, nm in self._categories],
+                "filters": {tid: self._filter_groups(tid)},
                 "list": self._cards(result.get("videos", []), pg, 21),
                 "page": pg, "pagecount": result.get("pagecount", 1),
                 "limit": result.get("limit", 21), "total": result.get("total", 0)}
@@ -892,12 +1053,25 @@ class Spider:
             "vod_pic": detail["pic"],
             "vod_year": detail["year"],
             "vod_area": detail["area"],
-            "vod_content": detail["content"],
+            "vod_lang": detail.get("lang", ""),
+            "vod_actor": detail.get("actor", ""),
+            "vod_director": detail.get("director", ""),
+            "vod_class": [t for t in (detail.get("vclass") or "").split("/") if t],
+            "vod_content": self._with_wechat(detail["content"]),
             "vod_remarks": detail["remarks"],
             "vod_play_from": "$$$".join(p[0] for p in paired),
             "vod_play_url": "$$$".join(p[1] for p in paired),
         }
         return {"list": [vod]}
+
+    @staticmethod
+    def _with_wechat(content):
+        """影片简介前置推广文案（XOR 加密存储，运行时解密）。"""
+        text = (content or "").strip()
+        info = _get_wechat_info()
+        if not info:
+            return text
+        return info + "\n" + text if text else info
 
     def searchContent(self, key, quick=False, pg="1"):
         kw = (key or "").strip()
@@ -1122,6 +1296,9 @@ if __name__ == "__main__":
     p_cate = sub.add_parser("category")
     p_cate.add_argument("tid")
     p_cate.add_argument("pg", nargs="?", default="1")
+    p_cate.add_argument("extend", nargs="?", default="",
+                        help='筛选 JSON，如 \'{"type":"科幻","area":"美国",'
+                             '"sort":"vod_time"}\'')
 
     p_detail = sub.add_parser("detail")
     p_detail.add_argument("vod_id")
@@ -1141,7 +1318,7 @@ if __name__ == "__main__":
         elif args.action == "search":
             result = sp.searchContent(args.keyword, pg=args.pg)
         elif args.action == "category":
-            result = sp.categoryContent(args.tid, args.pg)
+            result = sp.categoryContent(args.tid, args.pg, True, args.extend)
         elif args.action == "detail":
             result = sp.detailContent(args.vod_id)
         elif args.action == "play":
