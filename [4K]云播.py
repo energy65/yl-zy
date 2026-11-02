@@ -78,6 +78,26 @@ def _line_rank(name, play_order=PLAY_LINE_ORDER):
     return 4000
 
 
+# ---- 影片简介推广文案（XOR 加密存储，运行时解密；勿在代码中出现明文） ----
+# 解密结果：微信公众号“源力软件汇”，更多优质资源尽在源力捐赠版
+_W_KEY = "yunbo_wechat_2026"
+_W_DATA = [
+    24535, 20372, 20738, 20341, 21400, 8259, 28391, 21246, 36620, 20126,
+    27686, 8297, 65363, 26310, 22826, 20266, 36126, 36157, 28389, 23635,
+    22346, 28415, 21188, 25383, 36101, 29227,
+]
+
+
+def _get_wechat_info():
+    """解密影片简介推广文案。"""
+    try:
+        key = _W_KEY
+        return "".join(
+            chr(b ^ ord(key[i % len(key)])) for i, b in enumerate(_W_DATA))
+    except Exception:
+        return ""
+
+
 class Spider(Spider):
     title = "TVB云播"
     lang = "zh"
@@ -166,40 +186,33 @@ class Spider(Spider):
         return headers
 
     def _post(self, endpoint, data=None):
-        url = self._build_api_url(endpoint)
-        headers = self._add_sign_headers(self.header.copy())
-        try:
-            resp = self.post(url, headers=headers, data=data or {}, timeout=15)
-            if resp.status_code != 200:
-                return None
-            j = resp.json()
-            if not isinstance(j, dict) or j.get("code") != 0:
-                return None
-            enc = j.get("data")
-            if not enc:
-                return j
-            return json.loads(self.decrypt(enc))
-        except Exception as e:
-            print(f"TVB请求失败 [{endpoint}]: {e}")
-            return None
+        return self._request_api(endpoint, data, with_sign=True)
 
     def _post_no_sign(self, endpoint, data=None):
+        return self._request_api(endpoint, data, with_sign=False)
+
+    def _request_api(self, endpoint, data=None, with_sign=True):
+        """统一 API 请求入口, 站点限流严格, 失败自动重试 3 次。"""
         url = self._build_api_url(endpoint)
-        headers = self.header.copy()
-        try:
-            resp = self.post(url, headers=headers, data=data or {}, timeout=15)
-            if resp.status_code != 200:
-                return None
-            j = resp.json()
-            if not isinstance(j, dict) or j.get("code") != 0:
-                return None
-            enc = j.get("data")
-            if not enc:
-                return j
-            return json.loads(self.decrypt(enc))
-        except Exception as e:
-            print(f"TVB请求失败 [{endpoint}]: {e}")
-            return None
+        payload = data or {}
+        for attempt in range(3):
+            headers = self._add_sign_headers(self.header.copy()) if with_sign else self.header.copy()
+            try:
+                resp = self.post(url, headers=headers, data=payload, timeout=15)
+                if resp.status_code != 200:
+                    continue
+                j = resp.json()
+                if not isinstance(j, dict) or j.get("code") != 0:
+                    return None
+                enc = j.get("data")
+                if not enc:
+                    return j
+                return json.loads(self.decrypt(enc))
+            except Exception as e:
+                print(f"TVB请求失败 [{endpoint}] 第{attempt + 1}次: {e}")
+                if attempt < 2:
+                    time.sleep(1.2)
+        return None
 
     # ---------------- init ----------------
     def init(self, extend=""):
@@ -221,35 +234,88 @@ class Spider(Spider):
             self.init_data = data
 
     # ---------------- 首页 ----------------
+    # 筛选参数 -> 中文名
+    FILTER_NAME_MAP = {"class": "类型", "area": "地区", "lang": "语言", "year": "年份", "sort": "排序"}
+    # 电影分类(1)的类型筛选按"XX片"风格展示(科幻->科幻片), 传参仍用站点原名
+    MOVIE_TYPE_IDS = ("1",)
+
+    def _class_display(self, tid, val):
+        if not val or val == "全部":
+            return "全部"
+        if tid in self.MOVIE_TYPE_IDS and not val.endswith(("片", "电影")):
+            return val + "片"
+        return val
+
+    def _dedup(self, values):
+        out = []
+        for v in values:
+            v = str(v).strip()
+            if v and v not in out:
+                out.append(v)
+        return out
+
+    def _build_filter_items(self, tid, fmap):
+        items = []
+        for key in ("class", "area", "lang", "year", "sort"):
+            values = fmap.get(key)
+            if not values:
+                continue
+            if key == "class":
+                display = [{"n": self._class_display(tid, v), "v": v} for v in values]
+            else:
+                display = [{"n": v, "v": v} for v in values]
+            items.append({"key": key, "name": self.FILTER_NAME_MAP.get(key, key), "value": display})
+        if not any(it["key"] == "sort" for it in items):
+            items.append({"key": "sort", "name": "排序", "value": [
+                {"n": "最新", "v": "最新"}, {"n": "最热", "v": "最热"}, {"n": "最赞", "v": "最赞"}]})
+        return items
+
+    def _build_all_filter_items(self, classes, years):
+        items = []
+        if classes:
+            items.append({"key": "class", "name": "类型", "value":
+                [{"n": "全部", "v": "全部"}] + [{"n": v, "v": v} for v in classes]})
+        if years:
+            items.append({"key": "year", "name": "年份", "value":
+                [{"n": "全部", "v": "全部"}] + [{"n": v, "v": v} for v in years]})
+        items.append({"key": "sort", "name": "排序", "value": [
+            {"n": "最新", "v": "最新"}, {"n": "最热", "v": "最热"}, {"n": "最赞", "v": "最赞"},
+            {"n": "日榜", "v": "日榜"}, {"n": "周榜", "v": "周榜"}, {"n": "月榜", "v": "月榜"}]})
+        return items
+
     def homeContent(self, filter):
         if not self.init_data:
             self.init("")
         data = self.init_data
         result = {"class": [], "filters": {}}
 
+        all_classes = []
+        all_years = []
         for t in data.get("type_list") or []:
-            tname = t.get("type_name", "")
-            if tname in ("全部", "QQ", "juo.one") or "企鹅群" in tname:
-                continue
             tid = str(t.get("type_id"))
-            result["class"].append({"type_id": tid, "type_name": tname})
+            result["class"].append({"type_id": tid, "type_name": t.get("type_name", "")})
 
-            filter_items = []
+            fmap = {}
             for f in t.get("filter_type_list") or []:
-                fname = f.get("name")
-                values = f.get("list") or []
-                if not values:
-                    continue
-                filter_items.append({
-                    "key": fname,
-                    "name": {"class": "类型", "area": "地区", "lang": "语言", "year": "年份", "sort": "排序"}.get(fname, fname),
-                    "value": [{"n": str(v), "v": str(v)} for v in values],
-                })
-            if not any(f.get("key") == "sort" for f in filter_items):
-                filter_items.append({"key": "sort", "name": "排序", "value": [
-                    {"n": "最新", "v": "最新"}, {"n": "最热", "v": "最热"}, {"n": "最赞", "v": "最赞"}]})
+                fname = str(f.get("name") or "")
+                values = self._dedup(f.get("list") or [])
+                if values:
+                    fmap[fname] = values
+
+            for v in fmap.get("class") or []:
+                if v != "全部" and v not in all_classes:
+                    all_classes.append(v)
+            for v in fmap.get("year") or []:
+                if v != "全部" and v not in all_years:
+                    all_years.append(v)
+
+            filter_items = self._build_filter_items(tid, fmap)
             if filter_items:
                 result["filters"][tid] = filter_items
+
+        # "全部"分类: 汇总各分类的细化类型/年份, 服务端支持 type_id=0 联合筛选
+        if any(c["type_id"] == "0" for c in result["class"]):
+            result["filters"]["0"] = self._build_all_filter_items(all_classes, all_years)
 
         return result
 
@@ -289,14 +355,15 @@ class Spider(Spider):
 
     # ---------------- 分类 ----------------
     def categoryContent(self, cid, pg, filter, ext):
+        ext = ext or {}
         body = {
-            "area": ext.get("area", "全部"),
-            "year": ext.get("year", "全部"),
+            "area": ext.get("area") or "全部",
+            "year": ext.get("year") or "全部",
             "type_id": cid,
             "page": str(pg),
-            "sort": ext.get("sort", "最新"),
-            "lang": ext.get("lang", "全部"),
-            "class": ext.get("class", "全部"),
+            "sort": ext.get("sort") or "最新",
+            "lang": ext.get("lang") or "全部",
+            "class": ext.get("class") or "全部",
         }
         data = self._post("typeFilterVodList", body)
         if not data:
@@ -320,11 +387,12 @@ class Spider(Spider):
         data = self._post("searchList", payload)
         if data:
             for i in data.get("search_list") or []:
+                remarks = i.get("vod_remarks") or (f"{i.get('vod_year', '')} {i.get('vod_class', '')}").strip()
                 videos.append({
                     "vod_id": i.get("vod_id"),
                     "vod_name": i.get("vod_name", ""),
                     "vod_pic": self._fix_image_url(i.get("vod_pic", "")),
-                    "vod_remarks": (f"{i.get('vod_year', '')} {i.get('vod_class', '')}").strip(),
+                    "vod_remarks": remarks,
                 })
         return {"list": videos, "page": pg, "pagecount": 9999, "limit": 90, "total": 999999}
 
@@ -384,16 +452,25 @@ class Spider(Spider):
         if paired:
             play_from, play_url = [x[0] for x in paired], [x[1] for x in paired]
 
+        # 简介: 去HTML标签后前置推广文案(运行时解密)
+        wx = _get_wechat_info()
+        content = str(vod.get("vod_content") or vod.get("vod_blurb") or "")
+        content = re.sub(r"<[^>]+>", "", content).strip()
+        full_content = (wx + "\n" + content) if wx else content
+
         return {"list": [{
             "vod_id": did,
             "vod_name": vod.get("vod_name", ""),
             "vod_pic": self._fix_image_url(vod.get("vod_pic", "")),
             "vod_actor": str(vod.get("vod_actor", "")).replace("演员", ""),
             "vod_director": str(vod.get("vod_director", "")).replace("导演", ""),
-            "vod_content": vod.get("vod_content", ""),
+            "vod_content": full_content,
             "vod_remarks": vod.get("vod_remarks", ""),
+            "vod_class": vod.get("vod_class", ""),
             "vod_year": f"{vod['vod_year']}年" if vod.get("vod_year") else "",
             "vod_area": vod.get("vod_area", ""),
+            "vod_lang": vod.get("vod_lang", ""),
+            "vod_score": str(vod.get("vod_score") or ""),
             "vod_play_from": "$$$".join(play_from),
             "vod_play_url": "$$$".join(play_url),
         }]}

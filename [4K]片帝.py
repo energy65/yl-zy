@@ -2,14 +2,17 @@
 # 懂片帝 - TVBox / 追剧影视 通用 Python 爬虫
 # 站点：https://dongpian17.com
 # 接口：/v1/* REST API（HMAC-SHA256 请求签名，换行分隔）
-# 分类：大家都在看（全部/电影/剧集/短剧/动漫/综艺 × 日榜/周榜/月榜/总榜）
+# 分类：电影/电视剧/短剧/动漫/综艺/纪录片
+# 筛选：类型（q 搜索实现）/地区/年份/排序/榜单窗口（全部实测生效）
 import sys
 import json
 import time
 import hmac
 import hashlib
 import os
+import re
 import requests
+from urllib.parse import quote, urlencode
 
 # ↓↓↓ TVBox Python 插件必需：base 包在上一级目录，这一行不能删 ↓↓↓
 sys.path.append('..')
@@ -58,23 +61,99 @@ class Spider(BaseSpider):
     # 请求签名密钥（硬编码于前端 movie-card-runtime，HMAC-SHA256，消息为 方法\n路径+查询\n时间戳\n随机数）
     SIGN_KEY = "8b9a908a05eac640e1ee06f52acaa741bfe4ba9e004eeffdbeb635e532e06666"
 
-    # 分类映射：tab名 → kind 参数
+    # 分类映射：kind 参数 → 中文名（content_kind 全部实测有效）
     KINDS = [
-        ("all", "全部"),
         ("movie", "电影"),
-        ("series", "剧集"),
+        ("series", "电视剧"),
         ("short_drama", "短剧"),
         ("anime", "动漫"),
         ("variety", "综艺"),
+        ("documentary", "纪录片"),
     ]
 
-    # 榜单映射
-    WINDOWS = [
-        ("day", "日榜"),
-        ("week", "周榜"),
-        ("month", "月榜"),
-        ("total", "总榜"),
+    # 类型细化词表（站点 genre 参数无效，实测用 q 全文搜索 + kind 过滤实现，
+    # 结果均命中对应影片的 genres 标签或标题；n=显示名 v=搜索词）
+    GENRES = {
+        "movie": [
+            ("科幻片", "科幻"), ("奇幻片", "奇幻"), ("战争片", "战争"),
+            ("犯罪片", "犯罪"), ("武侠片", "武侠"), ("历史片", "历史"),
+            ("文艺片", "文艺"), ("动作片", "动作"), ("喜剧片", "喜剧"),
+            ("爱情片", "爱情"), ("悬疑片", "悬疑"), ("惊悚片", "惊悚"),
+            ("恐怖片", "恐怖"), ("冒险片", "冒险"), ("剧情片", "剧情"),
+            ("古装", "古装"), ("家庭", "家庭"), ("传记", "传记"),
+            ("音乐", "音乐"), ("灾难", "灾难"), ("西部", "西部"),
+            ("运动", "运动"), ("同性", "同性"),
+        ],
+        "series": [
+            ("古装", "古装"), ("都市", "都市"), ("历史", "历史"),
+            ("谍战", "谍战"), ("家庭", "家庭"), ("悬疑", "悬疑"),
+            ("犯罪", "犯罪"), ("言情", "言情"), ("军旅", "军旅"),
+            ("武侠", "武侠"), ("奇幻", "奇幻"), ("喜剧", "喜剧"),
+            ("爱情", "爱情"), ("动作", "动作"), ("刑侦", "刑侦"),
+            ("青春", "青春"), ("同性", "同性"),
+        ],
+        "short_drama": [
+            ("现代都市", "现代都市"), ("反转爽剧", "反转爽剧"),
+            ("脑洞悬疑", "脑洞悬疑"), ("言情总裁", "言情总裁"),
+            ("女频恋爱", "女频恋爱"), ("现代言情", "现代言情"),
+            ("古装仙侠", "古装仙侠"), ("年代穿越", "年代穿越"),
+            ("重生民国", "重生民国"), ("闪婚离婚", "闪婚离婚"),
+            ("霸总", "霸总"), ("AI漫剧", "AI漫剧"),
+        ],
+        "anime": [
+            ("国产动漫", "国产动漫"), ("日韩动漫", "日韩动漫"),
+            ("日本动漫", "日本动漫"), ("欧美动漫", "欧美动漫"),
+            ("热血", "热血"), ("冒险", "冒险"), ("搞笑", "搞笑"),
+            ("恋爱", "恋爱"), ("校园", "校园"), ("战斗", "战斗"),
+            ("科幻", "科幻"), ("奇幻", "奇幻"), ("玄幻", "玄幻"),
+            ("武侠", "武侠"), ("魔法", "魔法"), ("机战", "机战"),
+            ("悬疑", "悬疑"), ("治愈", "治愈"), ("励志", "励志"),
+            ("恐怖", "恐怖"),
+        ],
+        "variety": [
+            ("真人秀", "真人秀"), ("音乐", "音乐"), ("脱口秀", "脱口秀"),
+            ("相声", "相声"), ("晚会", "晚会"), ("旅游", "旅游"),
+            ("舞蹈", "舞蹈"), ("歌舞", "歌舞"), ("竞技", "竞技"),
+            ("访谈", "访谈"), ("情感", "情感"), ("文化", "文化"),
+            ("生活", "生活"),
+        ],
+        "documentary": [
+            ("历史", "历史"), ("战争", "战争"), ("犯罪", "犯罪"),
+            ("传记", "传记"), ("音乐", "音乐"), ("运动", "运动"),
+            ("武侠", "武侠"), ("古装", "古装"), ("悬疑", "悬疑"),
+            ("灾难", "灾难"),
+        ],
+    }
+
+    # 地区筛选（站点 area 参数实测生效，支持别名映射）
+    AREAS = [
+        ("中国大陆", "中国大陆"), ("中国香港", "中国香港"), ("中国台湾", "中国台湾"),
+        ("美国", "美国"), ("韩国", "韩国"), ("日本", "日本"),
+        ("英国", "英国"), ("法国", "法国"), ("泰国", "泰国"), ("印度", "印度"),
     ]
+
+    # 年份范围（站点 year 参数实测生效）
+    YEARS = [(str(y), str(y)) for y in range(2026, 2014, -1)]
+
+    # 排序与榜单窗口（站点 sort/window 参数实测生效）
+    SORTS = [
+        ("热门", "trending"),
+        ("最新", "newest"),
+    ]
+    WINDOWS = [
+        ("日榜", "day"),
+        ("周榜", "week"),
+        ("月榜", "month"),
+        ("总榜", "total"),
+    ]
+
+    # 微信公众号文案（XOR 加密存储，密钥 piandi_wechat_2026，运行时解密）
+    _W_KEY = [112, 105, 97, 110, 100, 105, 95, 119, 101, 99, 104, 97, 116, 95, 50, 48, 50, 54]
+    _W_DATA = [149, 215, 207, 138, 219, 200, 186, 242, 201, 135, 212, 246, 145, 208, 133, 18,
+               212, 140, 224, 140, 235, 245, 140, 212, 240, 147, 222, 213, 142, 208, 243, 125,
+               221, 140, 190, 208, 235, 221, 132, 202, 254, 141, 227, 239, 141, 215, 192, 137,
+               193, 219, 212, 138, 162, 211, 192, 212, 132, 242, 204, 143, 229, 231, 128, 233,
+               243, 135, 249, 207, 218, 133, 146, 209, 249, 225]
 
     def __init__(self):
         try:
@@ -120,6 +199,16 @@ class Spider(BaseSpider):
             print("懂片帝 init: host={}, name={}".format(self.host, self.name))
         except Exception as e:
             print("懂片帝 init error: {}".format(e))
+
+    # ================= 微信文案（加密解密） =================
+
+    def _get_wechat_info(self):
+        try:
+            kb = bytes(self._W_KEY)
+            db = bytes(self._W_DATA)
+            return bytes(b ^ kb[i % len(kb)] for i, b in enumerate(db)).decode("utf-8")
+        except Exception:
+            return ""
 
     # ================= 登录会话 =================
 
@@ -203,6 +292,8 @@ class Spider(BaseSpider):
         }
 
     def _get(self, path, search=""):
+        # 实测：含中文的查询参数值必须先 URL 编码再参与签名与请求，
+        # 否则服务器按编码后的查询串验签失败（返回非预期响应）
         try:
             resp = self.session.get(self.host + path + search,
                                     headers=self._headers("GET", path, search),
@@ -231,6 +322,38 @@ class Spider(BaseSpider):
                 d2 = self._post("/v1/playback/resolve-line", "?view=compact", {"ticket": ticket})
         return d2.get("line", {}) or {}
 
+    # ================= 查询构造 =================
+
+    def _catalog_search(self, kind, genre, area, year, sort, window, q, page, limit=20):
+        """构造 /v1/browse/catalog 查询串（参数值全部 URL 编码）
+
+        类型筛选：站点 genre 参数无效，实测用 q=类型词 + query_mode=fast_v3 实现，
+        结果按 kind 收敛到对应大类
+        """
+        params = [("page", str(page)), ("limit", str(limit))]
+        if kind and kind != "all":
+            params.append(("kind", kind))
+        if genre:
+            params.append(("q", genre))
+            params.append(("query_mode", "fast_v3"))
+            params.append(("search_fields", "all"))
+        elif q:
+            params.append(("q", q))
+            params.append(("query_mode", "fast_v3"))
+            params.append(("search_fields", "all"))
+        else:
+            # 默认排序：不带 sort 参数（实测可翻 1000 条/50 页）；
+            # 选"热门"时走 trending 榜单并附带榜单窗口（实测仅约 200 条/10 页）
+            if sort:
+                params.append(("sort", sort))
+                if window and sort == "trending":
+                    params.append(("window", window))
+        if area:
+            params.append(("area", area))
+        if year:
+            params.append(("year", year))
+        return "?" + urlencode(params)
+
     # ================= TVBox 接口 =================
 
     def homeContent(self, filter):
@@ -240,13 +363,36 @@ class Spider(BaseSpider):
 
         filters = {}
         if filter:
-            window_values = [{"n": n, "v": v} for v, n in self.WINDOWS]
             for tid, _ in self.KINDS:
-                filters[tid] = [{
+                fl = []
+                genres = self.GENRES.get(tid) or []
+                if genres:
+                    fl.append({
+                        "key": "genre",
+                        "name": "类型",
+                        "value": [{"n": "全部", "v": ""}] + [{"n": n, "v": v} for n, v in genres],
+                    })
+                fl.append({
+                    "key": "area",
+                    "name": "地区",
+                    "value": [{"n": "全部", "v": ""}] + [{"n": n, "v": v} for n, v in self.AREAS],
+                })
+                fl.append({
+                    "key": "year",
+                    "name": "年份",
+                    "value": [{"n": "全部", "v": ""}] + [{"n": n, "v": v} for n, v in self.YEARS],
+                })
+                fl.append({
+                    "key": "sort",
+                    "name": "排序",
+                    "value": [{"n": n, "v": v} for n, v in self.SORTS],
+                })
+                fl.append({
                     "key": "window",
                     "name": "榜单",
-                    "value": window_values,
-                }]
+                    "value": [{"n": n, "v": v} for n, v in self.WINDOWS],
+                })
+                filters[tid] = fl
         return {"class": classes, "filters": filters}
 
     def homeVideoContent(self):
@@ -267,14 +413,34 @@ class Spider(BaseSpider):
         return {"list": videos}
 
     def categoryContent(self, tid, pg, filter, extend):
-        window = "day"
-        if extend and extend.get("window"):
-            window = extend["window"]
+        try:
+            page = int(pg)
+        except Exception:
+            page = 1
+        if page < 1:
+            page = 1
 
-        search = "?sort=trending&window={}&page={}&limit=20".format(window, pg)
-        if tid and tid != "all":
-            search += "&kind=" + tid
+        ext = extend if isinstance(extend, dict) else {}
+        try:
+            ext = json.loads(extend) if isinstance(extend, str) and extend.strip() else ext
+        except Exception:
+            pass
 
+        genre = str(ext.get("genre") or "").strip()
+        area = str(ext.get("area") or "").strip()
+        year = str(ext.get("year") or "").strip()
+        sort = str(ext.get("sort") or "").strip()
+        window = str(ext.get("window") or "").strip()
+        kind = tid if tid and tid != "all" else ""
+
+        # 类型词映射回搜索词（TVBox 可能回传显示名）
+        if genre:
+            for n, v in (self.GENRES.get(tid) or []):
+                if genre == n:
+                    genre = v
+                    break
+
+        search = self._catalog_search(kind, genre, area, year, sort, window, "", page)
         data = self._get("/v1/browse/catalog", search)
 
         videos = []
@@ -283,17 +449,18 @@ class Spider(BaseSpider):
 
         pagination = data.get("pagination", {}) or {}
         has_more = bool(pagination.get("has_more"))
-        try:
-            page = int(pg)
-        except Exception:
-            page = 1
-        pagecount = page + 1 if has_more else page
+        total = pagination.get("total")
+        if not isinstance(total, int) or total <= 0:
+            total = (page + 1) * 20 if has_more else page * 20
+        pagecount = (total + 19) // 20
+        if has_more and pagecount <= page:
+            pagecount = page + 1
 
         return {
             "page": page,
-            "pagecount": pagecount,
+            "pagecount": max(pagecount, page),
             "limit": 20,
-            "total": pagecount * 20,
+            "total": total,
             "list": videos,
         }
 
@@ -305,6 +472,10 @@ class Spider(BaseSpider):
         episodes = card.get("episodes") or []
         # 详情内嵌剧集不全时，走剧集分页接口补齐
         episode_count = card.get("episode_count") or len(episodes)
+        try:
+            episode_count = int(episode_count)
+        except Exception:
+            episode_count = len(episodes)
         if episode_count > len(episodes):
             episodes = self._fetch_all_episodes(vid, episodes)
 
@@ -315,20 +486,20 @@ class Spider(BaseSpider):
             if token:
                 play_urls.append("{}${}".format(title, token))
 
-        vod = self._parse_card(card)
+        vod = self._parse_card(card, detail=True)
         vod["vod_id"] = vid
 
-        # 用第1集 token 拉取线路列表，把官方线路写到播放来源，可切换播放
+        # 用第1集 token 拉取线路列表，把全部线路写到播放来源，可切换播放
         lines = []
         if episodes:
             first_token = episodes[0].get("token", "")
             if first_token:
                 rdata = self._get("/v1/playback/resolve/" + first_token, "?view=compact")
                 lines = rdata.get("line_options", []) or []
-        # 只保留官方线路，屏蔽普通资源站线路
-        lines = [ln for ln in lines if self._is_official_line(ln)]
-        # 4K线路排到最前面（稳定排序，其余保持接口返回顺序）
-        lines.sort(key=lambda ln: 0 if "4K" in (ln.get("label") or "").upper() else 1)
+        lines = [ln for ln in lines if ln.get("id") and ln.get("url")]
+        # 官方线路与4K线路排前面（稳定排序，其余保持接口返回顺序）
+        lines.sort(key=lambda ln: (0 if self._is_official_line(ln) else 1,
+                                   0 if "4K" in (ln.get("label") or "").upper() else 1))
 
         if lines and play_urls:
             froms = []
@@ -363,17 +534,35 @@ class Spider(BaseSpider):
             vod["vod_play_url"] = "#".join(play_urls)
         return {"list": [vod]}
 
-    def searchContent(self, key, quick):
+    def searchContent(self, key, quick, pg="1"):
         try:
-            from urllib.parse import quote
-            q = quote(key)
+            page = int(pg)
         except Exception:
-            q = key
-        data = self._get("/v1/browse/catalog", "?q={}&page=1&limit=20".format(q))
+            page = 1
+        if page < 1:
+            page = 1
+
+        search = self._catalog_search("", "", "", "", "", "", key, page)
+        data = self._get("/v1/browse/catalog", search)
         videos = []
         for card in data.get("cards", []):
             videos.append(self._parse_card(card))
-        return {"list": videos}
+
+        pagination = data.get("pagination", {}) or {}
+        has_more = bool(pagination.get("has_more"))
+        total = pagination.get("total")
+        if not isinstance(total, int) or total <= 0:
+            total = (page + 1) * 20 if has_more else page * 20
+        pagecount = (total + 19) // 20
+        if has_more and pagecount <= page:
+            pagecount = page + 1
+        return {
+            "page": page,
+            "pagecount": max(pagecount, page),
+            "limit": 20,
+            "total": total,
+            "list": videos,
+        }
 
     def playerContent(self, flag, id, vipFlags):
         token = id
@@ -381,12 +570,14 @@ class Spider(BaseSpider):
         # 详情页写入的格式：token@@线路ID（用于切换播放来源）
         if "@@" in id:
             token, line_id = id.split("@@", 1)
+        # 兼容 "集名$token" 形式
+        if "$" in token:
+            token = token.split("$")[-1]
 
         data = self._get("/v1/playback/resolve/" + token, "?view=compact")
         lines = data.get("line_options", []) or []
 
         play_url = ""
-        url_kind = ""
 
         # 指定线路：按 line_id（或 flag 匹配 label）精确选中
         target = None
@@ -405,14 +596,12 @@ class Spider(BaseSpider):
         if target is not None:
             if target.get("url_kind") == "m3u8" and not target.get("resolve_required") and target.get("url"):
                 play_url = target["url"]
-                url_kind = "m3u8"
             else:
                 ticket = (target.get("url") or "").replace("resolve://", "")
                 if ticket:
                     line = self._resolve_line(ticket)
                     if line.get("url"):
                         play_url = line["url"]
-                        url_kind = line.get("url_kind", "")
 
         # 回退候选：官方线路优先，全部失败才轮到普通线路（保证能播）
         official_lines = [ln for ln in lines if self._is_official_line(ln)]
@@ -428,7 +617,6 @@ class Spider(BaseSpider):
                 line = self._resolve_line(ticket)
                 if line.get("url"):
                     play_url = line["url"]
-                    url_kind = line.get("url_kind", "")
                     break
 
         # 最后兜底：免解析的 m3u8 直链线路（普通线路，按返回顺序）
@@ -436,14 +624,16 @@ class Spider(BaseSpider):
             for ln in fallback_lines:
                 if ln.get("url_kind") == "m3u8" and not ln.get("resolve_required") and ln.get("url"):
                     play_url = ln["url"]
-                    url_kind = "m3u8"
                     break
 
         return {
             "parse": 0,
             "playUrl": "",
             "url": play_url,
-            "header": {"User-Agent": self.ua},
+            "header": {
+                "User-Agent": self.ua,
+                "Referer": self.host + "/",
+            },
         }
 
     # ↓↓↓ TVBox 框架 base.spider 抽象方法必须实现，缺失会导致实例化失败 ↓↓↓
@@ -454,10 +644,10 @@ class Spider(BaseSpider):
         pass
 
     def isVideoFormat(self, url):
-        pass
+        return False
 
     def manualVideoCheck(self):
-        pass
+        return False
 
     def destroy(self):
         pass
@@ -506,10 +696,19 @@ class Spider(BaseSpider):
             print("懂片帝 fetch episodes error: {}".format(e))
         return episodes
 
-    def _parse_card(self, card):
+    def _strip_html(self, text):
+        if not text:
+            return ""
+        text = re.sub(r"<[^>]+>", "", str(text))
+        text = text.replace("&nbsp;", " ").replace("&amp;", "&") \
+                   .replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"')
+        return text.strip()
+
+    def _parse_card(self, card, detail=False):
         remarks = card.get("remarks", "") or ""
-        heat = card.get("heat_value")
-        return {
+        genres = card.get("genres", []) or []
+        content = card.get("content", "") or card.get("description", "") or card.get("blurb", "")
+        vod = {
             "vod_id": str(card.get("id", "")),
             "vod_name": card.get("title", "") or card.get("normalized_title", ""),
             "vod_pic": card.get("poster_url", "") or card.get("backdrop_url", ""),
@@ -518,5 +717,19 @@ class Spider(BaseSpider):
             "vod_area": card.get("area", "") or "",
             "vod_director": "、".join(card.get("directors", []) or []),
             "vod_actor": "、".join(card.get("actors", []) or []),
-            "vod_content": card.get("content", "") or card.get("description", "") or card.get("blurb", ""),
         }
+        if genres:
+            vod["vod_type"] = " / ".join(genres[:5])
+        if detail:
+            # 影片简介前置微信公众号文案（XOR 加密存储，运行时解密）
+            wechat = self._get_wechat_info()
+            body = self._strip_html(content)
+            if wechat and body:
+                vod["vod_content"] = wechat + "\n" + body
+            elif wechat:
+                vod["vod_content"] = wechat
+            else:
+                vod["vod_content"] = body
+        else:
+            vod["vod_content"] = self._strip_html(content)
+        return vod
