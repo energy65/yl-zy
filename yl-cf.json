@@ -12,7 +12,7 @@
             "changeable": 1,
             "timeout": 60,
             "indexs": 1,
-            "ext": "./douban.js"
+            "ext": "./douban.json"
         }, {
             "key": "配置中心",
             "name": "🔨网盘丨配置中心",
@@ -711,6 +711,22 @@
             "key": "红果短剧PY",
             "name": "👌红果短剧丨[短剧]",
             "api": "./红果短剧new.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "红果短剧弹幕版.py",
+            "name": "👌红果短剧弹幕版.py丨[短剧]",
+            "api": "./红果短剧弹幕版.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "红果短剧修复版.py",
+            "name": "👌红果短剧修复版.py|[短剧]",
+            "api": "./红果短剧修复版.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
