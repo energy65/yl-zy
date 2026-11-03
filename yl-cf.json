@@ -700,22 +700,6 @@
             "filterable": 1,
             "genre": "shortdrama"
         }, {
-            "key": "红果短剧本地PY",
-            "name": "👌红果短剧本地丨[短剧]",
-            "api": "./红果短剧本地.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "红果短剧PY",
-            "name": "👌红果短剧丨[短剧]",
-            "api": "./红果短剧new.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "红果短剧弹幕版.py",
             "name": "👌红果短剧弹幕版.py丨[短剧]",
             "api": "./红果短剧弹幕版.py",
