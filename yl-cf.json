@@ -318,14 +318,6 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "[4K]瓜子APP.py PY",
-            "name": "👌4K瓜子APP.py丨[1080P]",
-            "api": "./[4K]瓜子APP.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "绮梦短剧 PY",
             "name": "👌绮梦短剧丨[短剧]",
             "api": "./绮梦短剧.py",
@@ -366,7 +358,7 @@
             "ext": "https://gh-proxy.org/https://raw.githubusercontent.com/energy65/yl/refs/heads/main/闪雷.js"
         }, {
             "key": "瓜子优质 PY",
-            "name": "👌瓜子优质丨[1080P]",
+            "name": "👌瓜子优质①丨[1080P]",
             "api": "./瓜子优质.py",
             "filterable": 1,
             "quickSearch": 1,
@@ -374,12 +366,28 @@
             "type": 3
         }, {
             "key": "csp_Guazi",
-            "name": "👌🏻瓜子┃[1080P]",
+            "name": "👌🏻瓜子优质②┃[1080P]",
             "type": 3,
             "api": "csp_Guazi",
             "searchable": 1,
             "changeable": 1,
             "jar": "./vox.jar"
+        }, {
+            "key": "瓜子优质 PY",
+            "name": "👌瓜子优质③丨[1080P]",
+            "api": "./瓜娃子.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "[4K]瓜子APP.py PY",
+            "name": "👌瓜子4k丨[1080P]",
+            "api": "./[4K]瓜子APP.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
         }, {
             "key": "泥视频PY",
             "name": "👌泥视频-已失效丨[1080P]",
