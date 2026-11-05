@@ -447,6 +447,22 @@
             "searchable": 1,
             "type": 3
         }, {
+            "key": "剧下饭4K.py",
+            "name": "👌剧下饭4K |[1080P] ",
+            "api": "./剧下饭4K.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "山楂.py",
+            "name": "👌山楂影视 |[1080P&4k] ",
+            "api": "./山楂.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
             "key": "novip PY",
             "name": "👌novip丨[1080P]",
             "api": "./novip.py",
