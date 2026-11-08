@@ -25,46 +25,6 @@
                 "type": "oval"
             }
         }, {
-            "key": "csp_iqiyi",
-            "name": "👌爱qi艺[官源]",
-            "type": 3,
-            "api": "csp_iqiyi",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "jar": "./琪琪家.jar"
-        }, {
-            "key": "果果家②PY",
-            "name": "👌guoguo丨[1080P&&4k]",
-            "api": "./T3芒果TV.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "csp-youku",
-            "name": "👌youku[官源]",
-            "type": 3,
-            "api": "csp_youku",
-            "searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "jar": "./库库家.jar"
-        }, {
-            "key": "爱腾讯",
-            "name": "👌腾xun[官源]",
-            "type": 3,
-            "api": "./drpy2.min.js",
-            "ext": "./qq-fenlei.js"
-        }, {
-            "key": "bili影视PY",
-            "name": "👌bili影视丨PY",
-            "api": "./bili影视.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "影探 PY",
             "name": "👌影探4k| [1080P] py",
             "api": "./影探4k.py",
@@ -185,6 +145,46 @@
             "key": "1905 PY",
             "name": "👌1905电影网丨[720p]",
             "api": "./1905.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "csp_iqiyi",
+            "name": "👌爱qi艺[官源]",
+            "type": 3,
+            "api": "csp_iqiyi",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "jar": "./琪琪家.jar"
+        }, {
+            "key": "果果家②PY",
+            "name": "👌guoguo丨[1080P&&4k]",
+            "api": "./T3芒果TV.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "csp-youku",
+            "name": "👌youku[官源]",
+            "type": 3,
+            "api": "csp_youku",
+            "searchable": 1,
+            "quickSearch": 1,
+            "filterable": 1,
+            "jar": "./库库家.jar"
+        }, {
+            "key": "爱腾讯",
+            "name": "👌腾xun[官源]",
+            "type": 3,
+            "api": "./drpy2.min.js",
+            "ext": "./qq-fenlei.js"
+        }, {
+            "key": "bili影视PY",
+            "name": "👌bili影视丨PY",
+            "api": "./bili影视.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
@@ -339,6 +339,14 @@
             "key": "影视工厂PY",
             "name": "👌影视工厂丨PY",
             "api": "./影视工厂.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "边缘PY",
+            "name": "👌边缘丨PY",
+            "api": "./边缘.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
@@ -671,40 +679,6 @@
             "searchable": 1,
             "quickSearch": 1,
             "filterable": 1
-        }, {
-            "key": "csp_Kan90",
-            "name": "😃最全┃短剧[短剧]",
-            "type": 3,
-            "jar": "./源力.jar",
-            "api": "csp_Kan90",
-            "timeout": 60,
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 0,
-            "类型": "短剧"
-        }, {
-            "key": "全能短剧",
-            "name": "😒短剧┃AI¹[短剧]",
-            "type": 3,
-            "jar": "./源力.jar",
-            "api": "csp_DuanJuCen",
-            "searchable": 1,
-            "quickSearch": 1,
-            "changeable": 1,
-            "ext": {
-                "classes": "./duanjucen.json"
-            },
-            "类型": "短剧"
-        }, {
-            "key": "七味短剧",
-            "name": "😄极速┃[短剧]",
-            "type": 3,
-            "jar": "./源力.jar",
-            "api": "csp_XBPQ",
-            "timeout": 60,
-            "ext": "./七味短剧.json",
-            "jar": "./svip.jar",
-            "类型": "短剧"
         }, {
             "key": "星芽短剧",
             "name": "😄星芽｜[短剧]",
@@ -2514,7 +2488,7 @@
             "url": "https://ztha.top/TVBox/lib/iptv.m3u",
             "ua": "",
             "source": "挺好线路"
-        },{
+        }, {
             "name": "MV",
             "url": "https://ztha.top/TVBox/tv/MV.txt",
             "ua": "",
@@ -2524,7 +2498,7 @@
             "url": "https://ztha.top/TVBox/lib/3d75a78a0fc7ede372c03598d6d10367.m3u",
             "ua": "",
             "source": "挺好线路"
-        },{
+        }, {
             "name": "📡虎牙",
             "url": "https://sub.ottiptv.cc/huyayqk.m3u",
             "ua": "",
@@ -2544,7 +2518,7 @@
             "url": "https://sub.ottiptv.cc/bililive.m3u",
             "ua": "",
             "source": "集多3线"
-        },{
+        }, {
             "name": "综合直播",
             "url": "http://193.123.86.190:14888/TV/iptv.php",
             "ua": "bingcha/1.1 (mianfeifenxiang)",
@@ -2554,17 +2528,17 @@
             "url": "https://nos.netease.com/ysf/3d75a78a0fc7ede372c03598d6d10367.m3u",
             "ua": "",
             "source": "饭太硬四线"
-        },{
+        }, {
             "name": "南风直播源",
             "url": "https://gh-proxy.com/https://raw.githubusercontent.com/yoursmile66/TVBox/main/live.txt",
             "ua": "okhttp/3.15",
             "source": "健康家用"
-        },{
+        }, {
             "name": "平台直播",
             "url": "http://47.120.41.246:8025/vip/jar/zb.php",
             "ua": "",
             "source": "pd"
-        },{
+        }, {
             "name": "裤佬",
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/refs/heads/Jsnzkpg/Jsnzkpg1",
             "ua": "",
@@ -2574,12 +2548,12 @@
             "url": "https://ds65.tv1288.xyz",
             "ua": "bingcha/1.1 (mianfeifenxiang) ",
             "source": "东篱2线"
-        },{
+        }, {
             "name": "宫殿",
             "url": "https://gongdian.top/tv/iptv",
             "ua": "",
             "source": "东篱2线"
-        },{
+        }, {
             "name": "电视直播",
             "url": "http://gh-proxy.org/raw.githubusercontent.com/Supprise0901/TVBox_live/main/live.txt",
             "ua": "",
@@ -2594,13 +2568,12 @@
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/YanG-1989/m3u/main/Gather.m3u",
             "ua": "",
             "source": "东篱2线"
-        },{
+        }, {
             "name": "Kimentanm4线",
             "url": "https://down.nigx.cn/raw.githubusercontent.com/Kimentanm/aptv/master/m3u/iptv.m3u",
             "ua": "",
             "source": "王二小一线"
-        },
-		 {
+        }, {
             "name": "cluntop",
             "url": "https://clun.top/lib/iptv.m3u",
             "ua": "",
