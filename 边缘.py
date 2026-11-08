@@ -2,7 +2,7 @@
 # by @嗷呜
 import re, os, sys, time, json, uuid, binascii, requests
 from urllib.parse import urlparse
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from base.spider import Spider
 from base64 import b64encode, b64decode
 from Crypto.PublicKey import RSA
@@ -26,6 +26,35 @@ class Spider(Spider):
         'http://42.193.137.125:9984',
         'https://bysp.10000.im'
     ]
+
+    # 播放兜底资源站（原站解析服务只返回"更新提示"视频，需要外部资源站兜底）
+    cj_apis = {
+        '光速资源': 'https://api.guangsuapi.com/api.php/provide/vod/',
+        '红牛资源': 'https://www.hongniuzy2.com/api.php/provide/vod/',
+        '金鹰资源': 'https://jinyingzy.com/api.php/provide/vod/',
+        '速播资源': 'https://subocaiji.com/api.php/provide/vod/',
+        '新浪资源': 'https://api.xinlangapi.com/xinlangapi.php/provide/vod/'
+    }
+
+    filter_names = {'type': '类型', 'area': '地区', 'lang': '语言', 'year': '年份'}
+
+    # 细化后的类型筛选（n 为显示名称，v 为接口实际使用的关键词）
+    type_extend = {
+        '1': [('动作片', '动作'), ('喜剧片', '喜剧'), ('爱情片', '爱情'), ('科幻片', '科幻'),
+              ('奇幻片', '奇幻'), ('战争片', '战争'), ('犯罪片', '犯罪'), ('悬疑片', '悬疑'),
+              ('惊悚片', '惊悚'), ('恐怖片', '恐怖'), ('冒险片', '冒险'), ('武侠片', '武侠'),
+              ('历史片', '历史'), ('文艺片', '文艺'), ('动画片', '动画'), ('剧情片', '剧情'),
+              ('青春片', '青春'), ('纪录片', '纪录'), ('灾难片', '灾难'), ('古装片', '古装'),
+              ('网络电影', '网络电影')],
+        '2': [('古装', '古装'), ('都市', '都市'), ('历史', '历史'), ('谍战', '谍战'),
+              ('家庭', '家庭'), ('年代', '年代'), ('宫廷', '宫廷'), ('悬疑', '悬疑'),
+              ('爱情', '爱情'), ('喜剧', '喜剧'), ('战争', '战争'), ('犯罪', '犯罪'),
+              ('青春', '青春'), ('武侠', '武侠'), ('玄幻', '玄幻'), ('仙侠', '仙侠'),
+              ('农村', '农村'), ('情景', '情景'), ('商战', '商战'), ('网剧', '网剧'),
+              ('其他', '其他')]
+    }
+
+    mp_notice = '<p style="color:#ff5a00;font-weight:bold;">微信公众号：源力软件汇</p>'
 
     def init(self, extend=""):
         try:
@@ -73,7 +102,17 @@ class Spider(Spider):
         with ThreadPoolExecutor(max_workers=len(classes)) as executor:
             results = executor.map(self.getf, classes)
             for id, ft in results:
-                if len(ft): filters[id] = ft
+                for f in ft:
+                    f['name'] = self.filter_names.get(f['key'], f['key'])
+                if id in self.type_extend:
+                    ft = [f for f in ft if f['key'] != 'type']
+                    ft.insert(0, {
+                        'key': 'type',
+                        'name': '类型',
+                        'value': [{'n': '全部', 'v': ''}] + [{'n': n, 'v': v} for n, v in self.type_extend[id]]
+                    })
+                if len(ft):
+                    filters[id] = ft
         result['class'] = classes
         result['filters'] = filters
         result['list'] = vlist
@@ -107,18 +146,27 @@ class Spider(Spider):
         vod = data['data']
         plist = []
         names = []
+        vname = vod.get('vod_name') or ''
+        total = int(vod.get('vod_total') or 0)
         for i in vod['vod_play_url']:
             ulist = []
             names.append(i['name'].split(' ')[0])
-            jdata = {'parse': ''}
+            parse = ''
             if i.get('parse') and isinstance(i['parse'], list) and len(i['parse']):
-                jdata['parse'] = self.e64(json.dumps(i['parse']))
-            for j in i['data']:
-                jdata['url'] = j['url']
+                parse = self.e64(json.dumps(i['parse']))
+            for idx, j in enumerate(i['data']):
+                jdata = {
+                    'url': j['url'],
+                    'parse': parse,
+                    'name': vname,
+                    'ep': idx,
+                    'total': total or len(i['data'])
+                }
                 ulist.append(f'{j["name"]}${self.e64(json.dumps(jdata))}')
             plist.append('#'.join(ulist))
         vod['vod_play_from'] = '$$$'.join(names)
         vod['vod_play_url'] = '$$$'.join(plist)
+        vod['vod_content'] = self.mp_notice + (vod.get('vod_content') or '')
         vod.pop('cover_list', None)
         return {'list': [vod]}
 
@@ -132,28 +180,141 @@ class Spider(Spider):
         return {'list': vlist, 'page': pg}
 
     def playerContent(self, flag, id, vipFlags):
-        data = json.loads(self.d64(id))
+        try:
+            data = json.loads(self.d64(id))
+        except Exception:
+            return {'parse': 1, 'url': id, 'header': {}}
+        url = data.get('url') or ''
+        name = data.get('name') or ''
+        ep = int(data.get('ep') or 0)
+        total = int(data.get('total') or 0)
         parse = data.get('parse')
-        url = data.get('url')
-        header = {}
         if parse:
-            parse = json.loads(self.d64(parse))
-        if not url:
-            return {'parse': 1, 'url': '', 'header': header}
-        if not re.search(r'\.m3u8|\.mp4|\.flv', url) and parse:
+            try:
+                parse = json.loads(self.d64(parse))
+            except Exception:
+                parse = []
+        if self._isvideo(url):
+            if self._health(url):
+                return {'parse': 1, 'url': url, 'header': {}}
+            jurl = self.getplayurl(name, ep, total)
+            return {'parse': 1, 'url': jurl or url, 'header': {}}
+        # 原站解析服务现在只返回"请下载新版本"的提示视频，必须校验并丢弃
+        if parse:
             for p in parse:
                 try:
                     response = self._get(f'{p}{url}')
                     jdata = response.json()
                     jdata = jdata.get('data') or jdata
                     jurl = jdata.get('url')
-                    if not jurl:
-                        continue
-                    header = jdata.get('header') or {}
-                    return {'parse': 0, 'url': jurl, 'header': header}
+                    if jurl and '/static/videos/' not in jurl and self._isvideo(jurl):
+                        return {'parse': 0, 'url': jurl, 'header': jdata.get('header') or {}}
                 except Exception:
                     continue
-        return {'parse': 1, 'url': url, 'header': header}
+        # 原站无法播放时，用资源站同名影片兜底
+        jurl = self.getplayurl(name, ep, total)
+        if jurl:
+            return {'parse': 1, 'url': jurl, 'header': {}}
+        return {'parse': 1, 'url': url, 'header': {}}
+
+    def _isvideo(self, url):
+        return bool(url) and bool(re.search(r'(\.m3u8|\.mp4|\.flv)(\?|$)', url))
+
+    def _health(self, url):
+        try:
+            response = requests.get(url, timeout=4, verify=False, stream=True,
+                                    headers={'User-Agent': 'Mozilla/5.0'})
+            code = response.status_code
+            response.close()
+            return 200 <= code < 400 or code in (403, 416)
+        except Exception:
+            return False
+
+    def _normname(self, name):
+        return re.sub(r'[^\w\u4e00-\u9fff]', '', name or '').lower()
+
+    def _checkm3u8(self, url):
+        try:
+            response = requests.get(url, timeout=6, verify=False, headers={'User-Agent': 'Mozilla/5.0'})
+            return response.status_code == 200 and '#EXTM3U' in (response.text or '')[:300]
+        except Exception:
+            return False
+
+    def _reallink(self, url):
+        if not url or not url.startswith('http'):
+            return ''
+        if self._isvideo(url):
+            if '.m3u8' in url:
+                return url if self._checkm3u8(url) else ''
+            return url
+        if '/share/' in url:
+            return ''
+        # 大部分资源站的播放页只需拼上 index.m3u8
+        if self._checkm3u8(url.rstrip('/') + '/index.m3u8'):
+            return url.rstrip('/') + '/index.m3u8'
+        response = self._get(url, headers={'User-Agent': 'Mozilla/5.0'})
+        if response is not None:
+            match = re.search(r'''https?://[^"'\\\s]+\.m3u8[^"'\\\s]*''', response.text or '')
+            if match and self._checkm3u8(match.group(0)):
+                return match.group(0)
+        return ''
+
+    def _sourceurl(self, api, wd, ep, total):
+        try:
+            response = requests.get(api, params={'ac': 'videolist', 'wd': wd}, timeout=8, verify=False,
+                                    headers={'User-Agent': 'Mozilla/5.0'})
+            vlist = response.json().get('list') or []
+        except Exception:
+            return ''
+        nn = self._normname(wd)
+        best = None
+        for v in vlist:
+            urls = [x.split('$')[-1] for x in (v.get('vod_play_url') or '').split('#') if '$' in x]
+            if not urls or ep >= len(urls):
+                continue
+            cn = self._normname(v.get('vod_name'))
+            if not cn or not (cn == nn or cn.startswith(nn) or nn.startswith(cn)):
+                continue
+            score = 40 if cn == nn else 0
+            if total <= 1:
+                if len(urls) > 2:
+                    continue
+                score += 30
+            else:
+                score += max(0, 30 - abs(len(urls) - total))
+            if best is None or score > best[0]:
+                best = (score, urls[ep])
+        return best[1] if best else ''
+
+    def getplayurl(self, name, ep, total=0):
+        if not name:
+            return ''
+        queries = [name]
+        simple = re.sub(r'第[一二三四五六七八九十0-9]+季.*$', '', name).strip()
+        if simple and simple != name:
+            queries.append(simple)
+        else:
+            simple = re.sub(r'[（(].*[）)]', '', name).strip()
+            if simple and simple != name:
+                queries.append(simple)
+        for wd in queries:
+            checked = 0
+            with ThreadPoolExecutor(max_workers=len(self.cj_apis)) as executor:
+                futures = [executor.submit(self._sourceurl, api, wd, ep, total) for api in self.cj_apis.values()]
+                for fut in as_completed(futures):
+                    try:
+                        url = fut.result()
+                    except Exception:
+                        continue
+                    if not url:
+                        continue
+                    real = self._reallink(url)
+                    if real:
+                        return real
+                    checked += 1
+                    if checked >= 3:
+                        break
+        return ''
 
     def localProxy(self, param):
         pass
