@@ -25,14 +25,6 @@
                 "type": "oval"
             }
         }, {
-            "key": "影探 PY",
-            "name": "👌影探4k| [1080P] py",
-            "api": "./影探4k.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "影视工厂 PY",
             "name": "👌影视工厂丨[1080P]",
             "api": "./影视工厂.py",
@@ -285,15 +277,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "[4K]咕噜.py PY",
-            "name": "👌4K咕噜.py丨[1080P]",
-            "api": "./[4K]咕噜.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },{
             "key": "[4K]河豚.py PY",
             "name": "👌4K河豚.py丨[1080P]",
             "api": "./[4K]河豚.py",
