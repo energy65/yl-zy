@@ -25,6 +25,14 @@
                 "type": "oval"
             }
         }, {
+            "key": "洛雪TV",
+            "name": "👌洛雪TV |[1080P] ",
+            "api": "./洛雪TV.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
             "key": "瓜子优质 PY",
             "name": "👌瓜子优质丨[1080P]",
             "api": "./瓜子优质.py",
@@ -78,6 +86,30 @@
             "key": "懂片帝 PY",
             "name": "懂片帝丨[1080P]",
             "api": "./懂片帝.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "红果短剧修复版.py",
+            "name": "👌红果短剧线路一丨[短剧",
+            "api": "./红果短剧修复版.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "红果(显季优化版).py",
+            "name": "👌红果短剧线路二丨[短剧",
+            "api": "./红果(显季优化版).py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
+            "key": "红果_酒亓3.py",
+            "name": "👌红果短剧线路三丨[短剧",
+            "api": "./红果_酒亓3.py",
             "filterable": 1,
             "quickSearch": 1,
             "searchable": 1,
