@@ -24,7 +24,17 @@
             "style": {
                 "type": "oval"
             }
-        }, {
+        }, 
+		{
+            "key": "洛雪TV",
+            "name": "👌洛雪TV |[1080P] ",
+            "api": "./洛雪TV.py", 
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        },
+		{
             "key": "影视工厂 PY",
             "name": "👌影视工厂丨[1080P]",
             "api": "./影视工厂.py",
