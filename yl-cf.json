@@ -51,14 +51,6 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "懂片帝-详细分类版PY",
-            "name": "👌懂片帝 丨[1080P]",
-            "api": "./懂片帝.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "pomo666 PY",
             "name": "👌pomo666丨[4k影视]",
             "api": "./pomo666.py",
