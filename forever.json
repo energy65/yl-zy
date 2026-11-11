@@ -48,14 +48,6 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        },  {
-            "key": "秒看 PY",
-            "name": "秒看丨[1080P]",
-            "api": "./秒看.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
         }, {
             "key": "懂片帝 PY",
             "name": "懂片帝丨[1080P]",
