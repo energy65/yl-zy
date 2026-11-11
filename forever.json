@@ -181,14 +181,6 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "电影侠 PY",
-            "name": "电影侠丨PY",
-            "api": "./电影侠.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "影视工厂PY",
             "name": "👌影视工厂丨PY",
             "api": "./影视工厂.py",

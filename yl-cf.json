@@ -43,14 +43,6 @@
             "searchable": 1,
             "type": 3
         }, {
-            "key": "网飞猫影视 PY",
-            "name": "👌网飞猫影视py丨[1080P]",
-            "api": "./网飞猫.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "星辰影院 PY",
             "name": "👌星辰影院丨[1080P] ",
             "api": "./星辰影院.py",
@@ -279,14 +271,6 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "电影侠 PY",
-            "name": "👌电影侠丨PY",
-            "api": "./电影侠.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
         },{
             "key": "[4K]河豚.py PY",
             "name": "👌4K河豚.py丨[1080P]",
@@ -390,25 +374,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "泥视频PY",
-            "name": "👌泥视频-已失效丨[1080P]",
-            "api": "./泥视频.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "永乐JS",
-            "name": "👌永乐丨[1080P]-已失效",
-            "type": 3,
-            "api": "https://mpimg.cn/down.php/0338609bd59d7b27226f5a269ec97936.js",
-            "style": {
-                "type": "rect",
-                "ratio": 1.33
-            },
-            "changeable": 1
-        }, {
+        },{
             "key": "猎手PY",
             "name": "👌猎手丨[1080P]",
             "api": "https://mpimg.cn/down.php/60fab5ff33f0b0fd88f099ae3be708bf.py",
