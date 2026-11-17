@@ -167,6 +167,14 @@
             "api": "./drpy2.min.js",
             "ext": "./qq-fenlei.js"
         }, {
+            "key": "腾讯4K",
+            "name": "👌腾讯4K[官源]",
+            "api": "./腾讯4K.py",
+            "filterable": 1,
+            "quickSearch": 1,
+            "searchable": 1,
+            "type": 3
+        }, {
             "key": "bili影视PY",
             "name": "👌bili影视丨PY",
             "api": "./bili影视.py",
@@ -2537,8 +2545,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, 
-		{
+        }, {
             "name": "dsjcs-zb",
             "type": 0,
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/bang359/dsj/refs/heads/main/dsjcs.txt",
@@ -2547,8 +2554,7 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, 
-		{
+        }, {
             "name": "261023zb",
             "type": 0,
             "url": "https://gh-proxy.org/raw.githubusercontent.com/suxuang/myIPTV/main/ipv4.m3u",
