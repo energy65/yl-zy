@@ -49,30 +49,6 @@
             "searchable": 1,
             "type": 3
         },{
-            "key": "红果短剧修复版.py",
-            "name": "👌红果短剧线路一丨[短剧",
-            "api": "./红果短剧修复版.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "红果(显季优化版).py",
-            "name": "👌红果短剧线路二丨[短剧",
-            "api": "./红果(显季优化版).py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
-            "key": "红果_酒亓3.py",
-            "name": "👌红果短剧线路三丨[短剧",
-            "api": "./红果_酒亓3.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
             "key": "葵花影视网 PY",
             "name": "葵花影视网丨[1080P]",
             "api": "./葵花影视网.py",
