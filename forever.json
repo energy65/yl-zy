@@ -193,15 +193,7 @@
             "quickSearch": 1,
             "searchable": 1,
             "type": 3
-        }, {
-            "key": "pomo666 PY",
-            "name": "👌pomo666丨PY",
-            "api": "./pomo666.py",
-            "filterable": 1,
-            "quickSearch": 1,
-            "searchable": 1,
-            "type": 3
-        }, {
+        },{
             "key": "奈飞电影",
             "name": "奈飞电影[1080P]",
             "type": 3,
