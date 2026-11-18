@@ -165,7 +165,7 @@
             "name": "👌腾xun[官源]",
             "type": 3,
             "api": "./drpy2.min.js",
-            "ext": "./qq-fenlei.js"
+            "ext": "./qq.js"
         }, {
             "key": "腾讯4K",
             "name": "👌腾讯4K[官源]",
