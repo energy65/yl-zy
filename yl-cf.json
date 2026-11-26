@@ -2522,7 +2522,18 @@
             "ua": "okhttp/3",
             "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
             "logo": "https://epg.112114.eu.org/logo/{name}.png"
-        }, {
+        }, 		
+		{
+            "name": "港澳台免费261126",
+            "type": 0,
+            "url": "https://hrtv.118138.xyz/tv_proxy.m3u",
+            "playerType": 2,
+            "timeout": 10,
+            "ua": "okhttp/3",
+            "epg": "https://epg.112114.eu.org/?ch={name}&date={date}",
+            "logo": "https://epg.112114.eu.org/logo/{name}.png"
+        }, 
+		{
             "name": "dsjcs-zb",
             "type": 0,
             "url": "https://gh-proxy.org/https://raw.githubusercontent.com/bang359/dsj/refs/heads/main/dsjcs.txt",
